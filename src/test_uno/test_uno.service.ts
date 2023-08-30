@@ -11,7 +11,7 @@ export class TestUnoService {
 
   async getTestUnoById(id: string): Promise<TestUnoResponseDTO> {
     const product = data.products.find((el) => el.id === id);
-    if (!product) return;
+    if (!product) {return;}
     return new TestUnoResponseDTO(product);
   }
 
@@ -40,7 +40,7 @@ export class TestUnoService {
 
   async deleteTestUno(id: string) {
     const productIndex = data.products.findIndex((el) => el.id === id);
-    if (productIndex < 0) return;
+    if (productIndex < 0) {return;}
     data.products.splice(productIndex, 1);
     return data.products;
   }
