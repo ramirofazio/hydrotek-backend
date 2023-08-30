@@ -135,15 +135,15 @@ declaracion 'imports' del archivo app.module.ts el nuevo modulo
 generado
 
 ```
-nest g [entidad] module
+nest g module [entidad] 
 ```
 ### Generacion de nuevo controller
 ```
-nest g [entidad] controller
+nest g controller [entidad] 
 ```
 ### Generacion de nuevo service
 ```
-nest g [entidad] service
+nest g service [entidad] 
 ```
 ## Importaciones entre modulos
 Situacion: Necesitamos utilizar el service 'product.service.ts' desde el service

@@ -10,7 +10,7 @@ import {
 } from "class-validator";
 import { Exclude, Expose } from "class-transformer";
 
-export class CreateProductDTO {
+export class CreateTestUnoDTO {
   @IsString()
   @IsNotEmpty()
   title: string;
@@ -29,7 +29,7 @@ export class CreateProductDTO {
   category: CategoryType;
 }
 
-export class EditProductDTO {
+export class EditTestUnoDTO {
   @IsUUID()
   id: string;
 
@@ -55,8 +55,8 @@ export class EditProductDTO {
   category: CategoryType;
 }
 
-export class ProductResponseDTO {
-    constructor(partial : Partial<ProductResponseDTO>) {
+export class TestUnoResponseDTO {
+    constructor(partial : Partial<TestUnoResponseDTO>) {
         Object.assign(this,partial);
     }
     

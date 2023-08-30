@@ -1,14 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
-import { UserService } from './user.service';
+import { Controller } from '@nestjs/common';
 
 @Controller('user')
-export class UserController {
-constructor(private readonly userService : UserService) {}
-    
-    @Get()
-    async manageProducts(): Promise<any>  {
-       return this.userService.manageProducts(); 
-        
-    }
-}
-
+export class UserController {}

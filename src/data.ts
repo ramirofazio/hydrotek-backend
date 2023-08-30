@@ -2,7 +2,7 @@ export const data: Data = {
   products: [],
 };
 
-export interface PostProduct {
+export interface PostTestUno {
   id?: string;
   title: string;
   description: string;
@@ -11,7 +11,7 @@ export interface PostProduct {
   category: CategoryType;
 }
 
-export interface CompleteProduct {
+export interface CompleteTestUno {
   id: string;
   title: string;
   createdAt: string;
@@ -27,7 +27,7 @@ export enum CategoryType {
 }
 
 interface Data {
-  products: CompleteProduct[];
+  products: CompleteTestUno[];
 }
 
 data.products.push({
