@@ -6,8 +6,9 @@ module.exports = {
   ignorePatterns: [".eslintrc"],
   rules: {
     quotes: ["error", "double"],
-    "@typescript-eslint/no-explicit-any": "warn", // ! cambiar a error cuando se cambie las promises
-    "no-unused-vars": "warn",
+    "@typescript-eslint/no-explicit-any": "error",
+
+    "no-unused-vars": "error",
     "new-cap": "off",
     indent: ["error", 2],
     "linebreak-style": "off",

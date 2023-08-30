@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-unused-vars */
 import { CallHandler, ExecutionContext, NestInterceptor } from "@nestjs/common";
 import { Observable, map } from "rxjs";
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Injectable } from "@nestjs/common";
 import { TestUnoService } from "src/test_uno/test_uno.service";
 

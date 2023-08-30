@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-unused-vars */
 import { Controller, Get } from "@nestjs/common";
 import { TestDosService } from "./test_dos.service";
 
