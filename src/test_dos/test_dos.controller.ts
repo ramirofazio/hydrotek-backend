@@ -1,14 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
-import { TestDosService } from './test_dos.service';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-unused-vars */
+import { Controller, Get } from "@nestjs/common";
+import { TestDosService } from "./test_dos.service";
 
-@Controller('test_dos')
+@Controller("test_dos")
 export class TestDosController {
-constructor(private readonly testDosService : TestDosService) {}
-    
-    @Get()
-    async manageTestUnos(): Promise<any>  {
-       return this.testDosService.manageTestUnos(); 
-        
-    }
-}
+  constructor(private readonly testDosService: TestDosService) {}
 
+  @Get()
+  async manageTestUnos(): Promise<any> {
+    return this.testDosService.manageTestUnos();
+  }
+}

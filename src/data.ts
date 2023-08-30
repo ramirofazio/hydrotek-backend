@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 export const data: Data = {
   products: [],
 };
@@ -22,8 +23,8 @@ export interface CompleteTestUno {
 }
 
 export enum CategoryType {
-  MACETAS = 'macetas',
-  OTROS = 'otros',
+  MACETAS = "macetas",
+  OTROS = "otros",
 }
 
 interface Data {
@@ -31,8 +32,8 @@ interface Data {
 }
 
 data.products.push({
-  id: '2f93956a-23a6-464e-90f5-7bd5b6296ecc',
-  title: 'maceta nro 1',
+  id: "2f93956a-23a6-464e-90f5-7bd5b6296ecc",
+  title: "maceta nro 1",
   createdAt: "2023-08-25",
   description: null,
   published: true,
@@ -41,8 +42,8 @@ data.products.push({
 });
 
 data.products.push({
-  id: '123b1864-45df-41f4-8e5d-255e0bf76b05',
-  title: 'fertilizante 200ml',
+  id: "123b1864-45df-41f4-8e5d-255e0bf76b05",
+  title: "fertilizante 200ml",
   createdAt: "2023-08-25",
   description: null,
   published: true,

@@ -13,72 +13,71 @@ import { Exclude, Expose } from "class-transformer";
 export class CreateTestUnoDTO {
   @IsString()
   @IsNotEmpty()
-  title: string;
+    title: string;
 
   @IsString()
-  description: string;
+    description: string;
 
   @IsBoolean()
-  published: boolean;
+    published: boolean;
 
   @IsNumber()
   @IsPositive()
-  value: number;
+    value: number;
 
   @IsEnum(CategoryType)
-  category: CategoryType;
+    category: CategoryType;
 }
 
 export class EditTestUnoDTO {
   @IsUUID()
-  id: string;
+    id: string;
 
   @IsString()
   @IsNotEmpty()
-  createdAt: string;
+    createdAt: string;
 
   @IsString()
   @IsNotEmpty()
-  title: string;
+    title: string;
 
   @IsString()
-  description: string;
+    description: string;
 
   @IsBoolean()
-  published: boolean;
+    published: boolean;
 
   @IsNumber()
   @IsPositive()
-  value: number;
+    value: number;
 
   @IsEnum(CategoryType)
-  category: CategoryType;
+    category: CategoryType;
 }
 
 export class TestUnoResponseDTO {
-    constructor(partial : Partial<TestUnoResponseDTO>) {
-        Object.assign(this,partial);
-    }
-    
-    title: string;
-    
-    description: string;
-    
-    published: boolean;
-    
-    
-    category: CategoryType;
-    //excluye props de la info de respuesta
-    @Exclude()
+  constructor(partial: Partial<TestUnoResponseDTO>) {
+    Object.assign(this, partial);
+  }
+
+  title: string;
+
+  description: string;
+
+  published: boolean;
+
+  category: CategoryType;
+  //excluye props de la info de respuesta
+  @Exclude()
     id: string;
-    @Exclude()
+  @Exclude()
     createdAt: string;
-    @Exclude()
+  @Exclude()
     value: number;
-    
-    //expone props, customizandolas si es necesario
-    @Expose({name: "amount"})
-    transformAmount() {
-        return this.value;
-    }
+
+  //expone props, customizandolas si es necesario
+  @Expose({ name: "amount" })
+  transformAmount() {
+    return this.value;
+  }
 }
