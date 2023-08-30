@@ -56,29 +56,28 @@ export class EditTestUnoDTO {
 }
 
 export class TestUnoResponseDTO {
-    constructor(partial : Partial<TestUnoResponseDTO>) {
-        Object.assign(this,partial);
-    }
-    
-    title: string;
-    
-    description: string;
-    
-    published: boolean;
-    
-    
-    category: CategoryType;
-    //excluye props de la info de respuesta
-    @Exclude()
-    id: string;
-    @Exclude()
-    createdAt: string;
-    @Exclude()
-    value: number;
-    
-    //expone props, customizandolas si es necesario
-    @Expose({name: "amount"})
-    transformAmount() {
-        return this.value;
-    }
+  constructor(partial: Partial<TestUnoResponseDTO>) {
+    Object.assign(this, partial);
+  }
+
+  title: string;
+
+  description: string;
+
+  published: boolean;
+
+  category: CategoryType;
+  //excluye props de la info de respuesta
+  @Exclude()
+  id: string;
+  @Exclude()
+  createdAt: string;
+  @Exclude()
+  value: number;
+
+  //expone props, customizandolas si es necesario
+  @Expose({ name: "amount" })
+  transformAmount() {
+    return this.value;
+  }
 }
