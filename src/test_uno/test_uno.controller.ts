@@ -6,7 +6,7 @@ import {
   Delete,
   Param,
   Body,
-  ParseEnumPipe,
+  // ParseEnumPipe,
   ParseUUIDPipe,
 } from "@nestjs/common";
 
