@@ -9,9 +9,12 @@ import { PrismaService } from "./prisma/prisma.service";
 import { PrismaModule } from "./prisma/prisma.module";
 import { AuthModule } from "./auth/auth.module";
 import { RoleService } from "./role/role.service";
+import { TfacturaModule } from "./tfactura/tfactura.module";
+import { ConfigModule } from "@nestjs/config";
 
 @Module({
-  imports: [TestDosModule, TestUnoModule, UserModule, PrismaModule, AuthModule],
+  imports: [TestDosModule, TestUnoModule, UserModule, TfacturaModule, PrismaModule,AuthModule,ConfigModule.forRoot()],
+
   controllers: [AppController],
   providers: [
     AppService,
