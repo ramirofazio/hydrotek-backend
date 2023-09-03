@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-unused-vars */
+
 import {
   Controller,
   Get,
@@ -12,11 +11,12 @@ import {
   ParseUUIDPipe,
 } from "@nestjs/common";
 
-import { CreateTestUnoDTO, EditTestUnoDTO } from "./test_uno.dto";
+import { EditTestUnoDTO } from "./test_uno.dto";
 import { TestUnoService } from "./test_uno.service";
 
 @Controller("test_uno")
 export class TestUnoController {
+  // eslint-disable-next-line no-unused-vars
   constructor(private readonly TestUnoService: TestUnoService) {}
 
   @Post()

@@ -6,7 +6,7 @@ module.exports = {
   ignorePatterns: [".eslintrc"],
   rules: {
     quotes: ["error", "double"],
-    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-explicit-any": "warn",
 
     "no-unused-vars": "error",
     "new-cap": "off",
