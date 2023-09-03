@@ -19,6 +19,27 @@ import { TestUnoService } from "./test_uno.service";
 export class TestUnoController {
   constructor(private readonly TestUnoService: TestUnoService) {}
 
+  @Post()
+  async postTest() {
+    return this.TestUnoService.postTest();
+  }
+
+
+  @Post("cat")
+  async postCategory() {
+    return this.TestUnoService.postCategory();
+  }
+
+  @Get()
+  async getAllTests() {
+    return this.TestUnoService.getAllTests();
+  }
+
+  @Get(":cat")
+  async getTestsByCategory(@Param("cat") cat:number) {
+    return this.TestUnoService.getTestsByCategory(cat);
+  }
+
   @Get()
   async getTestUnos(): Promise<any> {
     return this.TestUnoService.getTestUnos();
@@ -37,10 +58,10 @@ export class TestUnoController {
     return this.TestUnoService.getTestUnoById(id);
   }
 
-  @Post()
-  async createTestUno(@Body() body: CreateTestUnoDTO): Promise<any> {
-    return this.TestUnoService.createTestUno(body);
-  }
+  // @Post()
+  // async createTestUno(@Body() body: CreateTestUnoDTO): Promise<any> {
+  //   return this.TestUnoService.createTestUno(body);
+  // }
 
   @Put("/:id")
   async updateTestUno(
@@ -54,4 +75,6 @@ export class TestUnoController {
   async deleteTestUno(@Param("id", ParseUUIDPipe) id: string) {
     return this.TestUnoService.deleteTestUno(id);
   }
+
+
 }
