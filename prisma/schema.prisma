@@ -10,11 +10,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Product {
+model Test {
   id        Int      @id @default(autoincrement())
   title     String   @db.VarChar(255)
   createdAt DateTime @default(now()) @db.Timestamp(6)
-  description   String?
+  description   String? 
   published Boolean  @default(false)
   value  Int
+  testCategory TestCategory @relation(fields: [categoryId], references: [id])
+  categoryId Int
+}
+
+
+model TestCategory {
+  id Int @id @default(autoincrement())
+  value Int
+  test Test[]
 }
