@@ -7,9 +7,10 @@ import { TestUnoModule } from "./test_uno/test_uno.module";
 import { UserModule } from "./user/user.module";
 import { PrismaService } from './prisma/prisma.service';
 import { PrismaModule } from './prisma/prisma.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [TestDosModule, TestUnoModule, UserModule, PrismaModule],
+  imports: [TestDosModule, TestUnoModule, UserModule, PrismaModule, AuthModule],
   controllers: [AppController],
   providers: [
     AppService,
