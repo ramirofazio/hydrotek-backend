@@ -1,7 +1,31 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsPositive,
+  IsString,
+  IsStrongPassword,
+} from "class-validator";
 
-//? Aca irian mas props si loguea por 3ro (calculo)
+export class signUpDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  dni: number;
+
+  @IsString()
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @IsStrongPassword()
+  @IsNotEmpty()
+  password: string;
+}
 export class signInDto {
+  //? Aca irian mas props si loguea por 3ro (calculo)
   @IsString()
   @IsNotEmpty()
   email: string;
