@@ -8,6 +8,7 @@ import { UserModule } from "./user/user.module";
 import { PrismaService } from "./prisma/prisma.service";
 import { PrismaModule } from "./prisma/prisma.module";
 import { AuthModule } from "./auth/auth.module";
+import { RoleService } from './role/role.service';
 
 @Module({
   imports: [TestDosModule, TestUnoModule, UserModule, PrismaModule, AuthModule],
@@ -19,6 +20,7 @@ import { AuthModule } from "./auth/auth.module";
       useClass: ClassSerializerInterceptor,
     },
     PrismaService,
+    RoleService,
   ],
 })
 export class AppModule {}
