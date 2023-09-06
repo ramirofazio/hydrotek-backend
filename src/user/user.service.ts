@@ -10,4 +10,11 @@ export class UserService {
     const user = await this.prisma.user.create({ data });
     return user;
   }
+
+  async findOne(email: string): Promise<userModel | undefined> {
+    const user = await this.prisma.user.findFirstOrThrow({
+      where: { email: email },
+    });
+    return user;
+  }
 }
