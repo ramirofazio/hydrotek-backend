@@ -3,7 +3,9 @@ import { AuthService } from "./auth.service";
 import { signInDto, signUpDto } from "./auth.dto";
 @Controller("auth")
 export class AuthController {
+  /* eslint-disable */
   constructor(private authService: AuthService) {}
+  /* eslint-enable */
 
   @Post("signUp")
   signUp(@Body() body: signUpDto) {
@@ -11,7 +13,7 @@ export class AuthController {
   }
 
   @Post("signIn")
-  signIn(@Body() { email, pass }: signInDto) {
-    return this.authService.signIn(email, pass);
+  signIn(@Body() body: signInDto) {
+    return this.authService.signIn(body);
   }
 }

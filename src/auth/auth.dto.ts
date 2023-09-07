@@ -1,8 +1,6 @@
 import {
   IsEmail,
   IsNotEmpty,
-  IsNumber,
-  IsPositive,
   IsString,
   IsStrongPassword,
 } from "class-validator";
@@ -10,27 +8,27 @@ import {
 export class signUpDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+    name: string;
 
   dni: number;
 
   @IsString()
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+    email: string;
 
   @IsString()
   @IsStrongPassword()
   @IsNotEmpty()
-  password: string;
+    password: string;
 }
 export class signInDto {
   //? Aca irian mas props si loguea por 3ro (calculo)
   @IsString()
   @IsNotEmpty()
-  email: string;
+    email: string;
 
   @IsString()
   @IsNotEmpty()
-  pass: string;
+    pass: string;
 }

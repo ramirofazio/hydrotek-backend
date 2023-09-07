@@ -8,10 +8,12 @@ import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class AuthService {
+  /* eslint-disable */
   constructor(
     private userServices: UserService,
     private jwtService: JwtService
   ) {}
+  /* eslint-enable */
 
   async signUp(body: signUpDto): Promise<User> {
     return await this.userServices.createUser({
@@ -23,21 +25,18 @@ export class AuthService {
     });
   }
 
-  async signIn(
-    email: string,
-    pass: string
-  ): Promise<signInDto | UnauthorizedException | {}> {
+  async signIn({ email, pass }: signInDto): Promise<{ accessToken: string }> {
     const { password, id, name, roleId } =
       await this.userServices.findOne(email);
     const match = await bcrypt.compare(pass, password);
     if (!match) {
-      return new UnauthorizedException();
+      new UnauthorizedException();
     }
 
     const payload = { sub: id, name: name, admin: roleId }; //* A chequear aca el tema del role
 
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      accessToken: await this.jwtService.signAsync(payload),
     };
   }
 }

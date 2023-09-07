@@ -3,7 +3,9 @@ import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class RoleService {
+  /* eslint-disable */
   constructor(private prisma: PrismaService) {}
+  /* eslint-enable */
 
   async createRolesIfNotExist() {
     const userRole = await this.prisma.role.findFirst({

@@ -4,7 +4,9 @@ import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class UserService {
+  /* eslint-disable */
   constructor(private prisma: PrismaService) {}
+  /* eslint-enable */
 
   async createUser(data: User): Promise<User> {
     return await this.prisma.user.create({ data: data });
