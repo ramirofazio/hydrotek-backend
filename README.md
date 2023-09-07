@@ -32,6 +32,15 @@
 $ npm install
 ```
 
+## Running Docker (PostgreSQL)
+
+First install [Docker](https://www.docker.com)
+
+```bash
+# build and run container
+$ docker compose up
+```
+
 ## Running the app
 
 ```bash
