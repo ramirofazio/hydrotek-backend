@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  Injectable,
+  UnauthorizedException,
+  HttpException,
+  HttpStatus,
+} from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "src/user/user.service";
 import { signInDto, signUpDto } from "./auth.dto";
@@ -26,11 +31,13 @@ export class AuthService {
   }
 
   async signIn({ email, pass }: signInDto): Promise<{ accessToken: string }> {
-    const { password, id, name, roleId } =
-      await this.userServices.findOne(email);
+    const user = await this.userServices.findOne(email);
+    if (!user)
+      throw new HttpException("Usuario no encontrado", HttpStatus.NOT_FOUND);
+    const { password, id, name, roleId } = user;
     const match = await bcrypt.compare(pass, password);
     if (!match) {
-      new UnauthorizedException();
+      throw new UnauthorizedException();
     }
 
     const payload = { sub: id, name: name, admin: roleId }; //* A chequear aca el tema del role

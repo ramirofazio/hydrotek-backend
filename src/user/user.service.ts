@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { User } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 
@@ -9,7 +9,14 @@ export class UserService {
   /* eslint-enable */
 
   async createUser(data: User): Promise<User> {
-    return await this.prisma.user.create({ data: data });
+    const existingUser = await this.findOne(data.email);
+    if (existingUser) {
+      throw new HttpException(
+        "El correo electrónico ya está en uso",
+        HttpStatus.CONFLICT
+      );
+    }
+    return await this.prisma.user.create({ data });
   }
 
   async findOne(email: string): Promise<User | undefined> {
