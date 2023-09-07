@@ -32,8 +32,9 @@ export class AuthService {
 
   async signIn({ email, pass }: signInDto): Promise<{ accessToken: string }> {
     const user = await this.userServices.findOne(email);
-    if (!user)
+    if (!user) {
       throw new HttpException("Usuario no encontrado", HttpStatus.NOT_FOUND);
+    }
     const { password, id, name, roleId } = user;
     const match = await bcrypt.compare(pass, password);
     if (!match) {
