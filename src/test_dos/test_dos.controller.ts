@@ -11,9 +11,14 @@ export class TestDosController {
     return this.testDosService.manageTestUnos();
   }
 
-  @Get("token")
-  async getToken() : Promise<string | object> {
+  // @Get("token")
+  // async getToken() : Promise<string | object> {
 
-    return this.testDosService.getToken();
-  }
+  //   return this.testDosService.getToken();
+  // }
+
+  // @Get("products")
+  // async getProducts() : Promise<any> {
+  //   return this.testDosService.getProducts();
+  // }
 }

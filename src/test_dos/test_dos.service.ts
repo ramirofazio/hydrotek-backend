@@ -11,8 +11,12 @@ export class TestDosService {
     const products = await this.productService.getTestUnos();
     return { user: "test", products };
   }
-  async getToken() {
-    const token = await this.TfacturaService.getToken();
-    return token;
-  }
+  // async getToken() {
+  //   const token = await this.TfacturaService.getToken();
+  //   return { token };
+  // }
+  // async getProducts() {
+  //   const products = await this.TfacturaService.getProducts();
+  //   return products;
+  // }
 }

@@ -11,9 +11,12 @@ import { AuthModule } from "./auth/auth.module";
 import { RoleService } from "./role/role.service";
 import { TfacturaModule } from "./tfactura/tfactura.module";
 import { ConfigModule } from "@nestjs/config";
+import { ScheduleModule } from "@nestjs/schedule";
 
 @Module({
-  imports: [TestDosModule, TestUnoModule, UserModule, TfacturaModule, PrismaModule,AuthModule,ConfigModule.forRoot()],
+  imports: [TestDosModule, TestUnoModule, UserModule,
+    TfacturaModule, AuthModule, PrismaModule, ConfigModule.forRoot(),
+    ScheduleModule.forRoot()],
 
   controllers: [AppController],
   providers: [
