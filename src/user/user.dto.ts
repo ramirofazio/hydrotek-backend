@@ -1,5 +1,5 @@
 import {} from "class-validator";
-import {} from "class-transformer";
+import { Exclude } from "class-transformer";
 
 export class CreateUserDTO {
   //Define los campos del POST a traves del cual se crea un user
@@ -12,4 +12,22 @@ export class DeleteUserDTO {
 }
 export class UserResponseDTO {
   //Define los campos que retorna el GET para obtener un User
+  constructor(partial: Partial<UserResponseDTO>) {
+    Object.assign(this, partial);
+  }
+
+  id: string;
+
+  name: string;
+
+  dni: number;
+
+  email: string;
+
+  roleId: number;
+
+  @Exclude()
+    active: boolean;
+  @Exclude()
+    password: string;
 }

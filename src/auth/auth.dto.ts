@@ -20,7 +20,7 @@ export class signUpDto {
   email: string;
 
   @IsString()
-  @IsStrongPassword()
+  //@IsStrongPassword()
   @IsNotEmpty()
   password: string;
 }

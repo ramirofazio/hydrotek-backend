@@ -1,6 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { User } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
+import { UserResponseDTO } from "./user.dto";
 
 @Injectable()
 export class UserService {
@@ -8,6 +9,17 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
   /* eslint-enable */
 
+  async getAll(): Promise<UserResponseDTO[]> {
+    return await this.prisma.user.findMany({});
+  }
+  async getById(id: string): Promise<UserResponseDTO> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+    return user;
+  }
   async createUser(data: User): Promise<User> {
     const existingUser = await this.findOne(data.email);
     if (existingUser) {
