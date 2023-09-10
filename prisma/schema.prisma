@@ -42,3 +42,42 @@ model User {
     role     Role    @relation(fields: [roleId], references: [id])
     roleId   Int
 }
+
+model Token {
+  id Int @id @default(autoincrement())
+  token String
+  validUntil String
+}
+
+model TokenLog {
+  id Int @id @default(autoincrement())
+  errorCode Int?
+  data String?
+  date String
+}
+
+model Product {
+    id Int @unique
+    name String
+    price Decimal @db.Decimal(10,2)
+    description String?
+    published Boolean
+    type Int
+    profile Int
+    images ProductImage[]
+    updated String
+}
+
+model ProductLog {
+  id Int @id @default(autoincrement())
+  errorCode Int?
+  data String?
+  date String
+}
+
+model ProductImage {
+    id Int @id @default(autoincrement())
+    path String
+    product Product @relation(fields: [productId], references: [id])
+    productId Int @unique
+}
