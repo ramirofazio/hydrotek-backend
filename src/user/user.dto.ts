@@ -24,7 +24,7 @@ export class UserResponseDTO {
 
   email: string;
 
-  roleId: number;
+  role: {type: string};
 
   @Exclude()
     active: boolean;

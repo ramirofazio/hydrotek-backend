@@ -10,13 +10,28 @@ export class UserService {
   /* eslint-enable */
 
   async getAll(): Promise<UserResponseDTO[]> {
-    return await this.prisma.user.findMany({});
+    return await this.prisma.user.findMany({
+      include: {
+        role: {
+          select: {
+            type: true
+          }
+        }
+      }
+    });
   }
   async getById(id: string): Promise<UserResponseDTO> {
     const user = await this.prisma.user.findUnique({
       where: {
         id,
       },
+      include: {
+        role: {
+          select: {
+            type: true
+          }
+        }
+      }
     });
     return user;
   }
@@ -31,9 +46,16 @@ export class UserService {
     return await this.prisma.user.create({ data });
   }
 
-  async findOne(email: string): Promise<User | undefined> {
+  async findOne(email: string): Promise<UserResponseDTO | undefined> {
     return await this.prisma.user.findFirst({
       where: { email: email },
+      include: {
+        role: {
+          select: {
+            type: true
+          }
+        }
+      }
     });
   }
 }
