@@ -50,7 +50,6 @@ export class UserService {
       }
     });
     return user;
-    //return await this.prisma.user.create({ data });
   }
 
   async findByEmail(email: string): Promise<UserResponseDTO | undefined> {
@@ -66,13 +65,12 @@ export class UserService {
           select: {
             userName: true,
             cellPhone: true,
-            shoppingCart: true,
             adress: true,
+            avatar: true,
           },
         },
       },
     });
-
     return user;
   }
 }

@@ -1,5 +1,7 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
+// ? DER --> https://lucid.app/lucidchart/28dc171c-4979-4ad9-8b39-6fe7a66be19d/view?page=0_0&invitationId=inv_60d98a0c-9dc5-47aa-b4dd-113d301890db#
+
 generator client {
     provider = "prisma-client-js"
 }
@@ -49,7 +51,8 @@ model UserProfile {
     user         User    @relation(fields: [userId], references: [id])
     userId       String  @unique
     userName     String? @default("pelu")
+    avatar       String? @default("https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI=")
     cellPhone    Int?    @default(111)
-    shoppingCart String? // ? Crear relacion 1-1 cuando este el modelo shoppingCart
+    //shoppingCart String? // ? Crear relacion 1-1 cuando este el modelo shoppingCart
     adress       String?
 }

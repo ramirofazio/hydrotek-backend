@@ -10,7 +10,7 @@ import { signInDto, signUpDto } from "./auth.dto";
 import { randomUUID } from "crypto";
 import { User } from "@prisma/client";
 import * as bcrypt from "bcrypt";
-import { UserResponseDTO } from "src/user/user.dto";
+import { UserSignInResponseDTO } from "src/user/user.dto";
 
 @Injectable()
 export class AuthService {
@@ -31,10 +31,7 @@ export class AuthService {
     });
   }
 
-  async signIn({
-    email,
-    pass,
-  }: signInDto): Promise<{ user: UserResponseDTO; accessToken: string }> {
+  async signIn({ email, pass }: signInDto): Promise<UserSignInResponseDTO> {
     const user = await this.userServices.findByEmail(email);
     if (!user) {
       throw new HttpException("Usuario no encontrado", HttpStatus.NOT_FOUND);
@@ -48,7 +45,8 @@ export class AuthService {
     const payload = { sub: id, name: name, role: role.type };
 
     return {
-      user,
+      session: { id: id, email: user.email, role: role.type },
+      profile: user.profile,
       accessToken: await this.jwtService.signAsync(payload),
     };
   }
