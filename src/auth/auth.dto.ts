@@ -2,7 +2,7 @@ import {
   IsEmail,
   IsNotEmpty,
   IsString,
-  IsStrongPassword,
+  //IsStrongPassword, // * Definir una misma validacion para back y front
   IsOptional,
 } from "class-validator";
 
