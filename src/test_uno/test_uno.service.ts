@@ -4,7 +4,6 @@ import { randomUUID as uuid } from "crypto";
 import { TestUnoResponseDTO } from "./test_uno.dto";
 import { PrismaService } from "../prisma/prisma.service";
 
-
 @Injectable()
 export class TestUnoService {
   // eslint-disable-next-line no-unused-vars
@@ -15,7 +14,9 @@ export class TestUnoService {
 
   async getTestUnoById(id: string): Promise<TestUnoResponseDTO> {
     const product = data.products.find((el) => el.id === id);
-    if (!product) {return;}
+    if (!product) {
+      return;
+    }
     return new TestUnoResponseDTO(product);
   }
 
@@ -44,7 +45,9 @@ export class TestUnoService {
 
   async deleteTestUno(id: string) {
     const productIndex = data.products.findIndex((el) => el.id === id);
-    if (productIndex < 0) {return;}
+    if (productIndex < 0) {
+      return;
+    }
     data.products.splice(productIndex, 1);
     return data.products;
   }
@@ -53,7 +56,7 @@ export class TestUnoService {
     return await this.prisma.testCategory.create({
       data: {
         value: 100,
-      }
+      },
     });
   }
 
@@ -63,21 +66,19 @@ export class TestUnoService {
         title: "test",
         value: 2,
         categoryId: 2,
-      }
+      },
     });
   }
 
   async getAllTests() {
     return await this.prisma.test.findMany();
-
   }
 
-  async getTestsByCategory(cat : number) {
-
+  async getTestsByCategory(cat: number) {
     return await this.prisma.test.findMany({
       where: {
-        categoryId : cat
-      }
+        categoryId: cat,
+      },
     });
   }
 }

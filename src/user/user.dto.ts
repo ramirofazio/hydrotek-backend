@@ -24,10 +24,10 @@ export class UserResponseDTO {
 
   email: string;
 
-  role: {type: string};
+  role: { type: string };
 
   @Exclude()
-    active: boolean;
+  active: boolean;
   @Exclude()
-    password: string;
+  password: string;
 }

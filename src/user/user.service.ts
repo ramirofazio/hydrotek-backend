@@ -14,10 +14,10 @@ export class UserService {
       include: {
         role: {
           select: {
-            type: true
-          }
-        }
-      }
+            type: true,
+          },
+        },
+      },
     });
   }
   async getById(id: string): Promise<UserResponseDTO> {
@@ -28,34 +28,51 @@ export class UserService {
       include: {
         role: {
           select: {
-            type: true
-          }
-        }
-      }
+            type: true,
+          },
+        },
+      },
     });
     return user;
   }
   async createUser(data: User): Promise<User> {
-    const existingUser = await this.findOne(data.email);
+    const existingUser = await this.findByEmail(data.email);
     if (existingUser) {
       throw new HttpException(
         "El correo electrónico ya está en uso",
         HttpStatus.CONFLICT
       );
     }
-    return await this.prisma.user.create({ data });
+    const user = await this.prisma.user.create({ data });
+    await this.prisma.userProfile.create({
+      data: {
+        userId: user.id
+      }
+    });
+    return user;
+    //return await this.prisma.user.create({ data });
   }
 
-  async findOne(email: string): Promise<UserResponseDTO | undefined> {
-    return await this.prisma.user.findFirst({
+  async findByEmail(email: string): Promise<UserResponseDTO | undefined> {
+    const user = await this.prisma.user.findFirst({
       where: { email: email },
       include: {
         role: {
           select: {
-            type: true
-          }
-        }
-      }
+            type: true,
+          },
+        },
+        profile: {
+          select: {
+            userName: true,
+            cellPhone: true,
+            shoppingCart: true,
+            adress: true,
+          },
+        },
+      },
     });
+
+    return user;
   }
 }

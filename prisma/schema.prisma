@@ -33,14 +33,23 @@ model Role {
 }
 
 model User {
-    id       String  @id @default(uuid())
+    id       String       @id @default(uuid())
     name     String
-    dni      Int?    @unique
-    email    String  @unique 
+    dni      Int?         @unique
+    email    String       @unique
     password String
-    active   Boolean @default(true)
-    role     Role    @relation(fields: [roleId], references: [id])
+    active   Boolean      @default(true)
+    role     Role         @relation(fields: [roleId], references: [id])
     roleId   Int
+    profile  UserProfile?
 }
 
-        
+model UserProfile {
+    id           Int     @id @default(autoincrement())
+    user         User    @relation(fields: [userId], references: [id])
+    userId       String  @unique
+    userName     String? @default("pelu")
+    cellPhone    Int?    @default(111)
+    shoppingCart String? // ? Crear relacion 1-1 cuando este el modelo shoppingCart
+    adress       String?
+}

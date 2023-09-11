@@ -1,4 +1,3 @@
-
 import {
   Controller,
   Get,
@@ -24,7 +23,6 @@ export class TestUnoController {
     return this.TestUnoService.postTest();
   }
 
-
   @Post("cat")
   async postCategory() {
     return this.TestUnoService.postCategory();
@@ -36,7 +34,7 @@ export class TestUnoController {
   }
 
   @Get(":cat")
-  async getTestsByCategory(@Param("cat") cat:number) {
+  async getTestsByCategory(@Param("cat") cat: number) {
     return this.TestUnoService.getTestsByCategory(cat);
   }
 
@@ -66,7 +64,7 @@ export class TestUnoController {
   @Put("/:id")
   async updateTestUno(
     @Param("id", ParseUUIDPipe) id: string,
-    @Body() body: EditTestUnoDTO
+    @Body() body: EditTestUnoDTO,
   ) {
     return this.TestUnoService.updateTestUno(id, body);
   }
@@ -75,6 +73,4 @@ export class TestUnoController {
   async deleteTestUno(@Param("id", ParseUUIDPipe) id: string) {
     return this.TestUnoService.deleteTestUno(id);
   }
-
-
 }
