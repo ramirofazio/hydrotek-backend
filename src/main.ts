@@ -6,7 +6,11 @@ import { RoleService } from "./role/role.service";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  app.enableCors({
+    origin: "http://localhost:5173", // ? De donde permitimos que entren solicitudes
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+  });
   const config = new DocumentBuilder()
     .setTitle("HYD API")
     .setDescription("Documentación de cada ruta, que requiere y que retorna :)")
@@ -26,7 +30,7 @@ async function bootstrap() {
       transformOptions: {
         enableImplicitConversion: true,
       },
-    }),
+    })
   );
   await app.listen(3000);
 }
