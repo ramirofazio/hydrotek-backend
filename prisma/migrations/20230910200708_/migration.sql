@@ -1,5 +1,0 @@
--- AlterTable
-ALTER TABLE "ProductLog" ALTER COLUMN "date" SET DATA TYPE TEXT;
-
--- AlterTable
-ALTER TABLE "TokenLog" ALTER COLUMN "date" SET DATA TYPE TEXT;
