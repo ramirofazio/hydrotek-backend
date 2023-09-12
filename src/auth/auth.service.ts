@@ -10,6 +10,7 @@ import { signInDto, signUpDto } from "./auth.dto";
 import { randomUUID } from "crypto";
 import { User } from "@prisma/client";
 import * as bcrypt from "bcrypt";
+import { UserSignInResponseDTO } from "src/user/user.dto";
 
 @Injectable()
 export class AuthService {
@@ -30,20 +31,22 @@ export class AuthService {
     });
   }
 
-  async signIn({ email, pass }: signInDto): Promise<{ accessToken: string }> {
-    const user = await this.userServices.findOne(email);
+  async signIn({ email, pass }: signInDto): Promise<UserSignInResponseDTO> {
+    const user = await this.userServices.findByEmail(email);
     if (!user) {
       throw new HttpException("Usuario no encontrado", HttpStatus.NOT_FOUND);
     }
-    const { password, id, name, roleId } = user;
+    const { password, id, name, role } = user;
     const match = await bcrypt.compare(pass, password);
     if (!match) {
       throw new UnauthorizedException();
     }
 
-    const payload = { sub: id, name: name, admin: roleId }; //* A chequear aca el tema del role
+    const payload = { sub: id, name: name, role: role.type };
 
     return {
+      session: { id: id, email: user.email, role: role.type },
+      profile: user.profile,
       accessToken: await this.jwtService.signAsync(payload),
     };
   }
