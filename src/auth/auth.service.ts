@@ -11,13 +11,14 @@ import { randomUUID } from "crypto";
 import { User } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 import { UserSignInResponseDTO } from "src/user/user.dto";
-
+import { PrismaService } from "../prisma/prisma.service";
 @Injectable()
 export class AuthService {
   /* eslint-disable */
   constructor(
     private userServices: UserService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private prisma: PrismaService,
   ) {}
   /* eslint-enable */
 
@@ -49,5 +50,36 @@ export class AuthService {
       profile: user.profile,
       accessToken: await this.jwtService.signAsync(payload),
     };
+  }
+
+  async googleSignIn(
+    email: string,
+    name: string,
+    picture: string
+  ): Promise<UserSignInResponseDTO> {
+    const isAlready = await this.userServices.findByEmail(email);
+    if (isAlready) {
+      const { id, name, role } = isAlready;
+      const payload = { sub: id, name: name, role: role.type };
+
+      return {
+        session: { id: id, email: isAlready.email, role: role.type },
+        profile: isAlready.profile,
+        accessToken: await this.jwtService.signAsync(payload),
+      };
+    } else {
+      const user = await this.userServices.createUser({
+        ...isAlready,
+        name: name,
+        password: bcrypt.hashSync(email, 10),
+        active: true,
+        roleId: 1,
+      });
+      await this.prisma.userProfile.update({
+        data: {
+          picture: picture, // * Cambiar los parametros por el update
+        }
+      });
+    }
   }
 }
