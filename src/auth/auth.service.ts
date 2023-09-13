@@ -69,15 +69,14 @@ export class AuthService {
       };
     } else {
       await this.userServices.createUser({
+        id: randomUUID(),
         email: email,
         name: name,
         password: bcrypt.hashSync(email, 10),
         active: true,
         roleId: 1,
-        id: `cacatua ${email}`,
-        dni: 0,
+        dni: undefined
       });
-
       const user = await this.prisma.user.findFirst({
         where: { email: email },
         include: {
@@ -86,16 +85,17 @@ export class AuthService {
       });
 
       const { id, role } = user;
-      const userProfile = await this.prisma.userProfile.create({
+      const payload = { sub: id, name: user.name, role: role.type };
+
+      const userProfile = await this.prisma.userProfile.update({
+        where: { userId: id },
         data: {
-          userId: id,
           avatar: picture, // * Cambiar los parametros por el update
         },
       });
-      const payload = { sub: id, name: user.name, role: role.type };
 
       return {
-        session: { id: id, email: isAlready.email, role: role.type },
+        session: { id: id, email: email, role: role.type },
         profile: userProfile,
         accessToken: await this.jwtService.signAsync(payload),
       };
