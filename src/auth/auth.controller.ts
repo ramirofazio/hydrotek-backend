@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { signInDto, signUpDto } from "./auth.dto";
+import { signInDto, signUpDto, googleSignInDTO } from "./auth.dto";
 @Controller("auth")
 export class AuthController {
   /* eslint-disable */
@@ -15,5 +15,10 @@ export class AuthController {
   @Post("signIn")
   signIn(@Body() body: signInDto) {
     return this.authService.signIn(body);
+  }
+
+  @Post("googleSignIn")
+  googleSignIn(@Body() body: googleSignInDTO) {
+    return this.authService.googleSignIn(body);
   }
 }

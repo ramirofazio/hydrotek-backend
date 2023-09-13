@@ -46,8 +46,6 @@ export class UserSignInResponseDTO {
 
     cellPhone: number;
 
-    shoppingCart: string;
-
     avatar: string;
 
     adress: string;
