@@ -34,3 +34,15 @@ export class signInDto {
   @IsNotEmpty()
   pass: string;
 }
+
+export class googleSignInDTO {
+  @IsString()
+  @IsNotEmpty()
+  email: string;
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+  @IsString()
+  @IsNotEmpty()
+  picture: string;
+}

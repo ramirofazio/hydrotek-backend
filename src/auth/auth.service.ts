@@ -6,7 +6,7 @@ import {
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "src/user/user.service";
-import { signInDto, signUpDto } from "./auth.dto";
+import { signInDto, signUpDto, googleSignInDTO } from "./auth.dto";
 import { randomUUID } from "crypto";
 import { User } from "@prisma/client";
 import * as bcrypt from "bcrypt";
@@ -18,7 +18,7 @@ export class AuthService {
   constructor(
     private userServices: UserService,
     private jwtService: JwtService,
-    private prisma: PrismaService,
+    private prisma: PrismaService
   ) {}
   /* eslint-enable */
 
@@ -52,15 +52,15 @@ export class AuthService {
     };
   }
 
-  async googleSignIn(
-    email: string,
-    name: string,
-    picture: string
-  ): Promise<UserSignInResponseDTO> {
+  async googleSignIn({
+    email,
+    name,
+    picture,
+  }: googleSignInDTO): Promise<UserSignInResponseDTO> {
     const isAlready = await this.userServices.findByEmail(email);
     if (isAlready) {
-      const { id, name, role } = isAlready;
-      const payload = { sub: id, name: name, role: role.type };
+      const { id, role } = isAlready;
+      const payload = { sub: id, name: isAlready.name, role: role.type };
 
       return {
         session: { id: id, email: isAlready.email, role: role.type },
@@ -68,18 +68,37 @@ export class AuthService {
         accessToken: await this.jwtService.signAsync(payload),
       };
     } else {
-      const user = await this.userServices.createUser({
-        ...isAlready,
+      await this.userServices.createUser({
+        email: email,
         name: name,
         password: bcrypt.hashSync(email, 10),
         active: true,
         roleId: 1,
+        id: `cacatua ${email}`,
+        dni: 0,
       });
-      await this.prisma.userProfile.update({
+
+      const user = await this.prisma.user.findFirst({
+        where: { email: email },
+        include: {
+          role: { select: { type: true } },
+        },
+      });
+
+      const { id, role } = user;
+      const userProfile = await this.prisma.userProfile.create({
         data: {
-          picture: picture, // * Cambiar los parametros por el update
-        }
+          userId: id,
+          avatar: picture, // * Cambiar los parametros por el update
+        },
       });
+      const payload = { sub: id, name: user.name, role: role.type };
+
+      return {
+        session: { id: id, email: isAlready.email, role: role.type },
+        profile: userProfile,
+        accessToken: await this.jwtService.signAsync(payload),
+      };
     }
   }
 }
