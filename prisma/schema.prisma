@@ -35,63 +35,87 @@ model Role {
 }
 
 model User {
-    id       String       @id @default(uuid())
-    name     String
-    dni      Int?         @unique
-    email    String       @unique
-    password String
-    active   Boolean      @default(true)
-    role     Role         @relation(fields: [roleId], references: [id])
-    roleId   Int
-    profile  UserProfile?
+    id           String        @id @default(uuid())
+    name         String
+    dni          Int?          @unique
+    email        String        @unique
+    password     String
+    active       Boolean       @default(true)
+    role         Role          @relation(fields: [roleId], references: [id])
+    roleId       Int
+    profile      UserProfile?
+    shoppingCart ShoppingCart? // ? Crear relacion 1-1 cuando este el modelo shoppingCart
 }
 
 model UserProfile {
-    id           Int     @id @default(autoincrement())
-    user         User    @relation(fields: [userId], references: [id])
-    userId       String  @unique
-    userName     String? @default("pelu")
-    avatar       String? @default("https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI=")
-    cellPhone    Int?    @default(111)
-    //shoppingCart String? // ? Crear relacion 1-1 cuando este el modelo shoppingCart
-    adress       String?
+    id        Int     @id @default(autoincrement())
+    user      User    @relation(fields: [userId], references: [id])
+    userId    String  @unique
+    userName  String? @default("pelu")
+    avatar    String? @default("https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI=")
+    cellPhone Int?    @default(111)
+    adress    String?
+}
+
+model ShoppingCart {
+    id         Int              @id @default(autoincrement())
+    user       User             @relation(fields: [userId], references: [id])
+    userId     String           @unique
+    totalPrice Int
+    products   ProductsOnCart[]
+}
+
+model Post {
+    id String @id @default(uuid())
+    publishDate DateTime @default(now())
+    title String
+    text String
+    images Json // Crear un modelo para las imagenes? o un json de strings de cloudinary
+}
+
+model ProductsOnCart {
+    shoppingCart   ShoppingCart @relation(fields: [shoppingCartId], references: [id])
+    shoppingCartId Int          @unique
+    product        Product      @relation(fields: [productId], references: [id])
+    productId      Int          @unique
 }
 
 model Token {
-  id Int @id @default(autoincrement())
-  token String
-  validUntil String
+    id         Int    @id @default(autoincrement())
+    token      String
+    validUntil String
 }
 
 model TokenLog {
-  id Int @id @default(autoincrement())
-  errorCode Int?
-  data String?
-  date String
+    id        Int     @id @default(autoincrement())
+    errorCode Int?
+    data      String?
+    date      String
 }
 
 model Product {
-    id Int @unique
-    name String
-    price Decimal @db.Decimal(10,2)
-    description String?
-    published Boolean
-    type Int
-    profile Int
-    images ProductImage[]
-    updated String
+    id            Int              @unique
+    name          String
+    price         Decimal          @db.Decimal(10, 2)
+    description   String?
+    published     Boolean
+    type          Int
+    profile       Int
+    images        ProductImage[]
+    updated       String
+    shoppingCarts ProductsOnCart[]
 }
 
 model ProductLog {
-  id Int @id @default(autoincrement())
-  errorCode Int?
-  data String?
-  date String
+    id        Int     @id @default(autoincrement())
+    errorCode Int?
+    data      String?
+    date      String
 }
 
 model ProductImage {
-    id Int @id @default(autoincrement())
-    path String
-    product Product @relation(fields: [productId], references: [id])
-    productId Int @unique
+    id        Int     @id @default(autoincrement())
+    path      String
+    product   Product @relation(fields: [productId], references: [id])
+    productId Int     @unique
 }
