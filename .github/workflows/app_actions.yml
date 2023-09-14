@@ -1,0 +1,29 @@
+name: App actions
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+    types: [opened, synchronize]
+
+jobs:
+  # Incorporar a la hora de agregar el deployment
+  # avoid_redundancy:
+  #   runs-on: ubuntu-20.04
+  #   concurrency:
+  #     group: {}
+  #     cancel-in-progress:
+  lint:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3.7.0
+        with: 
+          node-version: '18'
+      - name: Install dependecies
+        run: npm install --no-audit --no-fund --no-optional
+      - name: Lint
+        run: npm run lint

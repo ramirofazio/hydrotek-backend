@@ -1,0 +1,210 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// ? DER --> https://lucid.app/lucidchart/28dc171c-4979-4ad9-8b39-6fe7a66be19d/view?page=0_0&invitationId=inv_60d98a0c-9dc5-47aa-b4dd-113d301890db#
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Test {
+    id           Int          @id @default(autoincrement())
+    title        String       @db.VarChar(255)
+    createdAt    DateTime     @default(now()) @db.Timestamp(6)
+    description  String?
+    published    Boolean      @default(false)
+    value        Int
+    testCategory TestCategory @relation(fields: [categoryId], references: [id])
+    categoryId   Int
+}
+
+model TestCategory {
+    id    Int    @id @default(autoincrement())
+    value Int
+    test  Test[]
+}
+
+model Role {
+    id   Int    @id @default(autoincrement())
+    type String
+    user User[]
+}
+
+model User {
+    id           String        @id @default(uuid())
+    name         String
+    dni          Int?          @unique
+    email        String        @unique
+    password     String
+    active       Boolean       @default(true)
+    role         Role          @relation(fields: [roleId], references: [id])
+    roleId       Int
+    profile      UserProfile?
+    shoppingCart ShoppingCart?
+    posts        Post[]
+    postComments PostComment[]
+    savedPosts    SavedPost[]
+    orders Order[]
+}
+
+model UserProfile {
+    id        Int     @id @default(autoincrement())
+    user      User    @relation(fields: [userId], references: [id])
+    userId    String  @unique
+    userName  String? @default("pelu")
+    avatar    String? @default("https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI=")
+    cellPhone Int?    @default(111)
+    adress    String?
+}
+
+model ShoppingCart {
+    id         Int              @id @default(autoincrement())
+    user       User             @relation(fields: [userId], references: [id])
+    userId     String           @unique
+    totalPrice Int
+    products   ProductsOnCart[]
+}
+
+model ProductsOnCart {
+    shoppingCart   ShoppingCart @relation(fields: [shoppingCartId], references: [id])
+    shoppingCartId Int          @unique
+    product        Product      @relation(fields: [productId], references: [id])
+    productId      Int          @unique
+
+    @@id([shoppingCartId, productId])
+}
+
+model Post {
+    id           String        @id @default(uuid())
+    publishDate  DateTime?     @default(now())
+    title        String
+    text         String
+    postAssets   PostAsset[] 
+    user         User          @relation(fields: [userId], references: [id])
+    userId       String        @unique
+    postComments PostComment[]
+    userSaveds    SavedPost[] // relacion m-n de post y usuarios
+}
+
+model PostAsset {
+    id     Int       @id @default(autoincrement())
+    type   AssetType? @default(IMAGE)
+    path   String
+    post   Post      @relation(fields: [postId], references: [id])
+    postId String    @unique
+}
+
+enum AssetType {
+    IMAGE
+    VIDEO
+}
+
+model PostComment {
+    id          Int       @id @default(autoincrement())
+    publishDate DateTime? @default(now())
+    coment      String
+    show        Boolean?  @default(true)
+    post        Post      @relation(fields: [postId], references: [id])
+    postId      String    @unique
+    user        User      @relation(fields: [userId], references: [id])
+    userId      String    @unique
+}
+
+model SavedPost {
+    post   Post   @relation(fields: [postId], references: [id])
+    postId String @unique
+    user   User   @relation(fields: [userId], references: [id])
+    userId String @unique
+
+    @@id([postId, userId])
+}
+
+model Token {
+    id         Int    @id @default(autoincrement())
+    token      String
+    validUntil String
+}
+
+model TokenLog {
+    id        Int     @id @default(autoincrement())
+    errorCode Int?
+    data      String?
+    date      String
+}
+
+model Product {
+    id            Int              @unique
+    name          String
+    price         Decimal          @db.Decimal(10, 2)
+    description   String?
+    published     Boolean
+    type          Int
+    profile       Int
+    images        ProductImage[]
+    updated       String
+    shoppingCarts ProductsOnCart[]
+    promotionalCodes PromotionalCodeOnProducts[]
+    orders OrderProducts[]
+}
+
+model ProductLog {
+    id        Int     @id @default(autoincrement())
+    errorCode Int?
+    data      String?
+    date      String
+}
+
+model ProductImage {
+    id        Int     @id @default(autoincrement())
+    path      String
+    product   Product @relation(fields: [productId], references: [id])
+    productId Int     @unique
+}
+
+model PromotionalCode {
+    id String @id @default(uuid())
+    discount Int
+    products PromotionalCodeOnProducts[]
+}
+
+model PromotionalCodeOnProducts {
+    product   Product @relation(fields: [productId], references: [id])
+    productId Int     @unique
+    promotionalCode PromotionalCode @relation(fields: [promotionalCodeId], references: [id])
+    promotionalCodeId String @unique
+
+    @@id([productId, promotionalCodeId])
+}
+
+model Order {
+    id String @id @default(uuid())
+    user   User   @relation(fields: [userId], references: [id])
+    userId String @unique
+    trackingCode String
+    state String
+    adress String
+    clientName String
+    city City?
+    products OrderProducts[]
+}
+
+model OrderProducts {
+    product   Product   @relation(fields: [productId], references: [id])
+    productId Int @unique
+    order Order @relation(fields: [orderId], references: [id])
+    orderId String @unique
+    
+    @@id([productId, orderId])
+}
+
+model City {
+    postalCode Int @id // ? Cargar data de ciudades a la DB || esperar a la API de correo
+    order Order @relation(fields: [orderId], references: [id])
+    orderId String @unique 
+    name String
+    province String
+}
