@@ -9,40 +9,40 @@ import {
 export class signUpDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+    name: string;
 
   @IsOptional()
-  dni: number | undefined;
+    dni: number | undefined;
 
   @IsString()
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+    email: string;
 
   @IsString()
   //@IsStrongPassword()
   @IsNotEmpty()
-  password: string;
+    password: string;
 }
 export class signInDto {
   //? Aca irian mas props si loguea por 3ro (calculo)
   @IsString()
   @IsNotEmpty()
-  email: string;
+    email: string;
 
   @IsString()
   @IsNotEmpty()
-  pass: string;
+    pass: string;
 }
 
 export class googleSignInDTO {
   @IsString()
   @IsNotEmpty()
-  email: string;
+    email: string;
   @IsString()
   @IsNotEmpty()
-  name: string;
+    name: string;
   @IsString()
   @IsNotEmpty()
-  picture: string;
+    picture: string;
 }

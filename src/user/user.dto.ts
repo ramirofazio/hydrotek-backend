@@ -28,20 +28,20 @@ export class UserResponseDTO {
   role: { type: string };
 
   @Exclude()
-  active: boolean;
+    active: boolean;
   @Exclude()
-  password: string;
+    password: string;
 }
 
 export class UserSignInResponseDTO {
   @IsNotEmpty()
-  session: { id: string; email: string; role: string };
+    session: { id: string; email: string; role: string };
 
   @IsNotEmpty()
-  accessToken: string;
+    accessToken: string;
 
   @Exclude()
-  profile: {
+    profile: {
     userName: string;
 
     cellPhone: number;

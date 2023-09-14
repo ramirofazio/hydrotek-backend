@@ -13,46 +13,46 @@ import { Exclude, Expose } from "class-transformer";
 export class CreateTestUnoDTO {
   @IsString()
   @IsNotEmpty()
-  title: string;
+    title: string;
 
   @IsString()
-  description: string;
+    description: string;
 
   @IsBoolean()
-  published: boolean;
+    published: boolean;
 
   @IsNumber()
   @IsPositive()
-  value: number;
+    value: number;
 
   @IsEnum(CategoryType)
-  category: CategoryType;
+    category: CategoryType;
 }
 
 export class EditTestUnoDTO {
   @IsUUID()
-  id: string;
+    id: string;
 
   @IsString()
   @IsNotEmpty()
-  createdAt: string;
+    createdAt: string;
 
   @IsString()
   @IsNotEmpty()
-  title: string;
+    title: string;
 
   @IsString()
-  description: string;
+    description: string;
 
   @IsBoolean()
-  published: boolean;
+    published: boolean;
 
   @IsNumber()
   @IsPositive()
-  value: number;
+    value: number;
 
   @IsEnum(CategoryType)
-  category: CategoryType;
+    category: CategoryType;
 }
 
 export class TestUnoResponseDTO {
@@ -69,11 +69,11 @@ export class TestUnoResponseDTO {
   category: CategoryType;
   //excluye props de la info de respuesta
   @Exclude()
-  id: string;
+    id: string;
   @Exclude()
-  createdAt: string;
+    createdAt: string;
   @Exclude()
-  value: number;
+    value: number;
 
   //expone props, customizandolas si es necesario
   @Expose({ name: "amount" })

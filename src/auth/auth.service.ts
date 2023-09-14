@@ -8,7 +8,6 @@ import { JwtService } from "@nestjs/jwt";
 import { UserService } from "src/user/user.service";
 import { signInDto, signUpDto, googleSignInDTO } from "./auth.dto";
 import { randomUUID } from "crypto";
-import { User } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 import { UserSignInResponseDTO } from "src/user/user.dto";
 import { PrismaService } from "../prisma/prisma.service";
