@@ -44,7 +44,11 @@ model User {
     role         Role          @relation(fields: [roleId], references: [id])
     roleId       Int
     profile      UserProfile?
-    shoppingCart ShoppingCart? // ? Crear relacion 1-1 cuando este el modelo shoppingCart
+    shoppingCart ShoppingCart?
+    posts        Post[]
+    postComments PostComment[]
+    savedPosts    SavedPost[]
+    orders Order[]
 }
 
 model UserProfile {
@@ -65,19 +69,58 @@ model ShoppingCart {
     products   ProductsOnCart[]
 }
 
-model Post {
-    id String @id @default(uuid())
-    publishDate DateTime @default(now())
-    title String
-    text String
-    images Json // Crear un modelo para las imagenes? o un json de strings de cloudinary
-}
-
 model ProductsOnCart {
     shoppingCart   ShoppingCart @relation(fields: [shoppingCartId], references: [id])
     shoppingCartId Int          @unique
     product        Product      @relation(fields: [productId], references: [id])
     productId      Int          @unique
+
+    @@id([shoppingCartId, productId])
+}
+
+model Post {
+    id           String        @id @default(uuid())
+    publishDate  DateTime?     @default(now())
+    title        String
+    text         String
+    postAssets   PostAsset[] 
+    user         User          @relation(fields: [userId], references: [id])
+    userId       String        @unique
+    postComments PostComment[]
+    userSaveds    SavedPost[] // relacion m-n de post y usuarios
+}
+
+model PostAsset {
+    id     Int       @id @default(autoincrement())
+    type   AssetType? @default(IMAGE)
+    path   String
+    post   Post      @relation(fields: [postId], references: [id])
+    postId String    @unique
+}
+
+enum AssetType {
+    IMAGE
+    VIDEO
+}
+
+model PostComment {
+    id          Int       @id @default(autoincrement())
+    publishDate DateTime? @default(now())
+    coment      String
+    show        Boolean?  @default(true)
+    post        Post      @relation(fields: [postId], references: [id])
+    postId      String    @unique
+    user        User      @relation(fields: [userId], references: [id])
+    userId      String    @unique
+}
+
+model SavedPost {
+    post   Post   @relation(fields: [postId], references: [id])
+    postId String @unique
+    user   User   @relation(fields: [userId], references: [id])
+    userId String @unique
+
+    @@id([postId, userId])
 }
 
 model Token {
@@ -104,6 +147,8 @@ model Product {
     images        ProductImage[]
     updated       String
     shoppingCarts ProductsOnCart[]
+    promotionalCodes PromotionalCodeOnProducts[]
+    orders OrderProducts[]
 }
 
 model ProductLog {
@@ -118,4 +163,48 @@ model ProductImage {
     path      String
     product   Product @relation(fields: [productId], references: [id])
     productId Int     @unique
+}
+
+model PromotionalCode {
+    id String @id @default(uuid())
+    discount Int
+    products PromotionalCodeOnProducts[]
+}
+
+model PromotionalCodeOnProducts {
+    product   Product @relation(fields: [productId], references: [id])
+    productId Int     @unique
+    promotionalCode PromotionalCode @relation(fields: [promotionalCodeId], references: [id])
+    promotionalCodeId String @unique
+
+    @@id([productId, promotionalCodeId])
+}
+
+model Order {
+    id String @id @default(uuid())
+    user   User   @relation(fields: [userId], references: [id])
+    userId String @unique
+    trackingCode String
+    state String
+    adress String
+    clientName String
+    city City?
+    products OrderProducts[]
+}
+
+model OrderProducts {
+    product   Product   @relation(fields: [productId], references: [id])
+    productId Int @unique
+    order Order @relation(fields: [orderId], references: [id])
+    orderId String @unique
+    
+    @@id([productId, orderId])
+}
+
+model City {
+    postalCode Int @id // ? Cargar data de ciudades a la DB || esperar a la API de correo
+    order Order @relation(fields: [orderId], references: [id])
+    orderId String @unique 
+    name String
+    province String
 }
