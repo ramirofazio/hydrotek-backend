@@ -35,21 +35,22 @@ export class UserService {
     });
     return user;
   }
-  async createUser(data: User): Promise<User> {
+  async createUser(data: User): Promise<UserResponseDTO> {
     const existingUser = await this.findByEmail(data.email);
     if (existingUser) {
       throw new HttpException(
         "El correo electrónico ya está en uso",
-        HttpStatus.CONFLICT
+        HttpStatus.BAD_REQUEST
       );
     }
     const user = await this.prisma.user.create({ data });
     await this.prisma.userProfile.create({
       data: {
-        userId: user.id
-      }
+        userId: user.id,
+      },
     });
-    return user;
+
+    return await this.findByEmail(user.email);
   }
 
   async findByEmail(email: string): Promise<UserResponseDTO | undefined> {

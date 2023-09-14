@@ -8,7 +8,6 @@ import { JwtService } from "@nestjs/jwt";
 import { UserService } from "src/user/user.service";
 import { signInDto, signUpDto, googleSignInDTO } from "./auth.dto";
 import { randomUUID } from "crypto";
-import { User } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 import { UserSignInResponseDTO } from "src/user/user.dto";
 import { PrismaService } from "../prisma/prisma.service";
@@ -22,14 +21,24 @@ export class AuthService {
   ) {}
   /* eslint-enable */
 
-  async signUp(body: signUpDto): Promise<User> {
-    return await this.userServices.createUser({
+  async signUp(body: signUpDto): Promise<UserSignInResponseDTO> {
+    const newUser = await this.userServices.createUser({
       ...body,
       password: bcrypt.hashSync(body.password, 10),
       id: randomUUID(),
       active: true,
       roleId: 1,
     });
+
+    const { id, name, role, email, profile } = newUser;
+
+    const payload = { sub: id, name: name, role: role.type };
+
+    return {
+      session: { id: id, email: email, role: role.type },
+      profile: profile,
+      accessToken: await this.jwtService.signAsync(payload),
+    };
   }
 
   async signIn({ email, pass }: signInDto): Promise<UserSignInResponseDTO> {
@@ -75,7 +84,7 @@ export class AuthService {
         password: bcrypt.hashSync(email, 10),
         active: true,
         roleId: 1,
-        dni: undefined
+        dni: undefined,
       });
       const user = await this.prisma.user.findFirst({
         where: { email: email },
