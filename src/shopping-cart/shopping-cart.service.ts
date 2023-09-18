@@ -1,13 +1,24 @@
-import { Injectable } from "@nestjs/common";
-import { CreateDTO } from "./shoppingCartDTO";
+import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
+import { UpdateCartDTO } from "./shoppingCartDTO";
 import { PrismaService } from "src/prisma/prisma.service";
+import { Response } from "../commonDTO";
 
 @Injectable()
 export class ShoppingCartService {
+  /* eslint-disable */
   constructor(private prisma: PrismaService) {}
+  /* eslint-enable */
 
-  async loadCart(data: CreateDTO): Promise<string> {
+  async loadCart(data: UpdateCartDTO): Promise<Response> {
     const { userId, shoppingCart } = data;
+
+    if (!shoppingCart.products.length) {
+      throw new HttpException(
+        "no se encontraron productos que cargar",
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
     const shoppingCartId = await this.prisma.shoppingCart.findFirst({
       where: { userId },
     });
@@ -18,11 +29,13 @@ export class ShoppingCartService {
       };
     });
     await this.prisma.productsOnCart.createMany({ data: bulkCartProducts });
-    const s = await this.prisma.shoppingCart.findUnique({
-      where: { userId: userId },
+    const newCart = await this.prisma.shoppingCart.update({
+      where: { id: shoppingCartId.id },
+      data: {
+        totalPrice: shoppingCart.totalPrice,
+      },
     });
-    //await this.prisma.shoppingCart.create({});
-    return "This action adds a new shoppingCart";
+    return { res: "se actualizo shoppingCart", payload: newCart };
   }
 
   findOne(id: number) {

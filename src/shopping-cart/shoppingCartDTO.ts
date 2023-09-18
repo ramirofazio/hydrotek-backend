@@ -2,14 +2,14 @@
 
 interface ProductOnCartDTO {
   quantity: number,
-  productId: string,
+  productId: number,
   price?: number,
 }
 
-export interface CreateDTO {
+export interface UpdateCartDTO {
   userId: string,
   shoppingCart: {
-    products : productOnCartDTO[],
+    products : ProductOnCartDTO[],
     totalPrice: number,
   }
 }
