@@ -49,7 +49,12 @@ export class UserService {
         userId: user.id,
       },
     });
-
+    await this.prisma.shoppingCart.create({
+      data: {
+        userId: user.id,
+        totalPrice: 0
+      },
+    });
     return await this.findByEmail(user.email);
   }
 
