@@ -10,9 +10,9 @@ export class ShoppingCartService {
   /* eslint-enable */
 
   async loadCart(data: UpdateCartDTO): Promise<Response> {
-    const { userId, shoppingCart } = data;
 
-    if (!shoppingCart.products.length) {
+    const { userId, shoppingCart } = data;
+    if (!shoppingCart?.products.length) {
       throw new HttpException(
         "no se encontraron productos que cargar",
         HttpStatus.BAD_REQUEST
@@ -23,11 +23,13 @@ export class ShoppingCartService {
       where: { userId },
       include: { products: true },
     });
+
     const { id } = shoppingCartId;
     if (shoppingCartId.products.length) {
       await this.prisma.productsOnCart.deleteMany({
         where: { shoppingCartId: id },
       });
+
     }
 
     const bulkCartProducts = shoppingCart.products.map((p) => {
