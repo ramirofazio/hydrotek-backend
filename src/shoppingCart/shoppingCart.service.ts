@@ -10,7 +10,6 @@ export class ShoppingCartService {
   /* eslint-enable */
 
   async loadCart(data: UpdateCartDTO): Promise<Response> {
-
     const { userId, shoppingCart } = data;
     if (!shoppingCart?.products.length) {
       throw new HttpException(
@@ -29,7 +28,6 @@ export class ShoppingCartService {
       await this.prisma.productsOnCart.deleteMany({
         where: { shoppingCartId: id },
       });
-
     }
 
     const bulkCartProducts = shoppingCart.products.map((p) => {
@@ -38,6 +36,7 @@ export class ShoppingCartService {
         shoppingCartId: id,
       };
     });
+
     await this.prisma.productsOnCart.createMany({ data: bulkCartProducts });
     const newCart = await this.prisma.shoppingCart.update({
       where: { id: id },

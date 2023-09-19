@@ -52,7 +52,7 @@ export class UserService {
     await this.prisma.shoppingCart.create({
       data: {
         userId: user.id,
-        totalPrice: 0
+        totalPrice: 0,
       },
     });
     return await this.findByEmail(user.email);
@@ -75,8 +75,17 @@ export class UserService {
             avatar: true,
           },
         },
+        shoppingCart: {
+          include: { products: true },
+        },
       },
     });
+    /* const { id, totalPrice } = user.shoppingCart;
+    if (totalPrice > 0) {
+      const cartProducts = await this.prisma.productsOnCart.findMany({
+        where: { shoppingCartId: id },
+      });
+    } */
     return user;
   }
 }
