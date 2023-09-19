@@ -1,44 +1,33 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
-  Patch,
   Param,
   Delete,
+  Put,
 } from "@nestjs/common";
 import { ShoppingCartService } from "./shopping-cart.service";
-import { ShoppingCart as cartModel } from "@prisma/client";
+import { Response } from "src/commonDTO";
+import { UpdateCartDTO } from "./shoppingCartDTO";
 
 @Controller("shopping-cart")
 export class ShoppingCartController {
-  constructor(private readonly shoppingCartService: ShoppingCartService) {}
-
- /*  @Post()
-  create(@Body() createShoppingCartDto: cartModel) {
-    return this.shoppingCartService.create(createShoppingCartDto);
-  } */
-
-  @Get()
-  findAll() {
-    //return this.shoppingCartService.findAll();
-  }
-
+  /* eslint-disable */
+  constructor(private shoppingCartService: ShoppingCartService) {}
+  /* eslint-enable */
   @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.shoppingCartService.findOne(+id);
+  findbyId(@Param("id") userId: string): Promise<Response> {
+    return this.shoppingCartService.findById(userId);
   }
 
-  /* @Patch(":id")
-  update(
-    @Param("id") id: string,
-    @Body() cartModel: cartModel
-  ) {
-    return this.shoppingCartService.update(+id, cartModel);
+  @Put()
+  async updateCart(@Body() data: UpdateCartDTO): Promise<Response> {
+    return await this.shoppingCartService.loadCart(data);
   }
+
 
   @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.shoppingCartService.remove(+id);
-  } */
+  cleanCart(@Param("id") userId: string): Promise<string> {
+    return this.shoppingCartService.cleanCart(userId);
+  }
 }
