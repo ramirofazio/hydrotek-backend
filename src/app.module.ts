@@ -12,7 +12,7 @@ import { RoleService } from "./role/role.service";
 import { TfacturaModule } from "./tfactura/tfactura.module";
 import { ConfigModule } from "@nestjs/config";
 import { ScheduleModule } from "@nestjs/schedule";
-import { ShoppingCartModule } from "./shopping-cart/shopping-cart.module";
+import { ShoppingCartModule } from "./shoppingCart/shoppingCart.module";
 
 @Module({
   imports: [

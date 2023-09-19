@@ -6,7 +6,7 @@ import {
   Delete,
   Put,
 } from "@nestjs/common";
-import { ShoppingCartService } from "./shopping-cart.service";
+import { ShoppingCartService } from "./shoppingCart.service";
 import { Response } from "src/commonDTO";
 import { UpdateCartDTO } from "./shoppingCartDTO";
 

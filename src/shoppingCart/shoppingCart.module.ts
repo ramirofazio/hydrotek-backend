@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
-import { ShoppingCartService } from "./shopping-cart.service";
-import { ShoppingCartController } from "./shopping-cart.controller";
+import { ShoppingCartService } from "./shoppingCart.service";
+import { ShoppingCartController } from "./shoppingCart.controller";
 import { PrismaModule } from "src/prisma/prisma.module";
 
 @Module({
