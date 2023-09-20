@@ -11,6 +11,9 @@ import { randomUUID } from "crypto";
 import * as bcrypt from "bcrypt";
 import { UserSignInResponseDTO } from "src/user/user.dto";
 import { PrismaService } from "../prisma/prisma.service";
+import { OAuth2Client } from "google-auth-library";
+import { env } from "process";
+
 @Injectable()
 export class AuthService {
   /* eslint-disable */
@@ -44,12 +47,15 @@ export class AuthService {
   async signIn({ email, pass }: signInDto): Promise<UserSignInResponseDTO> {
     const user = await this.userServices.findByEmail(email);
     if (!user) {
-      throw new HttpException("Usuario no encontrado", HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        "No se encontro una cuenta asociada al email",
+        HttpStatus.NOT_FOUND
+      );
     }
     const { password, id, name, role } = user;
     const match = await bcrypt.compare(pass, password);
     if (!match) {
-      throw new UnauthorizedException();
+      throw new HttpException("Contrseña invalida", HttpStatus.UNAUTHORIZED);
     }
 
     const payload = { sub: id, name: name, role: role.type };
@@ -59,6 +65,19 @@ export class AuthService {
       profile: user.profile,
       accessToken: await this.jwtService.signAsync(payload),
     };
+  }
+
+  async google2(code: string) {
+    const oAuth2Client = new OAuth2Client(
+      env.GOOGLE_CLIENT_ID,
+      env.GOOGLE_CLIENT_SECRET,
+      'http://localhost:3000'
+    );
+    console.log(code)
+    console.log(oAuth2Client)
+    const res = await oAuth2Client.getToken(code);
+    console.log(res);
+    return res;
   }
 
   async googleSignIn({

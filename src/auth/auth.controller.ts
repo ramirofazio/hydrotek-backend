@@ -17,6 +17,11 @@ export class AuthController {
     return this.authService.signIn(body);
   }
 
+  @Post("google2")
+  google2(@Body() body: {code: string}) {
+    return this.authService.google2(body.code);
+  }
+
   @Post("googleSignIn")
   googleSignIn(@Body() body: googleSignInDTO) {
     return this.authService.googleSignIn(body);
