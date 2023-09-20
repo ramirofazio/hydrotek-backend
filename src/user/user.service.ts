@@ -80,12 +80,7 @@ export class UserService {
         },
       },
     });
-    /* const { id, totalPrice } = user.shoppingCart;
-    if (totalPrice > 0) {
-      const cartProducts = await this.prisma.productsOnCart.findMany({
-        where: { shoppingCartId: id },
-      });
-    } */
+
     return user;
   }
 }
