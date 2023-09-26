@@ -1,5 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
-import { User } from "@prisma/client";
+import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateUserDTO, UserResponseDTO } from "./user.dto";
 import * as bcrypt from "bcrypt";

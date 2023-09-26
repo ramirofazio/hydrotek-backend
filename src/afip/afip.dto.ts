@@ -1,3 +1,5 @@
+//desactivo el warning de anys en este archivo ya que nose que puede llegar en esos campos
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import {
   IsNotEmpty,

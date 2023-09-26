@@ -84,7 +84,7 @@ export class DeleteUserDTO {
   //Define los campos del DELETE a traves del cual se elimina un user
 }
 export class UserResponseDTO {
-  /* eslint-disable */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [x: string]: any; // *  Pedir ayuda para correcto manejo de DTO (modelo UserProfile relacionado)
   /* eslint-enable */
   //Define los campos que retorna el GET para obtener un User

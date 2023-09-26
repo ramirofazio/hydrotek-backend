@@ -9,7 +9,7 @@ import {
   TFacturaProductsData,
 } from "./tfactura.credentials";
 //linea comentada para evitar errores eslint.
-import { Cron, CronExpression } from "@nestjs/schedule";
+// import { Cron, CronExpression } from "@nestjs/schedule";
 
 import { DateTime } from "luxon";
 import { PrismaService } from "src/prisma/prisma.service";
