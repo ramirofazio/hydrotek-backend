@@ -13,6 +13,7 @@ import { UserSignInResponseDTO } from "src/user/user.dto";
 import { PrismaService } from "../prisma/prisma.service";
 import { OAuth2Client } from "google-auth-library";
 import { env } from "process";
+import axios from "axios";
 
 @Injectable()
 export class AuthService {
@@ -67,17 +68,27 @@ export class AuthService {
     };
   }
 
-  async google2(code: string) {
+  async googleAuthCode(code: string): Promise<googleSignInDTO> {
     const oAuth2Client = new OAuth2Client(
       env.GOOGLE_CLIENT_ID,
       env.GOOGLE_CLIENT_SECRET,
-      'http://localhost:3000'
+      "http://localhost:5173/user/signIn"
+      // ? Para que sea valido el url debe estar autorizado en la google console y coincidir con el "redirect_uri" de la instancia de react-oAuth en el front
     );
-    console.log(code)
-    console.log(oAuth2Client)
-    const res = await oAuth2Client.getToken(code);
-    console.log(res);
-    return res;
+    const { tokens } = await oAuth2Client.getToken(code);
+    const userInfo = await axios.get(
+      "https://www.googleapis.com/oauth2/v3/userinfo",
+      {
+        headers: { Authorization: `Bearer ${tokens.access_token}` },
+      }
+    );
+    const { email, name, picture } = userInfo.data;
+
+    return {
+      email,
+      name,
+      picture,
+    };
   }
 
   async googleSignIn({

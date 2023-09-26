@@ -17,12 +17,13 @@ export class AuthController {
     return this.authService.signIn(body);
   }
 
-  @Post("google2")
-  google2(@Body() body: {code: string}) {
-    return this.authService.google2(body.code);
+  @Post("googleAuthCode")
+  async googleAuthCode(@Body() body: { code: string }) {
+    const userInfo = await this.authService.googleAuthCode(body.code);
+    return this.authService.googleSignIn(userInfo);
   }
 
-  @Post("googleSignIn")
+  @Post("googleImplicit")
   googleSignIn(@Body() body: googleSignInDTO) {
     return this.authService.googleSignIn(body);
   }
