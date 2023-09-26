@@ -5,14 +5,21 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
+  HttpException,
+  HttpStatus,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { User as userModel } from "@prisma/client";
+
+import {  IdentifierDTO } from "src/afip/afip.dto";
+import { TfacturaService } from "src/tfactura/tfactura.service";
+import { SuccessPostClientDataResponse } from "src/tfactura/tfactura.dto";
+import { CreateUserDTO } from "./user.dto";
+
 
 @Controller("user")
 export class UserController {
   /* eslint-disable */
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService, private readonly tfactura: TfacturaService) {}
   /* eslint-enable */
 
   @Get()
@@ -30,8 +37,35 @@ export class UserController {
   }
 
   @Post()
-  async createUser(@Body() data: userModel) {
-    const user = await this.userService.createUser(data);
-    return user;
+  async createUser(@Body() data: CreateUserDTO) {
+    const existingUser = await this.userService.checkUniques(data.email, data?.dni);
+    if (existingUser !== 0) {
+      throw new HttpException(
+        "Usuario registrado",
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    if(data.dni) {
+      const res:SuccessPostClientDataResponse = await this.tfactura.createUser(data.dni);
+      if(typeof res === "object" && "ClienteID" in res) {
+
+        data.tFacturaId = res.ClienteID;
+      }
+    }
+    try {
+      const user = await this.userService.createUser(data);
+      return user;
+    } catch (error) {
+      console.log(error);
+      return error;
+
+    }
+  }
+
+  @Get("/get-cuit/:identifier")
+  async getCuitFromDni(@Param() params:IdentifierDTO ) {
+    const res:SuccessPostClientDataResponse = await this.tfactura.createUser(params.identifier);
+    return res;
+
   }
 }

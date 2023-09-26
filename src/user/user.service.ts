@@ -1,8 +1,8 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { User } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
-import { UserResponseDTO } from "./user.dto";
-
+import { CreateUserDTO, UserResponseDTO } from "./user.dto";
+import * as bcrypt from "bcrypt";
 @Injectable()
 export class UserService {
   /* eslint-disable */
@@ -35,19 +35,27 @@ export class UserService {
     });
     return user;
   }
-  async createUser(data: User): Promise<UserResponseDTO> {
-    const existingUser = await this.findByEmail(data.email);
-    if (existingUser) {
-      throw new HttpException(
-        "El correo electrónico ya está en uso",
-        HttpStatus.BAD_REQUEST
-      );
-    }
-    const user = await this.prisma.user.create({ data });
-    await this.prisma.userProfile.create({
-      data: {
-        userId: user.id,
-      },
+  async createUser(data: CreateUserDTO): Promise<UserResponseDTO> {
+    const user = await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          name: data.name,
+          dni: Number(data.dni),
+          tFacturaId: data.tFacturaId,
+          email: data.email,
+          roleId: data.roleId,
+          password: bcrypt.hashSync(data.password, 10)
+        }
+      });
+      await tx.userProfile.create({
+        data: {
+          userId: user.id,
+          avatar: data.profile.avatar,
+          address: data.profile.address,
+          cellPhone: data.profile.cellPhone
+        },
+      });
+      return user;
     });
     await this.prisma.shoppingCart.create({
       data: {
@@ -69,9 +77,8 @@ export class UserService {
         },
         profile: {
           select: {
-            userName: true,
             cellPhone: true,
-            adress: true,
+            address: true,
             avatar: true,
           },
         },
@@ -82,5 +89,33 @@ export class UserService {
     });
 
     return user;
+  }
+
+  async checkUniques(email:string, dni:string = null) : Promise<number> {
+    if(dni) {
+      const userCount = await this.prisma.user.count({
+        where:
+
+        { OR: [
+          { email: email },
+          { dni: Number(dni) }
+        ] },
+      });
+      return userCount;
+    }
+    else {
+      const userCount = await this.prisma.user.count({
+        where: { email: email },
+      });
+      return userCount;
+    }
+
+  }
+
+  async checkDni(dni:string) : Promise<number> {
+    const userCount = await this.prisma.user.count({
+      where: { dni: Number(dni) },
+    });
+    return userCount;
   }
 }

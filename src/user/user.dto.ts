@@ -1,8 +1,81 @@
-import { IsNotEmpty } from "class-validator";
+import {
+  IsNotEmpty,
+  IsString,
+  IsEmail,
+  IsOptional,
+  MaxLength,
+  MinLength,
+  IsNumber,
+  IsEnum,
+  ValidateNested,
+  IsUUID,
+  IsBoolean,
+  IsNumberString,
+} from "class-validator";
 import { Exclude } from "class-transformer";
 
+export enum Roles {
+  // eslint-disable-next-line no-unused-vars
+  USER = 1,
+  // eslint-disable-next-line no-unused-vars
+  ADMIN = 2,
+}
+
+export class UserProfileDTO {
+  @IsOptional()
+  @IsString()
+    avatar: string;
+
+  @IsOptional()
+  @IsNumberString()
+    cellPhone: string;
+
+  @IsOptional()
+  @IsString()
+    address: string;
+}
 export class CreateUserDTO {
   //Define los campos del POST a traves del cual se crea un user
+
+  @IsOptional()
+  @IsNumber()
+    tFacturaId: number;
+
+  @IsString()
+  @IsNotEmpty()
+    name: string;
+
+  @IsEmail()
+  @IsNotEmpty({ message: "el Mail es un campo requerido" })
+    email: string;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(7)
+  @MaxLength(11)
+    dni: string;
+
+  @IsOptional()
+  @IsBoolean()
+    active: boolean;
+
+  @IsOptional()
+  @IsUUID()
+    id: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @IsEnum(Roles)
+    roleId: number;
+
+  @IsString()
+  @MinLength(7)
+  @MaxLength(11)
+    password: string;
+
+  @IsOptional()
+  @ValidateNested()
+    profile: UserProfileDTO;
 }
 export class UpdateUserDTO {
   //Define los campos del PUT a traves del cual se edita un user
@@ -63,11 +136,13 @@ export interface UserSignInResponseDTO2 {
 
   profile: {
     userName: string;
+    profile: {
 
-    cellPhone: number;
+    cellPhone: string;
 
     avatar: string;
 
-    adress: string;
+    address: string;
   };
+}
 }
