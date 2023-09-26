@@ -17,7 +17,13 @@ export class AuthController {
     return this.authService.signIn(body);
   }
 
-  @Post("googleSignIn")
+  @Post("googleAuthCode")
+  async googleAuthCode(@Body() body: { code: string }) {
+    const userInfo = await this.authService.googleAuthCode(body.code);
+    return this.authService.googleSignIn(userInfo);
+  }
+
+  @Post("googleImplicit")
   googleSignIn(@Body() body: googleSignInDTO) {
     return this.authService.googleSignIn(body);
   }
