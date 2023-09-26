@@ -8,7 +8,7 @@ import { UserService } from "src/user/user.service";
 import { signInDto, signUpDto, googleSignInDTO } from "./auth.dto";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcrypt";
-import { UserSignInResponseDTO } from "src/user/user.dto";
+import { UserSignInResponseDTO, UserSignInResponseDTO2 } from "src/user/user.dto";
 import { PrismaService } from "../prisma/prisma.service";
 import { OAuth2Client } from "google-auth-library";
 import { env } from "process";
@@ -44,7 +44,7 @@ export class AuthService {
     };
   }
 
-  async signIn({ email, pass }: signInDto): Promise<UserSignInResponseDTO> {
+  async signIn({ email, pass }: signInDto): Promise<UserSignInResponseDTO2> {
     const user = await this.userServices.findByEmail(email);
     if (!user) {
       throw new HttpException(
@@ -63,6 +63,7 @@ export class AuthService {
     return {
       session: { id: id, email: user.email, role: role.type },
       profile: user.profile,
+      shoppingCart: user.shoppingCart,
       accessToken: await this.jwtService.signAsync(payload),
     };
   }
