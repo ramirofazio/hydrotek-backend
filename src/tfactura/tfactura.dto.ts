@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DateTime } from "luxon";
 
 export interface TokenError {
@@ -30,6 +31,93 @@ export interface RawDataProduct {
   ProductoImagenes: any[];
   ProductoPerfil: number;
 }
+
+export interface RawClientResponse {
+  Error:               any[];
+  CodigoError:         number;
+  ContentEncoding:     null;
+  ContentType:         null;
+  Data:                RawDataClient[];
+  JsonRequestBehavior: number;
+  MaxJsonLength:       number;
+  RecursionLimit:      null;
+}
+
+export interface SuccessPostClientResponse {
+  Error:               any[];
+  CodigoError:         number;
+  ContentEncoding:     null;
+  ContentType:         null;
+  Data:                SuccessPostClientDataResponse;
+  JsonRequestBehavior: number;
+  MaxJsonLength:       number;
+  RecursionLimit:      null;
+}
+
+export interface SuccessPostClientDataResponse {
+  ClienteID : number
+}
+
+export interface RawDataClient {
+  ClienteId:                     number;
+  ClienteCodigoAlternativo:      string;
+  ClientePerfil:                 number;
+  ClienteCodigo:                 string;
+  ClienteNombre:                 string;
+  ClienteTipoDocumento:          number | null;
+  ClienteNumeroDocumento:        null | string;
+  ClienteDireccion:              RawClientAddress;
+  ClienteEmail:                  any[];
+  CategoriaImpositiva:           string;
+  ClientePerfilImpositivoCodigo: string;
+  CrearAunRepetido:              boolean;
+  AplicacionID:                  number;
+  UserIdentifier:                null;
+  ApplicationPublicKey:          null;
+  Token:                         null;
+}
+
+export interface ClientCreate {
+  ClienteNombre:                 string;
+  ClienteTipoDocumento:          number;
+  ClienteNumeroDocumento:        number;
+  ClienteDireccion:              AddressCreate;
+  CategoriaImpositiva:           string;
+  ClientePerfilImpositivoCodigo: string;
+  CrearAunRepetido:              boolean;
+  AplicacionID:                  number;
+  UserIdentifier:                string;
+  ApplicationPublicKey:          string;
+  Token:                         string;
+}
+
+export interface AddressCreate {
+  Calle:                string;
+  Numero:               string;
+  Piso:                 string;
+  Departamento:         string;
+  Localidad:            string;
+  CodigoPostal:         string;
+  Provincia:            string;
+  PaisID:               null;
+  PaisNombre:           string;
+}
+
+export interface RawClientAddress {
+  Calle:                string;
+  Numero:               string;
+  Piso:                 string;
+  Departamento:         string;
+  Localidad:            string;
+  CodigoPostal:         string;
+  Provincia:            string;
+  PaisID:               null;
+  PaisNombre:           string;
+  UserIdentifier:       null;
+  ApplicationPublicKey: null;
+  Token:                null;
+}
+
 
 export interface ErrorObject {
   Mensaje?: string;
