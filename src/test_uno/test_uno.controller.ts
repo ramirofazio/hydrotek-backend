@@ -39,7 +39,7 @@ export class TestUnoController {
   }
 
   @Get()
-  async getTestUnos(): Promise<any> {
+  async getTestUnos(): Promise<undefined | object> {
     return this.TestUnoService.getTestUnos();
   }
 
@@ -52,7 +52,7 @@ export class TestUnoController {
   // }
 
   @Get("/:id")
-  async getTestUnoById(@Param("id", ParseUUIDPipe) id: string): Promise<any> {
+  async getTestUnoById(@Param("id", ParseUUIDPipe) id: string): Promise<undefined | object> {
     return this.TestUnoService.getTestUnoById(id);
   }
 

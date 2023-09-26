@@ -7,7 +7,7 @@ export class TestDosController {
   constructor(private readonly testDosService: TestDosService) {}
 
   @Get()
-  async manageTestUnos(): Promise<any> {
+  async manageTestUnos(): Promise<undefined | object> {
     return this.testDosService.manageTestUnos();
   }
 
