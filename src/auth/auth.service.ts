@@ -26,11 +26,15 @@ export class AuthService {
 
   async signUp(body: signUpDto): Promise<UserSignInResponseDTO> {
     const newUser = await this.userServices.createUser({
-      ...body,
+      name: body.name,
+      tFacturaId: null,
+      dni: body.dni,
+      email: body.email,
       password: bcrypt.hashSync(body.password, 10),
       id: randomUUID(),
       active: true,
       roleId: 1,
+      profile: null
     });
 
     const { id, name, role, email, profile } = newUser;
@@ -115,6 +119,8 @@ export class AuthService {
         active: true,
         roleId: 1,
         dni: undefined,
+        tFacturaId: null,
+        profile: null
       });
       const user = await this.prisma.user.findFirst({
         where: { email: email },
