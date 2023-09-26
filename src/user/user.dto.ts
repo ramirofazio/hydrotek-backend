@@ -117,13 +117,13 @@ export class UserSignInResponseDTO {
 
   @Exclude()
     profile: {
-    userName: string;
+    id: number;
 
-    cellPhone: number;
+    cellPhone: string;
 
     avatar: string;
 
-    adress: string;
+    address: string;
   };
 }
 
@@ -137,12 +137,11 @@ export interface UserSignInResponseDTO2 {
   profile: {
     userName: string;
     profile: {
+      cellPhone: string;
 
-    cellPhone: string;
+      avatar: string;
 
-    avatar: string;
-
-    address: string;
+      address: string;
+    };
   };
-}
 }
