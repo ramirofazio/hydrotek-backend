@@ -1,14 +1,13 @@
-import {
-  Injectable,
-  HttpException,
-  HttpStatus,
-} from "@nestjs/common";
+import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "src/user/user.service";
 import { signInDto, signUpDto, googleSignInDTO } from "./auth.dto";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcrypt";
-import { UserSignInResponseDTO, UserSignInResponseDTO2 } from "src/user/user.dto";
+import {
+  UserSignInResponseDTO,
+  UserSignInResponseDTO2,
+} from "src/user/user.dto";
 import { PrismaService } from "../prisma/prisma.service";
 import { OAuth2Client } from "google-auth-library";
 import { env } from "process";
@@ -139,5 +138,15 @@ export class AuthService {
         accessToken: await this.jwtService.signAsync(payload),
       };
     }
+  }
+  async jwtAutoLogin(accessToken: string): Promise<any> {
+    /* const j = this.jwtService.verifyAsync(accessToken, {
+      secret: env.JWT_SECRET_KEY,
+    });
+    console.log(j) */
+    const { sub, name } = this.jwtService.decode(accessToken);
+    const userInfo = await this.prisma.user.findUnique(sub);
+    const res = await this.userServices.findByEmail(userInfo.email); // Es sehuro?, incluir email en jwt
+    return this.jwtService.decode(accessToken);
   }
 }

@@ -25,6 +25,7 @@ module.exports = {
     "comma-dangle": "off",
     "no-duplicate-imports": "error",
     "no-floating-decimal": "error",
+
   },
   root: true,
 };

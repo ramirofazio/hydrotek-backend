@@ -27,4 +27,9 @@ export class AuthController {
   googleSignIn(@Body() body: googleSignInDTO) {
     return this.authService.googleSignIn(body);
   }
+
+  @Post("jwtAutoLogin")
+  jwtAutoLogin(@Body() body: { accessToken: string }) {
+    return this.authService.jwtAutoLogin(body.accessToken);
+  }
 }
