@@ -1,18 +1,18 @@
-import {
-  Injectable,
-  HttpException,
-  HttpStatus,
-} from "@nestjs/common";
+import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "src/user/user.service";
 import { signInDto, signUpDto, googleSignInDTO } from "./auth.dto";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcrypt";
-import { UserSignInResponseDTO, UserSignInResponseDTO2 } from "src/user/user.dto";
+import {
+  UserSignInResponseDTO,
+  UserSignInResponseDTO2,
+} from "src/user/user.dto";
 import { PrismaService } from "../prisma/prisma.service";
 import { OAuth2Client } from "google-auth-library";
 import { env } from "process";
 import axios from "axios";
+
 
 @Injectable()
 export class AuthService {
@@ -138,6 +138,30 @@ export class AuthService {
         profile: userProfile,
         accessToken: await this.jwtService.signAsync(payload),
       };
+    }
+  }
+  async jwtAutoLogin(accessToken: string): Promise<UserSignInResponseDTO2> {
+    try {
+      console.log("se intento con el JWT: ", accessToken);
+      const { sub } = await this.jwtService.verifyAsync(accessToken, {
+        secret: env.JWT_SECRET_KEY,
+      });
+      const { email } = await this.prisma.user.findUnique({
+        where: { id: sub },
+      });
+      const userInfo = await this.userServices.findByEmail(email);
+      const { id, name, role } = userInfo;
+      const payload = { sub: id, name: name, role: role.type };
+
+      return {
+        session: { id: id, email: userInfo.email, role: role.type },
+        profile: userInfo.profile,
+        shoppingCart: userInfo.shoppingCart,
+        accessToken: await this.jwtService.signAsync(payload),
+      };
+
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.REQUEST_TIMEOUT);
     }
   }
 }
