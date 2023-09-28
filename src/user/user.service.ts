@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { CreateUserDTO, UserProfileDTO, UserResponseDTO, UserSession } from "./user.dto";
+import { CreateUserDTO, UserProfileDTO, TrueUserDTO, UserSession, RawUserDTO, TrueUserTransformer, SimpleUserDTO } from "./user.dto";
 import * as bcrypt from "bcrypt";
 @Injectable()
 export class UserService {
@@ -8,7 +8,7 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
   /* eslint-enable */
 
-  async getAll(): Promise<UserResponseDTO[]> {
+  async getAll(): Promise<SimpleUserDTO[]> {
     return await this.prisma.user.findMany({
       include: {
         role: {
@@ -19,22 +19,45 @@ export class UserService {
       },
     });
   }
-  async getById(id: string): Promise<UserResponseDTO> {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        id,
-      },
+  async getById(id: string): Promise<RawUserDTO> {
+    const user = await this.prisma.user.findFirst({
+      where: { id: id },
       include: {
         role: {
           select: {
             type: true,
           },
         },
+        profile: {
+          select: {
+            cellPhone: true,
+            address: true,
+            avatar: true,
+          },
+        },
+        shoppingCart: {
+          include: { products: true },
+        },
+        savedPosts: {
+          select: {
+            post: {
+              select: {
+                id:true,
+                publishDate:true,
+                title:true,
+                text:true,
+                postAssets:true
+              }
+            },
+            postId: true,
+          },
+        },
       },
     });
+
     return user;
   }
-  async createUser(data: CreateUserDTO): Promise<UserResponseDTO> {
+  async createUser(data: CreateUserDTO): Promise<RawUserDTO> {
     const user = await this.prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
         data: {
@@ -63,9 +86,11 @@ export class UserService {
       return user;
     });
     return await this.findByEmail(user.email);
+    // const fullUser = await this.findByEmail(user.email);
+    // return new TrueUserTransformer(fullUser);
   }
 
-  async findByEmail(email: string): Promise<UserResponseDTO | undefined> {
+  async findByEmail(email: string): Promise<RawUserDTO | undefined> {
     const user = await this.prisma.user.findFirst({
       where: { email: email },
       include: {

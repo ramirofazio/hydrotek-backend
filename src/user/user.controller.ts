@@ -10,10 +10,10 @@ import {
   Put,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
-
-import {  IdentifierDTO } from "src/afip/afip.dto";
 import { TfacturaService } from "src/tfactura/tfactura.service";
-import { SuccessPostClientDataResponse } from "src/tfactura/tfactura.dto";
+//lineas comentadas para evitar error eslint
+// import {  IdentifierDTO } from "src/afip/afip.dto";
+// import { SuccessPostClientDataResponse } from "src/tfactura/tfactura.dto";
 import { CreateUserDTO, UpdateUserDTO } from "./user.dto";
 
 
@@ -79,10 +79,4 @@ export class UserController {
 
   }
 
-  @Get("/get-cuit/:identifier")
-  async getCuitFromDni(@Param() params:IdentifierDTO ) {
-    const res:SuccessPostClientDataResponse = await this.tfactura.createUser(params.identifier);
-    return res;
-
-  }
 }
