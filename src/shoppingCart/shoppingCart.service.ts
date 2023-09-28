@@ -49,9 +49,9 @@ export class ShoppingCartService {
 
   async createMock(): Promise<Response> {
     const mockProduct = {
-      id: 2,
-      name: "pelusa",
-      price: 44.2,
+      id: 1,
+      name: "peluch2.0",
+      price: 42.2,
       published: true,
       type: 1,
       profile: 2,

@@ -25,6 +25,7 @@ export class AuthService {
   /* eslint-enable */
 
   async signUp(body: signUpDto): Promise<UserSignInResponseDTO> {
+    console.log(body)
     const newUser = await this.userServices.createUser({
       ...body,
       password: bcrypt.hashSync(body.password, 10),
@@ -72,7 +73,7 @@ export class AuthService {
     const oAuth2Client = new OAuth2Client(
       env.GOOGLE_CLIENT_ID,
       env.GOOGLE_CLIENT_SECRET,
-      "http://localhost:5173/user/signIn"
+      "http://localhost:5173/session/signIn"
       // ? Para que sea valido el url debe estar autorizado en la google console y coincidir con el "redirect_uri" de la instancia de react-oAuth en el front
     );
     const { tokens } = await oAuth2Client.getToken(code);
@@ -116,6 +117,7 @@ export class AuthService {
         roleId: 1,
         dni: undefined,
       });
+
       const user = await this.prisma.user.findFirst({
         where: { email: email },
         include: {
@@ -141,8 +143,8 @@ export class AuthService {
     }
   }
   async jwtAutoLogin(accessToken: string): Promise<UserSignInResponseDTO2> {
+    console.log("entro a JWT con: ", accessToken, new Date().getTime())
     try {
-      console.log("se intento con el JWT: ", accessToken);
       const { sub } = await this.jwtService.verifyAsync(accessToken, {
         secret: env.JWT_SECRET_KEY,
       });
