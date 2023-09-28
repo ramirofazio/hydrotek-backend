@@ -4,6 +4,9 @@ import {
   IsString,
   //IsStrongPassword, // * Definir una misma validacion para back y front
   IsOptional,
+  IsNumber,
+  MinLength,
+  MaxLength,
 } from "class-validator";
 
 export class signUpDto {
@@ -12,7 +15,10 @@ export class signUpDto {
     name: string;
 
   @IsOptional()
-    dni: number | undefined;
+  @IsNumber()
+  @MinLength(7)
+  @MaxLength(11)
+    dni: string;
 
   @IsString()
   @IsEmail()
