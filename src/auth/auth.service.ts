@@ -59,15 +59,16 @@ export class AuthService {
     const { password, id, name, role } = user;
     const match = await bcrypt.compare(pass, password);
     if (!match) {
-      throw new HttpException("Contrseña invalida", HttpStatus.UNAUTHORIZED);
+      throw new HttpException("Contraseña invalida", HttpStatus.UNAUTHORIZED);
     }
 
     const payload = { sub: id, name: name, role: role.type };
 
     return {
-      session: { id: id, email: user.email, role: role.type },
+      session: { id: id, email: user.email, role: role.type, name : name },
       profile: user.profile,
       shoppingCart: user.shoppingCart,
+      savedPosts : user.savedPosts,
       accessToken: await this.jwtService.signAsync(payload),
     };
   }

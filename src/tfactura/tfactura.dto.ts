@@ -159,3 +159,10 @@ export class Product {
     this.updated = timestamp;
   }
 }
+
+export interface TFacturaUserLog {
+  identifier : string,
+  errorCode : number,
+  data : string,
+  date : string,
+}

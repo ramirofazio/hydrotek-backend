@@ -19,11 +19,13 @@ import {
   RawClientResponse,
   RawProductResponse,
   SuccessPostClientResponse,
+  TFacturaUserLog,
   TokenError,
 } from "./tfactura.dto";
 import { isArray } from "class-validator";
-import { Token } from "@prisma/client";
+import {  Token } from "@prisma/client";
 import { AfipService } from "src/afip/afip.service";
+
 
 @Injectable()
 export class TfacturaService {
@@ -245,9 +247,19 @@ export class TfacturaService {
           if(!data.Error.length) {
             return data.Data;
           }
+
           else {
-            //usar identifier para almacenar casos en los que tfactura falle
-            console.log("fallo", identifier);
+            const dataError:TFacturaUserLog = {
+              identifier : identifier.toString(),
+              errorCode : data.CodigoError,
+              data: data.Error.map(el => el.Mensaje).join("/"),
+              date: DateTime.now()
+                .setLocale("es")
+                .toFormat("dd/MM/yyyy HH:mm"),
+            };
+            await this.prisma.tFacturaUserLog.create({
+              data : dataError
+            });
 
             return "Error";
           }
