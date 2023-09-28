@@ -7,13 +7,14 @@ import {
   ParseUUIDPipe,
   HttpException,
   HttpStatus,
+  Put,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 
 import {  IdentifierDTO } from "src/afip/afip.dto";
 import { TfacturaService } from "src/tfactura/tfactura.service";
 import { SuccessPostClientDataResponse } from "src/tfactura/tfactura.dto";
-import { CreateUserDTO } from "./user.dto";
+import { CreateUserDTO, UpdateUserDTO } from "./user.dto";
 
 
 @Controller("user")
@@ -45,13 +46,14 @@ export class UserController {
         HttpStatus.BAD_REQUEST
       );
     }
-    if(data.dni) {
-      const res:SuccessPostClientDataResponse = await this.tfactura.createUser(data.dni);
-      if(typeof res === "object" && "ClienteID" in res) {
+    // Este bloque solo se puede ejecutar teniendo las credenciales TFactura
+    // if(data.dni) {
+    //   const res:SuccessPostClientDataResponse = await this.tfactura.createUser(data.dni);
+    //   if(typeof res === "object" && "ClienteID" in res) {
 
-        data.tFacturaId = res.ClienteID;
-      }
-    }
+    //     data.tFacturaId = res.ClienteID;
+    //   }
+    // }
     try {
       const user = await this.userService.createUser(data);
       return user;
@@ -60,6 +62,21 @@ export class UserController {
       return error;
 
     }
+  }
+
+  @Put()
+  async updateUser(@Body() data: UpdateUserDTO) {
+    const user = data.session;
+    const profile = data.profile;
+    const id:string = data.session.id;
+    try {
+      const update = await this.userService.updateUser(id, user, profile);
+      return update;
+
+    } catch (error) {
+      throw new HttpException(`Ocurrió un error, ${error}`, HttpStatus.BAD_REQUEST);
+    }
+
   }
 
   @Get("/get-cuit/:identifier")

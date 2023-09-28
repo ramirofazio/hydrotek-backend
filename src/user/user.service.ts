@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { CreateUserDTO, UserResponseDTO } from "./user.dto";
+import { CreateUserDTO, UserProfileDTO, UserResponseDTO, UserSession } from "./user.dto";
 import * as bcrypt from "bcrypt";
 @Injectable()
 export class UserService {
@@ -54,13 +54,13 @@ export class UserService {
           cellPhone: data.profile.cellPhone
         },
       });
+      await tx.shoppingCart.create({
+        data: {
+          userId: user.id,
+          totalPrice: 0,
+        },
+      });
       return user;
-    });
-    await this.prisma.shoppingCart.create({
-      data: {
-        userId: user.id,
-        totalPrice: 0,
-      },
     });
     return await this.findByEmail(user.email);
   }
@@ -84,10 +84,49 @@ export class UserService {
         shoppingCart: {
           include: { products: true },
         },
+        savedPosts: {
+          select: {
+            post: {
+              select: {
+                id:true,
+                publishDate:true,
+                title:true,
+                text:true,
+                postAssets:true
+              }
+            },
+            postId: true,
+          },
+        },
       },
     });
 
     return user;
+  }
+
+  async updateUser(id:string, user:UserSession, profile:UserProfileDTO) : Promise<any> {
+
+    const transaction = await this.prisma.$transaction(async (tx) => {
+      const target = await tx.user.update({
+        where: { id : id },
+        data: {
+          name: user.name,
+          email: user.email,
+        }
+      });
+      await tx.userProfile.update({
+        where: { userId : id },
+        data: {
+
+          avatar: profile.avatar,
+          address: profile.address,
+          cellPhone: profile.cellPhone
+        },
+      });
+      return target;
+    });
+
+    return transaction;
   }
 
   async checkUniques(email:string, dni:string = null) : Promise<number> {

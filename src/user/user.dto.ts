@@ -77,9 +77,32 @@ export class CreateUserDTO {
   @ValidateNested()
     profile: UserProfileDTO;
 }
-export class UpdateUserDTO {
-  //Define los campos del PUT a traves del cual se edita un user
+
+export class UserSession {
+  @IsString()
+  @IsNotEmpty()
+    name: string;
+
+  @IsEmail()
+  @IsNotEmpty({ message: "el Mail es un campo requerido" })
+    email: string;
+
+  @IsOptional()
+  @IsUUID()
+    id: string;
 }
+export class UpdateUserDTO {
+
+  @IsNotEmpty()
+  @ValidateNested()
+    session:UserSession;
+
+  @IsOptional()
+  @ValidateNested()
+    profile: UserProfileDTO;
+}
+
+
 export class DeleteUserDTO {
   //Define los campos del DELETE a traves del cual se elimina un user
 }
@@ -128,7 +151,7 @@ export class UserSignInResponseDTO {
 }
 
 export interface UserSignInResponseDTO2 {
-  session: { id: string; email: string; role: string };
+  session: { id: string; email: string; role: string, name:string };
 
   accessToken: string;
 
@@ -144,4 +167,26 @@ export interface UserSignInResponseDTO2 {
       address: string;
     };
   };
+
+  savedPosts: SavedPosts[]
+}
+
+
+interface SavedPosts {
+  post: Post,
+  postId: number
+}
+
+interface Post {
+    id:string,
+    publishDate:string,
+    title:string,
+    text:string
+    postAssets:PostAsset[]
+}
+
+interface PostAsset {
+  id:string
+  type:string
+  path:string
 }
