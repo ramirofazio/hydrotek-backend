@@ -24,10 +24,12 @@ export class AuthService {
   ) {}
   /* eslint-enable */
 
-  async signUp(body: signUpDto): Promise<UserSignInResponseDTO> {
-    console.log(body)
-    const newUser = await this.userServices.createUser({
-      ...body,
+  async signUp(body: CreateUserDTO): Promise<TrueUserDTO> {
+    const data: CreateUserDTO = {
+      name: body.name,
+      tFacturaId: null,
+      dni: body.dni,
+      email: body.email,
       password: bcrypt.hashSync(body.password, 10),
       id: randomUUID(),
       active: true,
@@ -36,7 +38,7 @@ export class AuthService {
         id: null,
         avatar: null,
         address: null,
-        cellPhone: null
+        cellPhone: null,
       },
     };
 
@@ -75,26 +77,30 @@ export class AuthService {
   }
 
   async googleAuthCode(code: string): Promise<googleSignInDTO> {
-    const oAuth2Client = new OAuth2Client(
-      env.GOOGLE_CLIENT_ID,
-      env.GOOGLE_CLIENT_SECRET,
-      "http://localhost:5173/session/signIn"
-      // ? Para que sea valido el url debe estar autorizado en la google console y coincidir con el "redirect_uri" de la instancia de react-oAuth en el front
-    );
-    const { tokens } = await oAuth2Client.getToken(code);
-    const userInfo = await axios.get(
-      "https://www.googleapis.com/oauth2/v3/userinfo",
-      {
-        headers: { Authorization: `Bearer ${tokens.access_token}` },
-      }
-    );
-    const { email, name, picture } = userInfo.data;
-
-    return {
-      email,
-      name,
-      picture,
-    };
+    try {
+      const oAuth2Client = new OAuth2Client(
+        env.GOOGLE_CLIENT_ID,
+        env.GOOGLE_CLIENT_SECRET,
+        "http://localhost:5173/session/signIn"
+        // ? Para que sea valido el url debe estar autorizado en la google console y coincidir con el "redirect_uri" de la instancia de react-oAuth en el front
+      );
+      const { tokens } = await oAuth2Client.getToken(code);
+      const userInfo = await axios.get(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          headers: { Authorization: `Bearer ${tokens.access_token}` },
+        }
+      );
+      const { email, name, picture } = userInfo.data;
+      return {
+        email,
+        name,
+        picture,
+      };
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(e.message, HttpStatus.REQUEST_TIMEOUT);
+    }
   }
 
   async googleSignIn({
@@ -118,13 +124,15 @@ export class AuthService {
         email: email,
         active: true,
         roleId: 1,
-        dni: undefined,
-      });
-
-      const user = await this.prisma.user.findFirst({
-        where: { email: email },
-        include: {
-          role: { select: { type: true } },
+        password: bcrypt.hashSync(email, 10),
+        tFacturaId: null,
+        dni: null,
+        id: randomUUID(),
+        profile: {
+          id: null,
+          avatar: picture,
+          cellPhone: null,
+          address: null,
         },
       };
       const user = await this.userServices.createUser(data);
@@ -137,6 +145,7 @@ export class AuthService {
   }
   async jwtAutoLogin(accessToken: string): Promise<TrueUserDTO> {
     try {
+      console.log("se intento con el JWT: ", accessToken);
       const { sub } = await this.jwtService.verifyAsync(accessToken, {
         secret: env.JWT_SECRET_KEY,
       });
@@ -147,15 +156,10 @@ export class AuthService {
       const { id, name, role } = userInfo;
       const payload = { sub: id, name: name, role: role.type };
 
-      const jwt = await this.jwtService.signAsync(payload);
+      const newAccessToken = await this.jwtService.signAsync(payload);
+      const fullUser = new TrueUserTransformer(userInfo, newAccessToken);
 
-      return {
-        session: { id: id, email: userInfo.email, role: role.type },
-        profile: userInfo.profile,
-        shoppingCart: userInfo.shoppingCart,
-        accessToken: jwt
-      };
-
+      return fullUser;
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.REQUEST_TIMEOUT);
     }
