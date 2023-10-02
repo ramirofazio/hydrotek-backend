@@ -1,8 +1,9 @@
 #!/bin/sh
 
 # Ejecuta las migraciones de Prisma
-npm run migrate
-npm run prisma-update
+npx prisma migrate deploy
+npx prisma generate
 
 # Inicia tu aplicación
-npm start
+npm run build
+npm run start:prod
