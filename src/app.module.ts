@@ -13,6 +13,7 @@ import { TfacturaModule } from "./tfactura/tfactura.module";
 import { ConfigModule } from "@nestjs/config";
 import { ScheduleModule } from "@nestjs/schedule";
 import { ShoppingCartModule } from "./shoppingCart/shoppingCart.module";
+import { AfipModule } from "./afip/afip.module";
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ShoppingCartModule } from "./shoppingCart/shoppingCart.module";
     ConfigModule.forRoot(),
     ScheduleModule.forRoot(),
     ShoppingCartModule,
+    AfipModule
   ],
 
   controllers: [AppController],

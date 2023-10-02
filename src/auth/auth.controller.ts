@@ -1,6 +1,7 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { signInDto, signUpDto, googleSignInDTO } from "./auth.dto";
+import { signInDto, googleSignInDTO } from "./auth.dto";
+import { CreateUserDTO } from "src/user/user.dto";
 @Controller("auth")
 export class AuthController {
   /* eslint-disable */
@@ -8,7 +9,7 @@ export class AuthController {
   /* eslint-enable */
 
   @Post("signUp")
-  signUp(@Body() body: signUpDto) {
+  signUp(@Body() body: CreateUserDTO) {
     return this.authService.signUp(body);
   }
 

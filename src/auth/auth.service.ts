@@ -1,18 +1,18 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "src/user/user.service";
-import { signInDto, signUpDto, googleSignInDTO } from "./auth.dto";
+import { signInDto, googleSignInDTO } from "./auth.dto";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcrypt";
 import {
-  UserSignInResponseDTO,
-  UserSignInResponseDTO2,
+  CreateUserDTO,
+  TrueUserDTO,
+  TrueUserTransformer,
 } from "src/user/user.dto";
 import { PrismaService } from "../prisma/prisma.service";
 import { OAuth2Client } from "google-auth-library";
 import { env } from "process";
 import axios from "axios";
-
 
 @Injectable()
 export class AuthService {
@@ -32,20 +32,27 @@ export class AuthService {
       id: randomUUID(),
       active: true,
       roleId: 1,
-    });
+      profile: {
+        id: null,
+        avatar: null,
+        address: null,
+        cellPhone: null
+      },
+    };
 
-    const { id, name, role, email, profile } = newUser;
+    const newUser = await this.userServices.createUser(data);
+
+    const { id, name, role } = newUser;
 
     const payload = { sub: id, name: name, role: role.type };
 
-    return {
-      session: { id: id, email: email, role: role.type },
-      profile: profile,
-      accessToken: await this.jwtService.signAsync(payload),
-    };
+    const accessToken = await this.jwtService.signAsync(payload);
+    const fullUser = new TrueUserTransformer(newUser, accessToken);
+
+    return fullUser;
   }
 
-  async signIn({ email, pass }: signInDto): Promise<UserSignInResponseDTO2> {
+  async signIn({ email, pass }: signInDto): Promise<TrueUserDTO> {
     const user = await this.userServices.findByEmail(email);
     if (!user) {
       throw new HttpException(
@@ -56,17 +63,15 @@ export class AuthService {
     const { password, id, name, role } = user;
     const match = await bcrypt.compare(pass, password);
     if (!match) {
-      throw new HttpException("Contrseña invalida", HttpStatus.UNAUTHORIZED);
+      throw new HttpException("Contraseña invalida", HttpStatus.UNAUTHORIZED);
     }
 
     const payload = { sub: id, name: name, role: role.type };
 
-    return {
-      session: { id: id, email: user.email, role: role.type },
-      profile: user.profile,
-      shoppingCart: user.shoppingCart,
-      accessToken: await this.jwtService.signAsync(payload),
-    };
+    const accessToken = await this.jwtService.signAsync(payload);
+    const fullUser = new TrueUserTransformer(user, accessToken);
+
+    return fullUser;
   }
 
   async googleAuthCode(code: string): Promise<googleSignInDTO> {
@@ -96,23 +101,21 @@ export class AuthService {
     email,
     name,
     picture,
-  }: googleSignInDTO): Promise<UserSignInResponseDTO> {
+  }: googleSignInDTO): Promise<TrueUserDTO> {
     const isAlready = await this.userServices.findByEmail(email);
     if (isAlready) {
       const { id, role } = isAlready;
-      const payload = { sub: id, name: isAlready.name, role: role.type };
 
-      return {
-        session: { id: id, email: isAlready.email, role: role.type },
-        profile: isAlready.profile,
-        accessToken: await this.jwtService.signAsync(payload),
-      };
+      const payload = { sub: id, isAlready: name, role: role.type };
+
+      const accessToken = await this.jwtService.signAsync(payload);
+      const fullUser = new TrueUserTransformer(isAlready, accessToken);
+
+      return fullUser;
     } else {
-      await this.userServices.createUser({
-        id: randomUUID(),
-        email: email,
+      const data: CreateUserDTO = {
         name: name,
-        password: bcrypt.hashSync(email, 10),
+        email: email,
         active: true,
         roleId: 1,
         dni: undefined,
@@ -123,26 +126,16 @@ export class AuthService {
         include: {
           role: { select: { type: true } },
         },
-      });
-
+      };
+      const user = await this.userServices.createUser(data);
       const { id, role } = user;
       const payload = { sub: id, name: user.name, role: role.type };
-
-      const userProfile = await this.prisma.userProfile.update({
-        where: { userId: id },
-        data: {
-          avatar: picture, // * Cambiar los parametros por el update
-        },
-      });
-
-      return {
-        session: { id: id, email: email, role: role.type },
-        profile: userProfile,
-        accessToken: await this.jwtService.signAsync(payload),
-      };
+      const accessToken = await this.jwtService.signAsync(payload);
+      const fullUser = new TrueUserTransformer(isAlready, accessToken);
+      return fullUser;
     }
   }
-  async jwtAutoLogin(accessToken: string): Promise<UserSignInResponseDTO2> {
+  async jwtAutoLogin(accessToken: string): Promise<TrueUserDTO> {
     try {
       const { sub } = await this.jwtService.verifyAsync(accessToken, {
         secret: env.JWT_SECRET_KEY,
