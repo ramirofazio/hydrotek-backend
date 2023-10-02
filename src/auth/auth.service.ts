@@ -143,7 +143,6 @@ export class AuthService {
     }
   }
   async jwtAutoLogin(accessToken: string): Promise<UserSignInResponseDTO2> {
-    console.log("entro a JWT con: ", accessToken, new Date().getTime())
     try {
       const { sub } = await this.jwtService.verifyAsync(accessToken, {
         secret: env.JWT_SECRET_KEY,
@@ -155,11 +154,13 @@ export class AuthService {
       const { id, name, role } = userInfo;
       const payload = { sub: id, name: name, role: role.type };
 
+      const jwt = await this.jwtService.signAsync(payload);
+
       return {
         session: { id: id, email: userInfo.email, role: role.type },
         profile: userInfo.profile,
         shoppingCart: userInfo.shoppingCart,
-        accessToken: await this.jwtService.signAsync(payload),
+        accessToken: jwt
       };
 
     } catch (e) {
