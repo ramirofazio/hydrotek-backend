@@ -18,7 +18,7 @@ services:
       - ./db-data:/var/lib/postgresql/data
       - ./db-data-backup:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U root -d hydrotek-db -h postgres -p 100"]
+      test: ["CMD-SHELL", "pg_isready -U root -d hydrotek-db -h postgres -p 5432"]
       interval: 1m30s
       timeout: 10s
       retries: 3
@@ -48,4 +48,5 @@ services:
         restart: true
 networks:
    hydrotek:
+
 
