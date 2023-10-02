@@ -36,9 +36,9 @@ model Role {
 
 model User {
     id           String        @id @default(uuid())
-    tFacturaId   Int?           @unique
+    tFacturaId   Int?          @unique
     name         String
-    dni          Int?          @unique 
+    dni          Int?          @unique
     email        String        @unique
     password     String
     active       Boolean       @default(true)
@@ -54,11 +54,11 @@ model User {
 
 model UserProfile {
     id        Int     @id @default(autoincrement())
-    avatar    String? @default("https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI=")
-    cellPhone String    
-    address   String?
-    userId    String  @unique
     user      User    @relation(fields: [userId], references: [id])
+    userId    String  @unique
+    avatar    String? @default("https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI=")
+    cellPhone String?
+    address   String?
 }
 
 model ShoppingCart {
@@ -74,8 +74,9 @@ model ProductsOnCart {
     shoppingCartId Int          @unique
     product        Product      @relation(fields: [productId], references: [id])
     productId      Int          @unique
-    quantity Int
-    price Int?
+    quantity       Int
+    price          Int?
+
     @@id([shoppingCartId, productId])
 }
 
@@ -107,7 +108,7 @@ enum AssetType {
 model PostComment {
     id          Int       @id @default(autoincrement())
     publishDate DateTime? @default(now())
-    comment      String
+    comment     String
     show        Boolean?  @default(true)
     post        Post      @relation(fields: [postId], references: [id])
     postId      String    @unique
@@ -130,8 +131,6 @@ model Token {
     validUntil String
 }
 
-
-
 model Product {
     id               Int                         @unique
     name             String
@@ -146,7 +145,6 @@ model Product {
     promotionalCodes PromotionalCodeOnProducts[]
     orders           OrderProducts[]
 }
-
 
 model ProductImage {
     id        Int     @id @default(autoincrement())
@@ -176,7 +174,7 @@ model Order {
     userId       String          @unique
     trackingCode String
     state        String
-    address       String
+    address      String
     clientName   String
     city         City?
     products     OrderProducts[]
@@ -199,7 +197,6 @@ model City {
     province   String
 }
 
-
 model TokenLog {
     id        Int     @id @default(autoincrement())
     errorCode Int?
@@ -215,9 +212,9 @@ model ProductLog {
 }
 
 model TFacturaUserLog {
-    id        Int     @id @default(autoincrement())
-    errorCode Int?
-    data      String  @db.Text
-    date      String
+    id         Int    @id @default(autoincrement())
+    errorCode  Int?
+    data       String @db.Text
+    date       String
     identifier String
 }

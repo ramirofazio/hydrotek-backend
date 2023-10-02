@@ -1,6 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { CreateUserDTO, UserProfileDTO, UserSession, RawUserDTO, SimpleUserDTO } from "./user.dto";
+import {
+  CreateUserDTO,
+  UserProfileDTO,
+  UserSession,
+  RawUserDTO,
+  SimpleUserDTO,
+} from "./user.dto";
 import * as bcrypt from "bcrypt";
 @Injectable()
 export class UserService {
@@ -42,12 +48,12 @@ export class UserService {
           select: {
             post: {
               select: {
-                id:true,
-                publishDate:true,
-                title:true,
-                text:true,
-                postAssets:true
-              }
+                id: true,
+                publishDate: true,
+                title: true,
+                text: true,
+                postAssets: true,
+              },
             },
             postId: true,
           },
@@ -66,15 +72,15 @@ export class UserService {
           tFacturaId: data.tFacturaId,
           email: data.email,
           roleId: data.roleId,
-          password: bcrypt.hashSync(data.password, 10)
-        }
+          password: bcrypt.hashSync(data.password, 10),
+        },
       });
       await tx.userProfile.create({
         data: {
-          userId: user.id,
+          user: { connect: { id: user.id } },
           avatar: data.profile.avatar,
+          cellPhone: data.profile.cellPhone,
           address: data.profile.address,
-          cellPhone: data.profile.cellPhone
         },
       });
       await tx.shoppingCart.create({
@@ -113,12 +119,12 @@ export class UserService {
           select: {
             post: {
               select: {
-                id:true,
-                publishDate:true,
-                title:true,
-                text:true,
-                postAssets:true
-              }
+                id: true,
+                publishDate: true,
+                title: true,
+                text: true,
+                postAssets: true,
+              },
             },
             postId: true,
           },
@@ -129,23 +135,25 @@ export class UserService {
     return user;
   }
 
-  async updateUser(id:string, user:UserSession, profile:UserProfileDTO) : Promise<any> {
-
+  async updateUser(
+    id: string,
+    user: UserSession,
+    profile: UserProfileDTO
+  ): Promise<any> {
     const transaction = await this.prisma.$transaction(async (tx) => {
       const target = await tx.user.update({
-        where: { id : id },
+        where: { id: id },
         data: {
           name: user.name,
           email: user.email,
-        }
+        },
       });
       await tx.userProfile.update({
-        where: { userId : id },
+        where: { userId: id },
         data: {
-
           avatar: profile.avatar,
           address: profile.address,
-          cellPhone: profile.cellPhone
+          cellPhone: profile.cellPhone,
         },
       });
       return target;
@@ -154,28 +162,21 @@ export class UserService {
     return transaction;
   }
 
-  async checkUniques(email:string, dni:string = null) : Promise<number> {
-    if(dni) {
+  async checkUniques(email: string, dni: string = null): Promise<number> {
+    if (dni) {
       const userCount = await this.prisma.user.count({
-        where:
-
-        { OR: [
-          { email: email },
-          { dni: Number(dni) }
-        ] },
+        where: { OR: [{ email: email }, { dni: Number(dni) }] },
       });
       return userCount;
-    }
-    else {
+    } else {
       const userCount = await this.prisma.user.count({
         where: { email: email },
       });
       return userCount;
     }
-
   }
 
-  async checkDni(dni:string) : Promise<number> {
+  async checkDni(dni: string): Promise<number> {
     const userCount = await this.prisma.user.count({
       where: { dni: Number(dni) },
     });
