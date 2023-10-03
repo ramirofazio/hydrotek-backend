@@ -38,7 +38,7 @@ export class AuthService {
         id: null,
         avatar: null,
         address: null,
-        cellPhone: null
+        cellPhone: null,
       },
     };
 
@@ -77,26 +77,30 @@ export class AuthService {
   }
 
   async googleAuthCode(code: string): Promise<googleSignInDTO> {
-    const oAuth2Client = new OAuth2Client(
-      env.GOOGLE_CLIENT_ID,
-      env.GOOGLE_CLIENT_SECRET,
-      "http://localhost:5173/user/signIn"
-      // ? Para que sea valido el url debe estar autorizado en la google console y coincidir con el "redirect_uri" de la instancia de react-oAuth en el front
-    );
-    const { tokens } = await oAuth2Client.getToken(code);
-    const userInfo = await axios.get(
-      "https://www.googleapis.com/oauth2/v3/userinfo",
-      {
-        headers: { Authorization: `Bearer ${tokens.access_token}` },
-      }
-    );
-    const { email, name, picture } = userInfo.data;
-
-    return {
-      email,
-      name,
-      picture,
-    };
+    try {
+      const oAuth2Client = new OAuth2Client(
+        env.GOOGLE_CLIENT_ID,
+        env.GOOGLE_CLIENT_SECRET,
+        "http://localhost:5173/session/signIn"
+        // ? Para que sea valido el url debe estar autorizado en la google console y coincidir con el "redirect_uri" de la instancia de react-oAuth en el front
+      );
+      const { tokens } = await oAuth2Client.getToken(code);
+      const userInfo = await axios.get(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          headers: { Authorization: `Bearer ${tokens.access_token}` },
+        }
+      );
+      const { email, name, picture } = userInfo.data;
+      return {
+        email,
+        name,
+        picture,
+      };
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(e.message, HttpStatus.REQUEST_TIMEOUT);
+    }
   }
 
   async googleSignIn({
@@ -152,12 +156,10 @@ export class AuthService {
       const { id, name, role } = userInfo;
       const payload = { sub: id, name: name, role: role.type };
 
-
       const newAccessToken = await this.jwtService.signAsync(payload);
       const fullUser = new TrueUserTransformer(userInfo, newAccessToken);
 
       return fullUser;
-
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.REQUEST_TIMEOUT);
     }

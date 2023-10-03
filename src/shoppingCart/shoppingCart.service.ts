@@ -10,48 +10,55 @@ export class ShoppingCartService {
   /* eslint-enable */
 
   async loadCart(data: UpdateCartDTO): Promise<Response> {
-    const { userId, shoppingCart } = data;
-    if (!shoppingCart?.products.length) {
+    try {
+      const { userId, shoppingCart } = data;
+      if (!shoppingCart?.products.length) {
+        throw new HttpException(
+          "no se encontraron productos que cargar",
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      const shoppingCartId = await this.prisma.shoppingCart.findFirst({
+        where: { userId },
+        include: { products: true },
+      });
+
+      const { id } = shoppingCartId;
+
+      if (shoppingCartId.products.length) {
+        await this.prisma.productsOnCart.deleteMany({
+          where: { shoppingCartId: id },
+        });
+      }
+      const bulkCartProducts = shoppingCart.products.map((p) => {
+        return {
+          ...p,
+          shoppingCartId: id,
+        };
+      });
+      await this.prisma.productsOnCart.createMany({ data: bulkCartProducts });
+      const newCart = await this.prisma.shoppingCart.update({
+        where: { id: id },
+        data: {
+          totalPrice: shoppingCart.totalPrice,
+        },
+      });
+      return { res: "se actualizo shoppingCart", payload: newCart };
+    } catch (e) {
+      console.log(e);
       throw new HttpException(
-        "no se encontraron productos que cargar",
-        HttpStatus.BAD_REQUEST
+        e.message,
+        HttpStatus.CONFLICT
       );
     }
-
-    const shoppingCartId = await this.prisma.shoppingCart.findFirst({
-      where: { userId },
-      include: { products: true },
-    });
-
-    const { id } = shoppingCartId;
-    if (shoppingCartId.products.length) {
-      await this.prisma.productsOnCart.deleteMany({
-        where: { shoppingCartId: id },
-      });
-    }
-
-    const bulkCartProducts = shoppingCart.products.map((p) => {
-      return {
-        ...p,
-        shoppingCartId: id,
-      };
-    });
-
-    await this.prisma.productsOnCart.createMany({ data: bulkCartProducts });
-    const newCart = await this.prisma.shoppingCart.update({
-      where: { id: id },
-      data: {
-        totalPrice: shoppingCart.totalPrice,
-      },
-    });
-    return { res: "se actualizo shoppingCart", payload: newCart };
   }
 
   async createMock(): Promise<Response> {
     const mockProduct = {
-      id: 2,
-      name: "pelusa",
-      price: 44.2,
+      id: 1,
+      name: "peluch2.0",
+      price: 42.2,
       published: true,
       type: 1,
       profile: 2,
