@@ -28,6 +28,8 @@ services:
     build:
       context: ../hydrotek-frontend
       dockerfile: Dockerfile
+    env_file:
+      - ../hydrotek-frontend/.env
     ports:
       - 50:80
     networks:

@@ -25,12 +25,17 @@ export class AuthService {
   /* eslint-enable */
 
   async signUp(body: CreateUserDTO): Promise<TrueUserDTO> {
+    const isAlready = await this.userServices.findByEmail(body.email);
+    if (isAlready) {
+      throw new HttpException("El email ya esta en uso", HttpStatus.CONFLICT);
+    }
+
     const data: CreateUserDTO = {
       name: body.name,
       tFacturaId: null,
       dni: body.dni,
       email: body.email,
-      password: bcrypt.hashSync(body.password, 10),
+      password: body.password,
       id: randomUUID(),
       active: true,
       roleId: 1,
@@ -63,7 +68,9 @@ export class AuthService {
       );
     }
     const { password, id, name, role } = user;
+
     const match = await bcrypt.compare(pass, password);
+
     if (!match) {
       throw new HttpException("Contraseña invalida", HttpStatus.UNAUTHORIZED);
     }
@@ -145,7 +152,6 @@ export class AuthService {
   }
   async jwtAutoLogin(accessToken: string): Promise<TrueUserDTO> {
     try {
-      console.log("se intento con el JWT: ", accessToken);
       const { sub } = await this.jwtService.verifyAsync(accessToken, {
         secret: env.JWT_SECRET_KEY,
       });

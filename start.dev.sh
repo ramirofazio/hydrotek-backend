@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Ejecuta contenedor DB
-docker compose up db --build -d
+docker compose up postgres --build -d
 
 # Ejecuta las migraciones de Prisma
 npx prisma migrate dev
