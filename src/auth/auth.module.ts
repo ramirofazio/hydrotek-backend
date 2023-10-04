@@ -13,7 +13,7 @@ import { PrismaModule } from "src/prisma/prisma.module";
       //? Se registra globalmente el JWT para no tener que importar el servicio en todos lados
       global: true,
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: "60s" },
+      signOptions: { expiresIn: "2h" },
     }),
     PrismaModule,
   ],
