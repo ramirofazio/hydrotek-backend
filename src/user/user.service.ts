@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import {
   CreateUserDTO,
@@ -6,6 +6,7 @@ import {
   UserSession,
   RawUserDTO,
   SimpleUserDTO,
+  updatePasswordDto,
 } from "./user.dto";
 import * as bcrypt from "bcrypt";
 @Injectable()
@@ -160,6 +161,33 @@ export class UserService {
     });
 
     return await this.findByEmail(user.email);
+  }
+
+  async updatePassword({
+    id,
+    actualPassword,
+    newPassword,
+    newConfirmPassword,
+  }: updatePasswordDto) {
+    const user = await this.getById(id);
+
+    const match = await bcrypt.compare(actualPassword, user.password);
+
+    if (!match) {
+      throw new HttpException(
+        "Contraseña actual invalida",
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
+    if (newPassword === newConfirmPassword) {
+      await this.prisma.user.update({
+        where: { id: id },
+        data: { password: bcrypt.hashSync(newPassword, 10) },
+      });
+    }
+
+    return HttpStatus.OK;
   }
 
   async checkUniques(email: string, dni: string = null): Promise<number> {

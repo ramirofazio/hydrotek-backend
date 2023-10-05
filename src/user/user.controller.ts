@@ -14,13 +14,15 @@ import { TfacturaService } from "src/tfactura/tfactura.service";
 //lineas comentadas para evitar error eslint
 // import {  IdentifierDTO } from "src/afip/afip.dto";
 // import { SuccessPostClientDataResponse } from "src/tfactura/tfactura.dto";
-import { CreateUserDTO, UpdateUserDTO } from "./user.dto";
-
+import { CreateUserDTO, UpdateUserDTO, updatePasswordDto } from "./user.dto";
 
 @Controller("user")
 export class UserController {
   /* eslint-disable */
-  constructor(private readonly userService: UserService, private readonly tfactura: TfacturaService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly tfactura: TfacturaService
+  ) {}
   /* eslint-enable */
 
   @Get()
@@ -39,12 +41,12 @@ export class UserController {
 
   @Post()
   async createUser(@Body() data: CreateUserDTO) {
-    const existingUser = await this.userService.checkUniques(data.email, data?.dni);
+    const existingUser = await this.userService.checkUniques(
+      data.email,
+      data?.dni
+    );
     if (existingUser !== 0) {
-      throw new HttpException(
-        "Usuario registrado",
-        HttpStatus.BAD_REQUEST
-      );
+      throw new HttpException("Usuario registrado", HttpStatus.BAD_REQUEST);
     }
     // Este bloque solo se puede ejecutar teniendo las credenciales TFactura
     // if(data.dni) {
@@ -60,7 +62,6 @@ export class UserController {
     } catch (error) {
       console.log(error);
       return error;
-
     }
   }
 
@@ -68,15 +69,29 @@ export class UserController {
   async updateUser(@Body() data: UpdateUserDTO) {
     const user = data.session;
     const profile = data.profile;
-    const id:string = data.session.id;
+    const id: string = data.session.id;
     try {
       const update = await this.userService.updateUser(id, user, profile);
       return update;
-
     } catch (error) {
-      throw new HttpException(`Ocurrió un error, ${error}`, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        `Ocurrió un error, ${error}`,
+        HttpStatus.BAD_REQUEST
+      );
     }
-
   }
 
+  @Put("/updatePassword")
+  async updatePassword(@Body() { data }: any) {
+    //! ESTA JODIENDO EL DTO, FIXEAR
+    try {
+      const update = await this.userService.updatePassword(data);
+      return update;
+    } catch (error) {
+      throw new HttpException(
+        `Ocurrió un error, ${error}`,
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
 }

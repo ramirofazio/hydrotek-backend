@@ -278,3 +278,21 @@ interface PostAssets {
   type: string;
   path: string;
 }
+
+export class updatePasswordDto {
+  @IsNotEmpty()
+  @IsUUID()
+  id: string;
+
+  @IsString()
+  @MinLength(7)
+  actualPassword: string;
+
+  @IsString()
+  @MinLength(7)
+  newPassword: string;
+
+  @IsString()
+  @MinLength(7)
+  newConfirmPassword: string;
+}
