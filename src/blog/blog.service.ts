@@ -22,11 +22,11 @@ export class BlogService {
         HttpStatus.NOT_FOUND
       );
     }
-    return post
+    return post;
   }
 
   async createPost(body: CreatePostDTO): Promise<Response> {
-    const { userId, text, title } = body;
+    const { userId, text, title, postAssets } = body;
 
     const isValidUser = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -49,6 +49,14 @@ export class BlogService {
         userId,
       },
     });
+
+    if (postAssets?.length) {
+      const bulkAssets = postAssets.map((p) => {
+        return { ...p, postId: post.id };
+      });
+      console.log(bulkAssets);
+      await this.prisma.postAsset.createMany({ data: bulkAssets });
+    }
 
     return {
       res: `post "${title}" creado con exito`,
