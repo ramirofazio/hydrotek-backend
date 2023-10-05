@@ -14,6 +14,7 @@ import { ConfigModule } from "@nestjs/config";
 import { ScheduleModule } from "@nestjs/schedule";
 import { ShoppingCartModule } from "./shoppingCart/shoppingCart.module";
 import { AfipModule } from "./afip/afip.module";
+import { BlogModule } from "./blog/blog.module";
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AfipModule } from "./afip/afip.module";
     ConfigModule.forRoot(),
     ScheduleModule.forRoot(),
     ShoppingCartModule,
+    BlogModule,
     AfipModule
   ],
 
