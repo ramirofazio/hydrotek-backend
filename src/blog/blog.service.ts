@@ -15,7 +15,10 @@ export class BlogService {
   }
 
   async getPostDetail(postId: string) {
-    const post = await this.prisma.post.findUnique({ where: { id: postId } });
+    const post = await this.prisma.post.findUnique({
+      where: { id: postId },
+      include: { postAssets: { select: { type: true, path: true } } },
+    });
     if (!post) {
       throw new HttpException(
         `no se encontro ningun post con el id: ${postId}`,
