@@ -7,9 +7,12 @@ export interface CreatePostDTO {
 
 export interface EditPostDTO {
   userId: string;
-  text?: string;
-  title?: string;
-  postAssets?: PostAssetDTO[];
+  postId: string;
+  newData: {
+    text?: string;
+    title?: string;
+  };
+  newAssets?: PostAssetDTO[];
 }
 
 /* eslint-disable */
@@ -20,6 +23,7 @@ enum AssetType {
 /* eslint-enable */
 
 export interface PostAssetDTO {
+  id?: number;
   path: string;
   postId?: string;
   type?: AssetType;

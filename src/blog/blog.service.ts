@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { CreatePostDTO } from "./blog.dto";
+import { CreatePostDTO, EditPostDTO } from "./blog.dto";
 import { Response } from "../commonDTO";
 
 @Injectable()
@@ -8,6 +8,21 @@ export class BlogService {
   /* eslint-disable */
   constructor(private prisma: PrismaService) {}
   /* eslint-enable */
+
+  async isAdmin(userId: string) {
+    const isValidUser = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        role: { select: { type: true } },
+      },
+    });
+    if (!isValidUser || isValidUser.role.type !== "ADMIN") {
+      throw new HttpException(
+        `El usuario ${isValidUser.name} no esta habilitado para esta acción`,
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+  }
 
   async getPosts() {
     const posts = await this.prisma.post.findMany();
@@ -31,19 +46,7 @@ export class BlogService {
   async createPost(body: CreatePostDTO): Promise<Response> {
     const { userId, text, title, postAssets } = body;
 
-    const isValidUser = await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        role: { select: { type: true } },
-      },
-    });
-
-    if (!isValidUser || isValidUser.role.type !== "ADMIN") {
-      throw new HttpException(
-        "Usuario no autorizado a crear posts",
-        HttpStatus.UNAUTHORIZED
-      );
-    }
+    await this.isAdmin(userId);
 
     const post = await this.prisma.post.create({
       data: {
@@ -57,7 +60,6 @@ export class BlogService {
       const bulkAssets = postAssets.map((p) => {
         return { ...p, postId: post.id };
       });
-      console.log(bulkAssets);
       await this.prisma.postAsset.createMany({ data: bulkAssets });
     }
 
@@ -67,9 +69,48 @@ export class BlogService {
     };
   }
 
-  // async editPost() {
+  async editPost(body: EditPostDTO) {
+    const { newData, postId, userId, newAssets } = body;
 
-  // }
+    await this.isAdmin(userId);
+
+    if (!Object.values(newData).length) {
+      throw new HttpException(
+        "No se recibieron datos que actualizar",
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const updatedPost = await this.prisma.post.update({
+      where: {
+        id: postId,
+      },
+      data: {
+        ...newData,
+      },
+    });
+
+    if (newAssets.length) {
+      const oldAssets = await this.prisma.postAsset.findMany({
+        where: { postId },
+      });
+      oldAssets.map(async (a) => {
+        await this.prisma.postAsset.delete({
+          where: {
+            postId,
+            id: a.id,
+          },
+        });
+      });
+
+      const bulkAssets = newAssets.map((p) => {
+        return { ...p, postId };
+      });
+      await this.prisma.postAsset.createMany({ data: bulkAssets });
+    }
+
+    return updatedPost;
+  }
   // async deletePost() {
 
   // }

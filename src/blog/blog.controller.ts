@@ -8,7 +8,7 @@ import {
   Param,
 } from "@nestjs/common";
 import { BlogService } from "./blog.service";
-import { CreatePostDTO } from "./blog.dto";
+import { CreatePostDTO, EditPostDTO } from "./blog.dto";
 
 @Controller("blog")
 export class BlogController {
@@ -30,10 +30,10 @@ export class BlogController {
     return this.blogService.createPost(body);
   }
 
-  // @Put()
-  // editPost(@Body() body: EditPostDTO) {
-  //   return this.blogService.editPost(body)
-  // }
+  @Put()
+  editPost(@Body() body: EditPostDTO) {
+    return this.blogService.editPost(body);
+  }
 
   // @Delete()
   // deletePost(@Body() body: DeletePostDto) {
