@@ -140,7 +140,7 @@ export class UserService {
     user: UserSession,
     profile: UserProfileDTO
   ): Promise<any> {
-    const transaction = await this.prisma.$transaction(async (tx) => {
+    await this.prisma.$transaction(async (tx) => {
       const target = await tx.user.update({
         where: { id: id },
         data: {
@@ -159,7 +159,7 @@ export class UserService {
       return target;
     });
 
-    return transaction;
+    return await this.findByEmail(user.email);
   }
 
   async checkUniques(email: string, dni: string = null): Promise<number> {
