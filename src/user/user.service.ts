@@ -168,7 +168,7 @@ export class UserService {
     actualPassword,
     newPassword,
     newConfirmPassword,
-  }: updatePasswordDto) {
+  }: updatePasswordDto): Promise<HttpException | HttpStatus> {
     const user = await this.getById(id);
 
     const match = await bcrypt.compare(actualPassword, user.password);

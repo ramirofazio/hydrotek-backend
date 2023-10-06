@@ -284,15 +284,15 @@ export class updatePasswordDto {
   @IsUUID()
   id: string;
 
+  @IsNotEmpty()
   @IsString()
-  @MinLength(7)
   actualPassword: string;
 
+  @IsNotEmpty()
   @IsString()
-  @MinLength(7)
   newPassword: string;
 
+  @IsNotEmpty()
   @IsString()
-  @MinLength(7)
   newConfirmPassword: string;
 }

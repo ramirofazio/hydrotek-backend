@@ -82,8 +82,7 @@ export class UserController {
   }
 
   @Put("/updatePassword")
-  async updatePassword(@Body() { data }: any) {
-    //! ESTA JODIENDO EL DTO, FIXEAR
+  async updatePassword(@Body() data: updatePasswordDto) {
     try {
       const update = await this.userService.updatePassword(data);
       return update;
