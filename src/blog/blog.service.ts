@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { CreatePostDTO, EditPostDTO } from "./blog.dto";
+import { CreatePostDTO, DeletePostDTO, EditPostDTO } from "./blog.dto";
 import { Response } from "../commonDTO";
 
 @Injectable()
@@ -90,6 +90,7 @@ export class BlogService {
       },
     });
 
+    // ? Hay una forma mas efectiva para updatear?
     if (newAssets.length) {
       const oldAssets = await this.prisma.postAsset.findMany({
         where: { postId },
@@ -111,7 +112,12 @@ export class BlogService {
 
     return updatedPost;
   }
-  // async deletePost() {
+  async deletePost(body: DeletePostDTO) {
+    const { userId, postId } = body;
 
-  // }
+    await this.isAdmin(userId);
+
+    await this.prisma.post.delete({ where: { id: postId } });
+    await this.prisma.postAsset.deleteMany({ where: { postId } });
+  }
 }

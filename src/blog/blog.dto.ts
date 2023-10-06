@@ -28,3 +28,8 @@ export interface PostAssetDTO {
   postId?: string;
   type?: AssetType;
 }
+
+export interface DeletePostDTO {
+  userId: string;
+  postId: string;
+}
