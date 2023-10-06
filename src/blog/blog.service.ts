@@ -118,6 +118,6 @@ export class BlogService {
     await this.isAdmin(userId);
 
     await this.prisma.post.delete({ where: { id: postId } });
-    await this.prisma.postAsset.deleteMany({ where: { postId } });
+    //await this.prisma.postAsset.deleteMany({ where: { postId:} }); onCascade
   }
 }
