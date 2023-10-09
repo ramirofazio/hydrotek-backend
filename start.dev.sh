@@ -3,7 +3,7 @@
 # Ejecuta contenedor DB
 docker compose up postgres --build -d
 
-# Espera 20 segundos
+# Espera 40 segundos
 sleep 40
 
 # Ejecuta las migraciones de Prisma
