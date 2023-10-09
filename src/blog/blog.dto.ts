@@ -33,3 +33,14 @@ export interface DeletePostDTO {
   userId: string;
   postId: string;
 }
+
+export interface CreateCommmentDTO {
+  comment: string;
+  postId: string;
+  userId: string;
+}
+
+export interface DeleteCommentDTO {
+  commentId: number;
+  userId: string;
+}

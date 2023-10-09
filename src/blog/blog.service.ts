@@ -1,6 +1,12 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { CreatePostDTO, DeletePostDTO, EditPostDTO } from "./blog.dto";
+import {
+  CreatePostDTO,
+  DeletePostDTO,
+  EditPostDTO,
+  CreateCommmentDTO,
+  DeleteCommentDTO,
+} from "./blog.dto";
 import { Response } from "../commonDTO";
 
 @Injectable()
@@ -121,6 +127,34 @@ export class BlogService {
 
     return {
       res: `se elimino el post ${postId} correctamente`,
+      payload: deleted,
+    };
+  }
+
+  async uploadComment(data: CreateCommmentDTO): Promise<Response> {
+    const created = await this.prisma.postComment.create({
+      data, //Por default va la propiedad "show"=false, para que el Admin elija que comentarios aprobar
+    });
+
+    return {
+      res: `se cargo el comentario ${data.comment.slice(
+        0,
+        15
+      )} para su revisión`,
+      payload: created,
+    };
+  }
+
+  async deleteComment(data: DeleteCommentDTO): Promise<Response> {
+    const { userId, commentId } = data;
+    await this.isAdmin(userId);
+
+    const deleted = await this.prisma.postComment.delete({
+      where: { id: commentId },
+    });
+
+    return {
+      res: `se borro el comentario ${commentId}`,
       payload: deleted,
     };
   }

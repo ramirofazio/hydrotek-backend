@@ -109,11 +109,11 @@ model PostComment {
     id          Int       @id @default(autoincrement())
     publishDate DateTime? @default(now())
     comment     String
-    show        Boolean?  @default(true)
-    post        Post      @relation(fields: [postId], references: [id])
-    postId      String    @unique
+    show        Boolean?  @default(false)
+    post        Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+    postId      String    
     user        User      @relation(fields: [userId], references: [id])
-    userId      String    @unique
+    userId      String    
 }
 
 model SavedPost {
