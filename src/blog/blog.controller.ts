@@ -37,6 +37,6 @@ export class BlogController {
 
   @Delete()
   deletePost(@Body() body: DeletePostDTO) {
-    return this.blogService.deletePost(body)
+    return this.blogService.deletePost(body);
   }
 }

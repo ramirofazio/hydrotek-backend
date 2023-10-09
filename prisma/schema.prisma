@@ -96,7 +96,7 @@ model PostAsset {
     id     Int        @id @default(autoincrement())
     type   AssetType? @default(IMAGE)
     path   String
-    post   Post       @relation(fields: [postId], references: [id])
+    post   Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
     postId String     
 }
 

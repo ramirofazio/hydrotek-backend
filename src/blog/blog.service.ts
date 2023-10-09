@@ -112,12 +112,16 @@ export class BlogService {
 
     return updatedPost;
   }
-  async deletePost(body: DeletePostDTO) {
+  async deletePost(body: DeletePostDTO): Promise<Response> {
     const { userId, postId } = body;
 
     await this.isAdmin(userId);
 
-    await this.prisma.post.delete({ where: { id: postId } });
-    //await this.prisma.postAsset.deleteMany({ where: { postId:} }); onCascade
+    const deleted = await this.prisma.post.delete({ where: { id: postId } });
+
+    return {
+      res: `se elimino el post ${postId} correctamente`,
+      payload: deleted,
+    };
   }
 }
