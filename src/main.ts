@@ -3,11 +3,12 @@ import { AppModule } from "./app.module";
 import { ValidationPipe } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { RoleService } from "./role/role.service";
+import { env } from "process";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: "http://localhost:5173", // ? De donde permitimos que entren solicitudes
+    origin: env.ACCESS_URL,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
   });

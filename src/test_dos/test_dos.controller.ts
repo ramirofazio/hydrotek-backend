@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Controller, Get } from "@nestjs/common";
 import { TestDosService } from "./test_dos.service";
 
@@ -7,7 +8,7 @@ export class TestDosController {
   constructor(private readonly testDosService: TestDosService) {}
 
   @Get()
-  async manageTestUnos(): Promise<any> {
+  async manageTestUnos(): Promise<undefined | object> {
     return this.testDosService.manageTestUnos();
   }
 

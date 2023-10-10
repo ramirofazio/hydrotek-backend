@@ -24,3 +24,4 @@ build/
 out/
 db-data
 /prisma/migrations
+start.sh
