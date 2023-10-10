@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Ejecuta contenedor DB
-docker compose up postgres --build -d
+docker compose -p hydrotek up postgres --build -d
 
 # Espera 40 segundos
 sleep 40
