@@ -38,7 +38,19 @@ export class BlogService {
   async getPostDetail(postId: string) {
     const post = await this.prisma.post.findUnique({
       where: { id: postId },
-      include: { postAssets: { select: { type: true, path: true } } },
+      include: {
+        postAssets: { select: { type: true, path: true } },
+        postComments: {
+          select: {
+            comment: true,
+            publishDate: true,
+            show: true,
+            user: {
+              select: { name: true, profile: { select: { avatar: true } } },
+            },
+          },
+        },
+      },
     });
     if (!post) {
       throw new HttpException(
@@ -132,6 +144,7 @@ export class BlogService {
   }
 
   async uploadComment(data: CreateCommmentDTO): Promise<Response> {
+    console.log(data)
     const created = await this.prisma.postComment.create({
       data, //Por default va la propiedad "show"=false, para que el Admin elija que comentarios aprobar
     });
