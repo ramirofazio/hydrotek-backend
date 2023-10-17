@@ -45,6 +45,7 @@ export class UserService {
         shoppingCart: {
           include: { products: true },
         },
+        postComments: true,
         savedPosts: {
           select: {
             post: {
@@ -69,7 +70,7 @@ export class UserService {
       const user = await tx.user.create({
         data: {
           name: data.name,
-          dni: Number(data.dni),
+          dni: data.dni ? Number(data.dni) : null,
           tFacturaId: data.tFacturaId,
           email: data.email,
           roleId: data.roleId,

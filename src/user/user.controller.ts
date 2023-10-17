@@ -4,7 +4,6 @@ import {
   Body,
   Get,
   Param,
-  ParseUUIDPipe,
   HttpException,
   HttpStatus,
   Put,
@@ -34,8 +33,8 @@ export class UserController {
     return await this.userService.findByEmail(email);
   }
 
-  @Get("/:id")
-  async getById(@Param("id", ParseUUIDPipe) id: string) {
+  @Get("/id/:id")
+  async getById(@Param("id") id: string) {
     return await this.userService.getById(id);
   }
 

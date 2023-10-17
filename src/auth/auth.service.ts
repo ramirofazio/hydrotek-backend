@@ -116,6 +116,7 @@ export class AuthService {
     picture,
   }: googleSignInDTO): Promise<TrueUserDTO> {
     const isAlready = await this.userServices.findByEmail(email);
+
     if (isAlready) {
       const { id, role } = isAlready;
 

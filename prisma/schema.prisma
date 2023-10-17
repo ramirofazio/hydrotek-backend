@@ -87,7 +87,7 @@ model Post {
     text         String
     postAssets   PostAsset[]
     user         User          @relation(fields: [userId], references: [id])
-    userId       String        @unique
+    userId       String         // camibar de relacion de 1-n
     postComments PostComment[]
     userSaveds   SavedPost[] // relacion m-n de post y usuarios
 }
@@ -96,8 +96,8 @@ model PostAsset {
     id     Int        @id @default(autoincrement())
     type   AssetType? @default(IMAGE)
     path   String
-    post   Post       @relation(fields: [postId], references: [id])
-    postId String     @unique
+    post   Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
+    postId String     
 }
 
 enum AssetType {
@@ -109,11 +109,11 @@ model PostComment {
     id          Int       @id @default(autoincrement())
     publishDate DateTime? @default(now())
     comment     String
-    show        Boolean?  @default(true)
-    post        Post      @relation(fields: [postId], references: [id])
-    postId      String    @unique
+    show        Boolean?  @default(false)
+    post        Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+    postId      String    
     user        User      @relation(fields: [userId], references: [id])
-    userId      String    @unique
+    userId      String    
 }
 
 model SavedPost {
