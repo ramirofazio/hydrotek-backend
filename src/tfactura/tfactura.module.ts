@@ -3,6 +3,7 @@ import { TfacturaService } from "./tfactura.service";
 import { HttpModule } from "@nestjs/axios";
 import { PrismaModule } from "src/prisma/prisma.module";
 import { AfipModule } from "src/afip/afip.module";
+import { TfacturaController } from "./tfactura.controller";
 
 
 @Module({
@@ -12,5 +13,6 @@ import { AfipModule } from "src/afip/afip.module";
   }), PrismaModule, AfipModule],
   providers: [TfacturaService],
   exports: [TfacturaService],
+  controllers: [TfacturaController],
 })
 export class TfacturaModule {}
