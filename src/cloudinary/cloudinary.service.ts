@@ -1,8 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UseInterceptors } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { v2 as cloudinary } from "cloudinary";
 import { env } from "process";
 import * as fs from "fs";
+
 
 @Injectable()
 export class CloudinaryService {
