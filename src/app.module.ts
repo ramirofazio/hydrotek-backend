@@ -15,6 +15,7 @@ import { ScheduleModule } from "@nestjs/schedule";
 import { ShoppingCartModule } from "./shoppingCart/shoppingCart.module";
 import { AfipModule } from "./afip/afip.module";
 import { BlogModule } from "./blog/blog.module";
+import { CloudinaryModule } from "./cloudinary/cloudinary.module";
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { BlogModule } from "./blog/blog.module";
     TfacturaModule,
     AuthModule,
     PrismaModule,
+    CloudinaryModule,
     ConfigModule.forRoot(),
     ScheduleModule.forRoot(),
     ShoppingCartModule,
