@@ -22,21 +22,24 @@ export class CloudinaryController {
     return this.cloudinaryService.getSignature();
   }
 
+  // @Post("updateAvatar")
+  // @UseInterceptors(FileInterceptor("file"))
+  //  uploadFile(@UploadedFile() file: any) {
+  //   /* const base64Data = readFileSync(file.buffer, "base64");
+  //   const dataURL = `data:${file.mimetype};base64,${base64Data}`;
+
+  //   console.log(dataURL); */
+  //   console.log(file)
+  //   //return await this.cloudinaryService.updateAvatar(file);
+  // }
+  //@UseInterceptors(FileInterceptor("body"))
   @Post("updateAvatar")
   @UseInterceptors(FileInterceptor("file"))
-  async uploadFile(@UploadedFile() file: any) {
-    /* const base64Data = readFileSync(file.buffer, "base64");
-    const dataURL = `data:${file.mimetype};base64,${base64Data}`;
-
-    console.log(dataURL); */
-    return await this.cloudinaryService.updateAvatar(file);
-  }
-  /* @Post("updateAvatar")
-  @UseInterceptors(FileInterceptor("body"))
-  uploadFile(@Body() body: any) {
+  async uploadFile(/* @UploadedFile() file,  */@Body() body) {
+    //console.log(file);
     console.log(body);
-    console.log(body.file)
-  } */
+    return await this.cloudinaryService.updateAvatar(body);
+  }
   updateAvatar(@Body() body: any) {
     this.cloudinaryService.updateAvatar(body);
   }
