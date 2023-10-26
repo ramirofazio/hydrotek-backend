@@ -51,6 +51,18 @@ export class UserSession {
   @IsOptional()
   @IsUUID()
     id: string;
+
+
+  @IsOptional()
+  @IsString()
+  @MinLength(7)
+  @MaxLength(11)
+    dni: string;
+
+  @IsOptional()
+  @IsNumber()
+    tFacturaId: number;
+
 }
 
 //DTO para validar data al momento de crear un usuario

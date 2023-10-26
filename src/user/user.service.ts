@@ -10,10 +10,13 @@ import {
 } from "./user.dto";
 import * as bcrypt from "bcrypt";
 import { confirmPasswordResetRequest } from "src/auth/auth.dto";
+// import { SuccessPostClientDataResponse } from "src/tfactura/tfactura.dto";
+import { TfacturaService } from "src/tfactura/tfactura.service";
+
 @Injectable()
 export class UserService {
   /* eslint-disable */
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService,private readonly tfacturaService: TfacturaService) {}
   /* eslint-enable */
 
   async getAll(): Promise<SimpleUserDTO[]> {
@@ -100,6 +103,8 @@ export class UserService {
   }
 
   async findByEmail(email: string): Promise<RawUserDTO | undefined> {
+    console.log("arranca");
+
     const user = await this.prisma.user.findFirst({
       where: { email: email },
       include: {
@@ -134,6 +139,7 @@ export class UserService {
         },
       },
     });
+    console.log("USER", user);
 
     return user;
   }
@@ -142,25 +148,67 @@ export class UserService {
     id: string,
     user: UserSession,
     profile: UserProfileDTO
-  ): Promise<any> {
-    await this.prisma.$transaction(async (tx) => {
-      const target = await tx.user.update({
-        where: { id: id },
-        data: {
-          name: user.name,
-          email: user.email,
-        },
-      });
-      await tx.userProfile.update({
-        where: { userId: id },
-        data: {
-          avatar: profile.avatar,
-          address: profile.address,
-          cellPhone: profile.cellPhone,
-        },
-      });
-      return target;
+  ): Promise<RawUserDTO> {
+
+    const existingUser = await this.prisma.user.findUnique({
+      where: { id: id },
     });
+
+    if((!existingUser.dni && !existingUser.tFacturaId) && user.dni) {
+      // Este bloque solo se puede ejecutar teniendo las credenciales TFactura
+
+      // const res:SuccessPostClientDataResponse = await this.tfacturaService.createUser(user.dni);
+
+
+      // if(typeof res === "object" && "ClienteID" in res) {
+      //   user.tFacturaId = res.ClienteID;
+      // }
+    }
+    await this.prisma.$transaction(async (tx) => {
+
+      const existingUser = await tx.user.findUnique({
+        where: { id: id },
+      });
+      if(existingUser && existingUser.dni === null) {
+        const target = await tx.user.update({
+          where: { id: id },
+          data: {
+            name: user.name,
+            dni : Number(user.dni),
+            tFacturaId : user.tFacturaId
+          },
+        });
+        await tx.userProfile.update({
+          where: { userId: id },
+          data: {
+            avatar: profile.avatar,
+            address: profile.address,
+            cellPhone: profile.cellPhone,
+          },
+        });
+        return target;
+      }
+      if(existingUser && existingUser.dni !== null) {
+        const target = await tx.user.update({
+          where: { id: id },
+          data: {
+            name: user.name,
+          },
+        });
+        await tx.userProfile.update({
+          where: { userId: id },
+          data: {
+            avatar: profile.avatar,
+            address: profile.address,
+            cellPhone: profile.cellPhone,
+          },
+        });
+        return target;
+      }
+
+
+    });
+
 
     return await this.findByEmail(user.email);
   }
