@@ -15,12 +15,13 @@ import { TfacturaService } from "src/tfactura/tfactura.service";
 // import { SuccessPostClientDataResponse } from "src/tfactura/tfactura.dto";
 import { CreateUserDTO, UpdateUserDTO, updatePasswordDto } from "./user.dto";
 
+
 @Controller("user")
 export class UserController {
   /* eslint-disable */
   constructor(
     private readonly userService: UserService,
-    private readonly tfactura: TfacturaService
+    private readonly tfacturaService: TfacturaService
   ) {}
   /* eslint-enable */
 
@@ -44,12 +45,12 @@ export class UserController {
       data.email,
       data?.dni
     );
-    if (existingUser !== 0) {
+    if (existingUser) {
       throw new HttpException("Usuario registrado", HttpStatus.BAD_REQUEST);
     }
     // Este bloque solo se puede ejecutar teniendo las credenciales TFactura
     // if(data.dni) {
-    //   const res:SuccessPostClientDataResponse = await this.tfactura.createUser(data.dni);
+    //   const res:SuccessPostClientDataResponse = await this.tfacturaService.createUser(data.dni);
     //   if(typeof res === "object" && "ClienteID" in res) {
 
     //     data.tFacturaId = res.ClienteID;
@@ -71,6 +72,8 @@ export class UserController {
     const id: string = data.session.id;
     try {
       const update = await this.userService.updateUser(id, user, profile);
+      console.log(update);
+
       return update;
     } catch (error) {
       throw new HttpException(

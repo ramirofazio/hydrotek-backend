@@ -1,6 +1,6 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, HttpException, HttpStatus, Post } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { signInDto, googleSignInDTO } from "./auth.dto";
+import { signInDto, googleSignInDTO, confirmPasswordResetRequest, initPasswordResetRequest } from "./auth.dto";
 import { CreateUserDTO } from "src/user/user.dto";
 @Controller("auth")
 export class AuthController {
@@ -32,5 +32,30 @@ export class AuthController {
   @Post("jwtAutoLogin")
   jwtAutoLogin(@Body() body: { accessToken: string }) {
     return this.authService.jwtAutoLogin(body.accessToken);
+  }
+
+  @Post("init-reset")
+  async initResetPassword(@Body() body : initPasswordResetRequest) {
+    try {
+      this.authService.initResetPassword(body.email);
+      return "ok";
+    } catch (error) {
+      return error;
+    }
+  }
+
+  @Post("reset-password")
+  async resetPassword(@Body() body:confirmPasswordResetRequest) {
+    try {
+      return await this.authService.confirmResetPassword(body);
+    } catch (error) {
+      if(error.name === "JsonWebTokenError") {
+        throw new HttpException("token invalido", HttpStatus.UNAUTHORIZED);
+      }
+      else {
+        throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      }
+    }
+
   }
 }
