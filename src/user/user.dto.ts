@@ -271,7 +271,7 @@ export interface SimpleUserDTO {
 
 //Estructura de savedPosts
 export interface SavedPosts {
-  post: Post;
+  //post: Post;
   postId: string;
 }
 

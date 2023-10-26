@@ -16,7 +16,10 @@ import { TfacturaService } from "src/tfactura/tfactura.service";
 @Injectable()
 export class UserService {
   /* eslint-disable */
-  constructor(private prisma: PrismaService,private readonly tfacturaService: TfacturaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly tfacturaService: TfacturaService
+  ) {}
   /* eslint-enable */
 
   async getAll(): Promise<SimpleUserDTO[]> {
@@ -103,7 +106,6 @@ export class UserService {
   }
 
   async findByEmail(email: string): Promise<RawUserDTO | undefined> {
-    console.log("arranca");
 
     const user = await this.prisma.user.findFirst({
       where: { email: email },
@@ -125,7 +127,7 @@ export class UserService {
         },
         savedPosts: {
           select: {
-            post: {
+            /* post: {
               select: {
                 id: true,
                 publishDate: true,
@@ -133,13 +135,12 @@ export class UserService {
                 text: true,
                 postAssets: true,
               },
-            },
+            }, */
             postId: true,
           },
         },
       },
     });
-    console.log("USER", user);
 
     return user;
   }
@@ -149,33 +150,28 @@ export class UserService {
     user: UserSession,
     profile: UserProfileDTO
   ): Promise<RawUserDTO> {
-
     const existingUser = await this.prisma.user.findUnique({
       where: { id: id },
     });
 
-    if((!existingUser.dni && !existingUser.tFacturaId) && user.dni) {
+    if (!existingUser.dni && !existingUser.tFacturaId && user.dni) {
       // Este bloque solo se puede ejecutar teniendo las credenciales TFactura
-
       // const res:SuccessPostClientDataResponse = await this.tfacturaService.createUser(user.dni);
-
-
       // if(typeof res === "object" && "ClienteID" in res) {
       //   user.tFacturaId = res.ClienteID;
       // }
     }
     await this.prisma.$transaction(async (tx) => {
-
       const existingUser = await tx.user.findUnique({
         where: { id: id },
       });
-      if(existingUser && existingUser.dni === null) {
+      if (existingUser && existingUser.dni === null) {
         const target = await tx.user.update({
           where: { id: id },
           data: {
             name: user.name,
-            dni : Number(user.dni),
-            tFacturaId : user.tFacturaId
+            dni: Number(user.dni),
+            tFacturaId: user.tFacturaId,
           },
         });
         await tx.userProfile.update({
@@ -188,7 +184,7 @@ export class UserService {
         });
         return target;
       }
-      if(existingUser && existingUser.dni !== null) {
+      if (existingUser && existingUser.dni !== null) {
         const target = await tx.user.update({
           where: { id: id },
           data: {
@@ -205,10 +201,7 @@ export class UserService {
         });
         return target;
       }
-
-
     });
-
 
     return await this.findByEmail(user.email);
   }
@@ -240,7 +233,7 @@ export class UserService {
     return HttpStatus.OK;
   }
 
-  async updateForgottenPassword(data:confirmPasswordResetRequest) {
+  async updateForgottenPassword(data: confirmPasswordResetRequest) {
     await this.prisma.user.update({
       where: { email: data.email },
       data: { password: bcrypt.hashSync(data.newPassword, 10) },
@@ -267,5 +260,17 @@ export class UserService {
       where: { dni: Number(dni) },
     });
     return userCount;
+  }
+
+  async getSavedPosts(userId: any) {
+    console.log(userId);
+    const posts = await this.prisma.savedPost.findMany({
+      where: { userId: userId.userId },
+      include: {
+        post: true,
+      },
+    });
+    console.log(posts);
+    return posts;
   }
 }
