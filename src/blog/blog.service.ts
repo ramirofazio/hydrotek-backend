@@ -6,6 +6,7 @@ import {
   EditPostDTO,
   CreateCommmentDTO,
   DeleteCommentDTO,
+  SavePostsDTO,
 } from "./blog.dto";
 import { Response } from "../commonDTO";
 
@@ -144,7 +145,7 @@ export class BlogService {
   }
 
   async uploadComment(data: CreateCommmentDTO): Promise<Response> {
-    console.log(data)
+    console.log(data);
     const created = await this.prisma.postComment.create({
       data, //Por default va la propiedad "show"=false, para que el Admin elija que comentarios aprobar
     });
@@ -169,6 +170,26 @@ export class BlogService {
     return {
       res: `se borro el comentario ${commentId}`,
       payload: deleted,
+    };
+  }
+
+  async handleSavedPosts(data: SavePostsDTO): Promise<Response> {
+    const { userId, postIds } = data;
+    await this.prisma.savedPost.deleteMany({ where: { userId } });
+    const rawBulk = postIds.map((p) => {
+      return {
+        userId,
+        postId: p,
+      };
+    });
+
+    const save = await this.prisma.savedPost.createMany({
+      data: rawBulk,
+    });
+
+    return {
+      res: "se actualizaron los post guradados",
+      payload: { quantity: save },
     };
   }
 }

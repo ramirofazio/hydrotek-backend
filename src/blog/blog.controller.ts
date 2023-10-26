@@ -14,6 +14,7 @@ import {
   DeletePostDTO,
   CreateCommmentDTO,
   DeleteCommentDTO,
+  SavePostsDTO,
 } from "./blog.dto";
 
 @Controller("blog")
@@ -55,4 +56,9 @@ export class BlogController {
   deleteComment(@Body() data: DeleteCommentDTO) {
     return this.blogService.deleteComment(data);
   }
+
+  @Post("/savePost")
+  savePost(@Body() data: SavePostsDTO) {
+    return this.blogService.handleSavedPosts(data);
+  } // post comments
 }

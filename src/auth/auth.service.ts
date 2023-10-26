@@ -40,7 +40,7 @@ export class AuthService {
       password: body.password,
       id: randomUUID(),
       active: true,
-      roleId: 1,
+      roleId: 2,
       profile: {
         id: null,
         avatar: null,
