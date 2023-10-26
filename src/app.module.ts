@@ -15,6 +15,9 @@ import { ScheduleModule } from "@nestjs/schedule";
 import { ShoppingCartModule } from "./shoppingCart/shoppingCart.module";
 import { AfipModule } from "./afip/afip.module";
 import { BlogModule } from "./blog/blog.module";
+import { MailerModule } from "@nestjs-modules/mailer";
+import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
+import { MailModule } from "./mail/mail.module";
 
 @Module({
   imports: [
@@ -28,7 +31,29 @@ import { BlogModule } from "./blog/blog.module";
     ScheduleModule.forRoot(),
     ShoppingCartModule,
     BlogModule,
-    AfipModule
+    AfipModule,
+    MailModule,
+    MailerModule.forRoot({
+      transport: {
+        host: "sandbox.smtp.mailtrap.io",
+        port: 2525,
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: "8fa63bb4da955c",
+          pass: "a33c43705a940e",
+        },
+      },
+      defaults: {
+        from: "8fa63bb4da955c",
+      },
+      template: {
+        dir: "./src/templates",
+        adapter: new HandlebarsAdapter(), // or any other adapter
+        options: {
+          strict: true,
+        },
+      },
+    }),
   ],
 
   controllers: [AppController],

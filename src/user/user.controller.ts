@@ -45,7 +45,7 @@ export class UserController {
       data.email,
       data?.dni
     );
-    if (existingUser !== 0) {
+    if (existingUser) {
       throw new HttpException("Usuario registrado", HttpStatus.BAD_REQUEST);
     }
     // Este bloque solo se puede ejecutar teniendo las credenciales TFactura

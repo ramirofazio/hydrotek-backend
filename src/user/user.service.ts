@@ -9,8 +9,10 @@ import {
   updatePasswordDto,
 } from "./user.dto";
 import * as bcrypt from "bcrypt";
+import { confirmPasswordResetRequest } from "src/auth/auth.dto";
 // import { SuccessPostClientDataResponse } from "src/tfactura/tfactura.dto";
 import { TfacturaService } from "src/tfactura/tfactura.service";
+
 @Injectable()
 export class UserService {
   /* eslint-disable */
@@ -238,17 +240,25 @@ export class UserService {
     return HttpStatus.OK;
   }
 
-  async checkUniques(email: string, dni: string = null): Promise<number> {
+  async updateForgottenPassword(data:confirmPasswordResetRequest) {
+    await this.prisma.user.update({
+      where: { email: data.email },
+      data: { password: bcrypt.hashSync(data.newPassword, 10) },
+    });
+    return HttpStatus.OK;
+  }
+
+  async checkUniques(email: string, dni: string = null): Promise<boolean> {
     if (dni) {
       const userCount = await this.prisma.user.count({
         where: { OR: [{ email: email }, { dni: Number(dni) }] },
       });
-      return userCount;
+      return userCount > 0;
     } else {
       const userCount = await this.prisma.user.count({
         where: { email: email },
       });
-      return userCount;
+      return userCount > 0;
     }
   }
 

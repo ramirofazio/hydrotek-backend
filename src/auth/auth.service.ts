@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "src/user/user.service";
-import { signInDto, googleSignInDTO } from "./auth.dto";
+import { signInDto, googleSignInDTO, confirmPasswordResetRequest } from "./auth.dto";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcrypt";
 import {
@@ -13,19 +13,21 @@ import { PrismaService } from "../prisma/prisma.service";
 import { OAuth2Client } from "google-auth-library";
 import { env } from "process";
 import axios from "axios";
+import { MailService } from "src/mail/mail.service";
 
 @Injectable()
 export class AuthService {
   /* eslint-disable */
   constructor(
-    private userServices: UserService,
+    private userService: UserService,
     private jwtService: JwtService,
-    private prisma: PrismaService
+    private prisma: PrismaService,
+    private mailService: MailService
   ) {}
   /* eslint-enable */
 
   async signUp(body: CreateUserDTO): Promise<TrueUserDTO> {
-    const isAlready = await this.userServices.findByEmail(body.email);
+    const isAlready = await this.userService.findByEmail(body.email);
     if (isAlready) {
       throw new HttpException("El email ya esta en uso", HttpStatus.CONFLICT);
     }
@@ -47,7 +49,7 @@ export class AuthService {
       },
     };
 
-    const newUser = await this.userServices.createUser(data);
+    const newUser = await this.userService.createUser(data);
 
     const { id, name, role } = newUser;
 
@@ -60,7 +62,7 @@ export class AuthService {
   }
 
   async signIn({ email, pass }: signInDto): Promise<TrueUserDTO> {
-    const user = await this.userServices.findByEmail(email);
+    const user = await this.userService.findByEmail(email);
     if (!user) {
       throw new HttpException(
         "No se encontro una cuenta asociada al email",
@@ -115,8 +117,7 @@ export class AuthService {
     name,
     picture,
   }: googleSignInDTO): Promise<TrueUserDTO> {
-    const isAlready = await this.userServices.findByEmail(email);
-
+    const isAlready = await this.userService.findByEmail(email);
     if (isAlready) {
       const { id, role } = isAlready;
 
@@ -143,7 +144,7 @@ export class AuthService {
           address: null,
         },
       };
-      const user = await this.userServices.createUser(data);
+      const user = await this.userService.createUser(data);
       const { id, role } = user;
       const payload = { sub: id, name: user.name, role: role.type };
       const accessToken = await this.jwtService.signAsync(payload);
@@ -159,7 +160,7 @@ export class AuthService {
       const { email } = await this.prisma.user.findUnique({
         where: { id: sub },
       });
-      const userInfo = await this.userServices.findByEmail(email);
+      const userInfo = await this.userService.findByEmail(email);
       const { id, name, role } = userInfo;
       const payload = { sub: id, name: name, role: role.type };
 
@@ -170,5 +171,28 @@ export class AuthService {
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.REQUEST_TIMEOUT);
     }
+  }
+
+  async initResetPassword(email:string) {
+
+    const existingUser = await this.userService.findByEmail(email);
+    const { id, name, role } = existingUser;
+    const payload = { sub: id, name: name, role: role.type };
+    const newAccessToken = await this.jwtService.signAsync(payload, { expiresIn : "1h" });
+    if(existingUser) {
+
+      this.mailService.sendResetPasswordMail(email, newAccessToken);
+    }
+  }
+
+  async confirmResetPassword(data:confirmPasswordResetRequest) {
+    const verify = await this.jwtService.verify(data.token);
+    if(!verify) {
+      throw "token invalido";
+    }
+
+    return await this.userService.updateForgottenPassword(data);
+
+
   }
 }
