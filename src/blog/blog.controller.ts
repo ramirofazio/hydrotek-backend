@@ -60,5 +60,5 @@ export class BlogController {
   @Post("/savePost")
   handleSavedPosts(@Body() data: SavePostsDTO) {
     return this.blogService.handleSavedPosts(data);
-  } // post comments
+  }
 }
