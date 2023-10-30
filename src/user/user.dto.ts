@@ -276,6 +276,7 @@ export interface SavedPosts {
 }
 
 //Estructura de Posts
+/* eslint-disable */
 interface Post {
   id: string;
   publishDate: string | any;
@@ -283,7 +284,7 @@ interface Post {
   text: string;
   postAssets: PostAssets[];
 }
-
+/* eslint-enable */
 //Estructura de PostsAssets
 interface PostAssets {
   id: number;
