@@ -97,7 +97,6 @@ export class UserController {
 
   @Get("/savedPosts/:userId")
   getSavedPosts(@Param() userId: any) {
-    console.log("entro a saved");
     return this.userService.getSavedPosts(userId);
   }
 }

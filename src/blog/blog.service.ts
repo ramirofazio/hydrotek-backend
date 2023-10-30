@@ -145,7 +145,6 @@ export class BlogService {
   }
 
   async uploadComment(data: CreateCommmentDTO): Promise<Response> {
-    console.log(data);
     const created = await this.prisma.postComment.create({
       data, //Por default va la propiedad "show"=false, para que el Admin elija que comentarios aprobar
     });

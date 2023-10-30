@@ -263,14 +263,12 @@ export class UserService {
   }
 
   async getSavedPosts(userId: any) {
-    console.log(userId);
     const posts = await this.prisma.savedPost.findMany({
       where: { userId: userId.userId },
       include: {
         post: true,
       },
     });
-    console.log(posts);
     return posts;
   }
 }
