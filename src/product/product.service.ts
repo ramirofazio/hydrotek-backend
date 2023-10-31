@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
-import { UpdateCartDTO } from "./product.dto";
+import { PagDTO, ProductDTO, ProductsPaginatedDTO } from "./product.dto";
 import { PrismaService } from "src/prisma/prisma.service";
-import { Response } from "../commonDTO";
+import { Error } from "../commonDTO";
 import { TfacturaService } from "src/tfactura/tfactura.service";
 
 @Injectable()
@@ -13,72 +13,57 @@ export class ProductService {
   ) {}
   /* eslint-enable */
 
-  async updateDBProducts(): Promise<any> {
-    const res = await this.tfacturaService.getToken();
-    console.log(res);
-    if (res !== "success") {
-      throw new HttpException("cannot get token", HttpStatus.FAILED_DEPENDENCY);
+  async updateDBProducts(): Promise<string | Error> {
+    try {
+      const token = await this.tfacturaService.getToken();
+      console.log(token);
+      if (!token) {
+        throw new HttpException(
+          "cannot get token",
+          HttpStatus.FAILED_DEPENDENCY
+        );
+      }
+      await this.tfacturaService.getProducts();
+      return "products updated successfully";
+    } catch (e) {
+      console.log(e);
+      return {
+        message: e.message,
+        name: e.name,
+        status: e.status,
+      };
     }
   }
 
-  /* async createMock(): Promise<Response> {
-    const mockProduct = {
-      id: 1,
-      name: "peluch2.0",
-      price: 42.2,
-      published: true,
-      type: 1,
-      profile: 2,
-      updated: "no updateado",
-    };
-    const mock = await this.prisma.product.create({ data: mockProduct });
-    return {
-      res: "se creo el mock product",
-      payload: mock,
-    };
+  async importantProducts(): Promise<ProductDTO[]> {
+    const products = await this.prisma.product.findMany({
+      skip: 0,
+      take: 50,
+    });
+    return products;
   }
 
-  async findById(userId: string): Promise<Response> {
-    //fin by userId
-    const cart = await this.prisma.shoppingCart.findUnique({
-      where: {
-        userId,
-      },
-      include: {
-        products: true,
-      },
+  async getProductDetail(id: number): Promise<ProductDTO> {
+    const product = await this.prisma.product.findUnique({
+      where: { id },
+    });
+    return product;
+  }
+
+  async getProductsPaginated({
+    pag = 0,
+    productsPerPage = 15,
+  }: PagDTO): Promise<ProductsPaginatedDTO> {
+    const quantity = await this.prisma.product.count();
+
+    const products = await this.prisma.product.findMany({
+      skip: productsPerPage * pag,
+      take: productsPerPage,
     });
 
     return {
-      res: `se encontro el carrito con id de usuario ${userId}`,
-      payload: cart,
+      quantity: Math.ceil(quantity / productsPerPage),
+      products,
     };
   }
-
-  async cleanCart(userId: string): Promise<string> {
-    const cart = await this.prisma.shoppingCart.findUnique({
-      where: { userId },
-      include: {
-        products: true,
-      },
-    });
-    if (!cart.products.length) {
-      throw new HttpException(
-        `el carrito de ${userId}, no tiene productos asociados`,
-        HttpStatus.CONFLICT
-      );
-    }
-    await this.prisma.productsOnCart.deleteMany({
-      where: { shoppingCartId: cart.id },
-    });
-
-    await this.prisma.shoppingCart.update({
-      where: { userId },
-      data: {
-        totalPrice: 0,
-      },
-    });
-
-    return `se limpios el carrito de ${userId}`;
-  } */
 }

@@ -1,15 +1,22 @@
+import { Decimal } from "@prisma/client/runtime/library";
 
-
-interface ProductOnCartDTO {
-  quantity: number,
-  productId: number,
-  price?: number,
+export interface ProductDTO {
+  id: number;
+  name: string;
+  price: Decimal;
+  description: string;
+  published: boolean;
+  type: number;
+  profile: number;
+  updated: string;
 }
 
-export interface UpdateCartDTO {
-  userId: string,
-  shoppingCart: {
-    products : ProductOnCartDTO[],
-    totalPrice: number,
-  }
+export interface PagDTO {
+  pag: number;
+  productsPerPage?: number;
+}
+
+export interface ProductsPaginatedDTO {
+  quantity: number;
+  products: ProductDTO[]
 }
