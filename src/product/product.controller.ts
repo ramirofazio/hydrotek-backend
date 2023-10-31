@@ -28,13 +28,5 @@ export class ProductController {
     return this.productService.getProductsPaginated(body);
   }
 
-  /* @Put()
-  async updateCart(@Body() data: UpdateCartDTO): Promise<Response> {
-    return await this.shoppingCartService.loadCart(data);
-  }
 
-  @Delete(":id")
-  cleanCart(@Param("id") userId: string): Promise<string> {
-    return this.shoppingCartService.cleanCart(userId);
-  } */
 }
