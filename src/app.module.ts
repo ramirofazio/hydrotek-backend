@@ -19,6 +19,7 @@ import { CloudinaryModule } from "./cloudinary/cloudinary.module";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
 import { MailModule } from "./mail/mail.module";
+import { ProductModule } from "./product/product.module";
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { MailModule } from "./mail/mail.module";
     TestUnoModule,
     UserModule,
     TfacturaModule,
+    ProductModule,
     AuthModule,
     PrismaModule,
     CloudinaryModule,
