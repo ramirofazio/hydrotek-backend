@@ -15,7 +15,6 @@ import { TfacturaService } from "src/tfactura/tfactura.service";
 // import { SuccessPostClientDataResponse } from "src/tfactura/tfactura.dto";
 import { CreateUserDTO, UpdateUserDTO, updatePasswordDto } from "./user.dto";
 
-
 @Controller("user")
 export class UserController {
   /* eslint-disable */
@@ -94,5 +93,10 @@ export class UserController {
         HttpStatus.BAD_REQUEST
       );
     }
+  }
+
+  @Get("/savedPosts/:userId")
+  getSavedPosts(@Param() userId: any) {
+    return this.userService.getSavedPosts(userId);
   }
 }

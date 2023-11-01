@@ -22,7 +22,6 @@ export class CloudinaryService {
       },
       `${env.CLOUDINARY_API_SECRET}`
     );
-    console.log(signature);
     return { timestamp, signature };
   }
 
@@ -37,7 +36,6 @@ export class CloudinaryService {
         cloud_name: env.CLOUDINARY_CLOUD_NAME,
         overwrite: true,
       });
-      console.log(result);
       return result.secure_url;
     } catch (e) {
       console.log(e);

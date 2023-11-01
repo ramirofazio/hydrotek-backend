@@ -44,3 +44,8 @@ export interface DeleteCommentDTO {
   commentId: number;
   userId: string;
 }
+
+export interface SavePostsDTO {
+  userId: string;
+  postIds: string[];
+}
