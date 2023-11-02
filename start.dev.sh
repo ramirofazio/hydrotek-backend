@@ -4,7 +4,7 @@
 docker compose -p hydrotek up postgres --build -d
 
 # Espera 40 segundos
-sleep 40
+sleep 20
 
 # Ejecuta las migraciones de Prisma
 npx prisma migrate dev
