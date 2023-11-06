@@ -123,6 +123,7 @@ export class TfacturaService {
           validUntil: timestamp,
         },
       });
+      return { token : "success" };
     } else {
       await this.prisma.tokenLog.create({
         data: {
@@ -131,6 +132,7 @@ export class TfacturaService {
           date: timestamp,
         },
       });
+      return { token : "error" };
     }
   }
 
@@ -159,15 +161,21 @@ export class TfacturaService {
       res.Data.forEach((el) => {
         formatted.push(new Product(el));
       });
-      await this.prisma.$transaction(
-        formatted.map((el) => {
-          return this.prisma.product.upsert({
-            where: { id: el.id },
-            create: { ...el },
-            update: { ...el },
-          });
-        })
-      );
+      try {
+        await this.prisma.$transaction(
+          formatted.map((el) => {
+            return this.prisma.product.upsert({
+              where: { id: el.id },
+              create: { ...el },
+              update: { ...el },
+            });
+          })
+        );
+        return { products: "success" };
+      } catch (error) {
+        return { error };
+      }
+
     }
   }
 

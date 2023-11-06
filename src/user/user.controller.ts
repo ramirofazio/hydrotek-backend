@@ -4,7 +4,6 @@ import {
   Body,
   Get,
   Param,
-  ParseUUIDPipe,
   HttpException,
   HttpStatus,
   Put,
@@ -21,7 +20,7 @@ export class UserController {
   /* eslint-disable */
   constructor(
     private readonly userService: UserService,
-    private readonly tfactura: TfacturaService
+    private readonly tfacturaService: TfacturaService
   ) {}
   /* eslint-enable */
 
@@ -34,8 +33,8 @@ export class UserController {
     return await this.userService.findByEmail(email);
   }
 
-  @Get("/:id")
-  async getById(@Param("id", ParseUUIDPipe) id: string) {
+  @Get("/id/:id")
+  async getById(@Param("id") id: string) {
     return await this.userService.getById(id);
   }
 
@@ -45,12 +44,12 @@ export class UserController {
       data.email,
       data?.dni
     );
-    if (existingUser !== 0) {
+    if (existingUser) {
       throw new HttpException("Usuario registrado", HttpStatus.BAD_REQUEST);
     }
     // Este bloque solo se puede ejecutar teniendo las credenciales TFactura
     // if(data.dni) {
-    //   const res:SuccessPostClientDataResponse = await this.tfactura.createUser(data.dni);
+    //   const res:SuccessPostClientDataResponse = await this.tfacturaService.createUser(data.dni);
     //   if(typeof res === "object" && "ClienteID" in res) {
 
     //     data.tFacturaId = res.ClienteID;
@@ -72,6 +71,8 @@ export class UserController {
     const id: string = data.session.id;
     try {
       const update = await this.userService.updateUser(id, user, profile);
+      console.log(update);
+
       return update;
     } catch (error) {
       throw new HttpException(
@@ -92,5 +93,10 @@ export class UserController {
         HttpStatus.BAD_REQUEST
       );
     }
+  }
+
+  @Get("/savedPosts/:userId")
+  getSavedPosts(@Param() userId: any) {
+    return this.userService.getSavedPosts(userId);
   }
 }

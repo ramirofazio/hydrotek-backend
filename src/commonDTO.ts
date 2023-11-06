@@ -5,7 +5,7 @@ export interface Response {
 }
 
 export interface Error {
-  message: string
-  name: string
-  status: string | number
+  message: string | undefined
+  name: string | undefined
+  status: string | number | undefined
 }
