@@ -25,6 +25,7 @@ export class UserService {
   async getAll(): Promise<SimpleUserDTO[]> {
     return await this.prisma.user.findMany({
       include: {
+        _count: { select: { orders: true } },
         role: {
           select: {
             type: true,
@@ -106,7 +107,6 @@ export class UserService {
   }
 
   async findByEmail(email: string): Promise<RawUserDTO | undefined> {
-
     const user = await this.prisma.user.findFirst({
       where: { email: email },
       include: {
