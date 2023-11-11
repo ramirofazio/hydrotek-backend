@@ -20,6 +20,7 @@ import { MailerModule } from "@nestjs-modules/mailer";
 import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
 import { MailModule } from "./mail/mail.module";
 import { ProductModule } from "./product/product.module";
+import { ApidolarModule } from "./apidolar/apidolar.module";
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { ProductModule } from "./product/product.module";
         },
       },
     }),
+    ApidolarModule,
   ],
 
   controllers: [AppController],

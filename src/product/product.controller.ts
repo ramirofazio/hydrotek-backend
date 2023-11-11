@@ -13,6 +13,11 @@ export class ProductController {
     return await this.productService.updateDBProducts();
   }
 
+  @Get("updateDB/full")
+  async updateDBProductsAndUsd() {
+    return await this.productService.updateDBProducts(true);
+  }
+
   @Get()
   async getImportantProducts() {
     return await this.productService.importantProducts();

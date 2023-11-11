@@ -1,9 +1,10 @@
-import { Decimal } from "@prisma/client/runtime/library";
+
 
 export interface ProductDTO {
   id: number;
   name: string;
-  price: Decimal;
+  usdPrice: number;
+  arsPrice: number;
   description: string;
   published: boolean;
   type: number;
