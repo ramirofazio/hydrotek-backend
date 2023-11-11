@@ -11,11 +11,6 @@ export class ApidolarController {
     return await this.apidolarService.storeUsdValue();
   }
 
-  @Post("auto")
-  async autoStoreUsdValue() {
-    return await this.apidolarService.storeUsdValue();
-  }
-
   @Get("last")
   async GetUsdValue() {
     return await this.apidolarService.getSimpleUsdValue();
