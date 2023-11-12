@@ -18,6 +18,11 @@ export class ProductController {
     return await this.productService.importantProducts();
   }
 
+  @Get("all")
+  async getAllProducts() {
+    return await this.productService.getAllProducts();
+  }
+
   @Get("detail/:id")
   async getProductDetail(@Param("id") id: number): Promise<ProductDTO> {
     return await this.productService.getProductDetail(id);
@@ -27,6 +32,4 @@ export class ProductController {
   findbyId(@Body() body: PagDTO): Promise<ProductsPaginatedDTO> {
     return this.productService.getProductsPaginated(body);
   }
-
-
 }

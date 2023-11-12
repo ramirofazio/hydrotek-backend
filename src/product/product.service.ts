@@ -43,6 +43,11 @@ export class ProductService {
     return products;
   }
 
+  async getAllProducts(): Promise<ProductDTO[]> {
+    const products = await this.prisma.product.findMany();
+    return products;
+  }
+
   async getProductDetail(id: number): Promise<ProductDTO> {
     const product = await this.prisma.product.findUnique({
       where: { id },
