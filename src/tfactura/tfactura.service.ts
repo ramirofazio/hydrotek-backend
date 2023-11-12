@@ -1,5 +1,5 @@
 import { HttpService } from "@nestjs/axios";
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { AxiosError } from "axios";
 import { catchError, firstValueFrom } from "rxjs";
 import {
@@ -9,7 +9,7 @@ import {
   TFacturaProductsData,
 } from "./tfactura.credentials";
 //linea comentada para evitar errores eslint.
-// import { Cron, CronExpression } from "@nestjs/schedule";
+
 
 import { DateTime } from "luxon";
 import { PrismaService } from "src/prisma/prisma.service";
@@ -25,6 +25,7 @@ import {
 import { isArray } from "class-validator";
 import {  Token } from "@prisma/client";
 import { AfipService } from "src/afip/afip.service";
+import { ApidolarService } from "src/apidolar/apidolar.service";
 
 
 @Injectable()
@@ -35,7 +36,9 @@ export class TfacturaService {
     // eslint-disable-next-line no-unused-vars
     private prisma: PrismaService,
     // eslint-disable-next-line no-unused-vars
-    private afipService: AfipService
+    private afipService: AfipService,
+    // eslint-disable-next-line no-unused-vars
+    private apidolarService: ApidolarService
   ) {}
 
   //Función auxiliar para obtener ultimo token
@@ -67,7 +70,7 @@ export class TfacturaService {
   }
 
   //Solicitud de productos a TFactura. Utiliza ultimo token guardado en db
-  // @Cron(CronExpression.EVERY_10_SECONDS)
+
   async getProducts(): Promise<RawProductResponse> {
     const { GET_PRODUCTS_URL, TFacturaBaseCredentials } =
       new TFacturaProductsData();
@@ -140,6 +143,13 @@ export class TfacturaService {
   //ya que esta estructura sale bien o mal pero siempre en BLOQUE (100%)
   // @Cron(CronExpression.EVERY_10_SECONDS)
   async postProducts() {
+    const usdValue:number = await this.apidolarService.getSimpleUsdValue();
+    if(!usdValue) {
+      throw new HttpException(
+        "No se encontró un valor almacenado de Cotización",
+        HttpStatus.BAD_REQUEST
+      );
+    }
     const res: RawProductResponse = await this.getProducts();
     if (res.Error.length) {
       //manejo el error
@@ -161,12 +171,16 @@ export class TfacturaService {
       res.Data.forEach((el) => {
         formatted.push(new Product(el));
       });
+
+      const cleanProducts : Product[] = formatted.filter(el => {
+        return el.type === 1 && el.usdPrice > 0;
+      });
       try {
         await this.prisma.$transaction(
-          formatted.map((el) => {
+          cleanProducts.map((el) => {
             return this.prisma.product.upsert({
               where: { id: el.id },
-              create: { ...el },
+              create: { ...el, arsPrice : el.usdPrice * usdValue },
               update: { ...el },
             });
           })

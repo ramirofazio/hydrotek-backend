@@ -87,7 +87,7 @@ model Post {
     text         String
     postAssets   PostAsset[]
     user         User          @relation(fields: [userId], references: [id])
-    userId       String         // camibar de relacion de 1-n
+    userId       String // camibar de relacion de 1-n
     postComments PostComment[]
     userSaveds   SavedPost[] // relacion m-n de post y usuarios
 }
@@ -97,7 +97,7 @@ model PostAsset {
     type   AssetType? @default(IMAGE)
     path   String
     post   Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
-    postId String     
+    postId String
 }
 
 enum AssetType {
@@ -111,19 +111,17 @@ model PostComment {
     comment     String
     show        Boolean?  @default(false)
     post        Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
-    postId      String    
+    postId      String
     user        User      @relation(fields: [userId], references: [id])
-    userId      String    
+    userId      String
 }
 
 model SavedPost {
-    id Int @id @default(autoincrement())
+    id     Int    @id @default(autoincrement())
     post   Post   @relation(fields: [postId], references: [id])
-    postId String 
+    postId String
     user   User   @relation(fields: [userId], references: [id])
-    userId String 
-
-    
+    userId String
 }
 
 model Token {
@@ -135,7 +133,8 @@ model Token {
 model Product {
     id               Int                         @unique
     name             String
-    price            Decimal                     @db.Decimal(10, 2)
+    usdPrice         Float
+    arsPrice         Float
     description      String?
     published        Boolean
     type             Int
@@ -218,4 +217,10 @@ model TFacturaUserLog {
     data       String @db.Text
     date       String
     identifier String
+}
+
+model DollarPrice {
+    id    Int     @id @default(autoincrement())
+    date  String
+    price Float
 }

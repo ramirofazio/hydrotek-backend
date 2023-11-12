@@ -58,7 +58,8 @@ export class ShoppingCartService {
     const mockProduct = {
       id: 1,
       name: "peluch2.0",
-      price: 42.2,
+      usdPrice: 42.2,
+      arsPrice: 42.2 * 960,
       published: true,
       type: 1,
       profile: 2,
