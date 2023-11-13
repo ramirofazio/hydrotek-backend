@@ -9,8 +9,8 @@ export class ProductController {
   /* eslint-enable */
 
   @Get("updateDB")
-  async updateDBProducts() {
-    return await this.productService.updateDBProducts();
+  async updateDBProductsAndUsd(@Param("full") full: boolean) {
+    return await this.productService.updateDBProducts(full);
   }
 
   @Get()
