@@ -7,6 +7,7 @@ import {
   RawUserDTO,
   SimpleUserDTO,
   updatePasswordDto,
+  sessionDTO,
 } from "./user.dto";
 import * as bcrypt from "bcrypt";
 import { confirmPasswordResetRequest } from "src/auth/auth.dto";
@@ -21,6 +22,38 @@ export class UserService {
     private readonly tfacturaService: TfacturaService
   ) {}
   /* eslint-enable */
+
+  async alternAdmin(
+    id: string,
+    currentUser: sessionDTO
+  ): Promise<SimpleUserDTO[] | HttpStatus> {
+    const userToUpdate = await this.prisma.user.findFirst({ where: { id } });
+    const admin = await this.prisma.user.findFirst({
+      where: { id: currentUser.id },
+    });
+
+    if (!userToUpdate || admin.roleId !== 2) {
+      return HttpStatus.BAD_REQUEST;
+    }
+
+    const newRoleId = userToUpdate.roleId === 1 ? 2 : 1;
+
+    await this.prisma.user.update({
+      where: { id },
+      data: { roleId: newRoleId },
+    });
+
+    return await this.prisma.user.findMany({
+      include: {
+        _count: { select: { orders: true } },
+        role: {
+          select: {
+            type: true,
+          },
+        },
+      },
+    });
+  }
 
   async getAll(): Promise<SimpleUserDTO[]> {
     return await this.prisma.user.findMany({
