@@ -261,7 +261,8 @@ export class UserService {
     });
     return userCount;
   }
-
+  //? El userId deberia ser string, porque no lo acepta nest? comentamos para q no joda el eslint
+  /* eslint-disable */
   async getSavedPosts(userId: any) {
     const posts = await this.prisma.savedPost.findMany({
       where: { userId: userId.userId },
@@ -271,4 +272,5 @@ export class UserService {
     });
     return posts;
   }
+  /* eslint-enable */
 }

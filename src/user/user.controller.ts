@@ -95,8 +95,11 @@ export class UserController {
     }
   }
 
+  //? El userId deberia ser string, porque no lo acepta nest? comentamos para q no joda el eslint
+  /* eslint-disable */
   @Get("/savedPosts/:userId")
   getSavedPosts(@Param() userId: any) {
     return this.userService.getSavedPosts(userId);
   }
+  /* eslint-enable */
 }

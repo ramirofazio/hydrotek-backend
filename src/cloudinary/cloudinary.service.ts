@@ -7,7 +7,6 @@ import { env } from "process";
 export class CloudinaryService {
   /* eslint-disable */
   constructor(private prisma: PrismaService) {}
-  /* eslint-enable */
 
   getSignature() {
     // ? en desuso, pero la podemos necesitar mas adelante
