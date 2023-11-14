@@ -43,16 +43,7 @@ export class UserService {
       data: { roleId: newRoleId },
     });
 
-    return await this.prisma.user.findMany({
-      include: {
-        _count: { select: { orders: true } },
-        role: {
-          select: {
-            type: true,
-          },
-        },
-      },
-    });
+    return await this.getAll();
   }
 
   async getAll(): Promise<SimpleUserDTO[]> {
@@ -65,6 +56,7 @@ export class UserService {
           },
         },
       },
+      orderBy: { name: "asc" },
     });
   }
   async getById(id: string): Promise<RawUserDTO> {

@@ -24,7 +24,7 @@ export class ProductService {
           HttpStatus.FAILED_DEPENDENCY
         );
       }
-      if(updateUsd) {
+      if (updateUsd) {
         await this.apidolarService.storeUsdValue();
       }
       await this.tfacturaService.postProducts();
@@ -59,8 +59,7 @@ export class ProductService {
   }
 
   async getAllProducts(): Promise<ProductDTO[]> {
-    const products = await this.prisma.product.findMany();
-    return products;
+    return await this.prisma.product.findMany({ orderBy: { name: "asc" } });
   }
 
   async getProductDetail(id: number): Promise<ProductDTO> {
