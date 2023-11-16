@@ -1,5 +1,5 @@
 export interface apiDolarResponse {
-    fecha: string,
-	compra: number,
-	venta: number
-  }
+  fechaActualizacion: string;
+  compra: number;
+  venta: number;
+}

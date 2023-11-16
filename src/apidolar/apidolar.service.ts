@@ -20,7 +20,7 @@ export class ApidolarService {
 
     await this.prisma.dollarPrice.create({
       data: {
-        date: data.fecha,
+        date: data.fechaActualizacion,
         price : Number(data.venta),
       }
     });
