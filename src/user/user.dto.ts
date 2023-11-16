@@ -23,66 +23,66 @@ export enum Roles {
 export class sessionDTO {
   @IsOptional()
   @IsString()
-  dni: string;
+    dni: string;
 
   @IsNotEmpty()
   @IsString()
-  id: string;
+    id: string;
 
   @IsNotEmpty()
   @IsString()
-  email: string;
+    email: string;
 
   @IsNotEmpty()
   @IsString()
-  role: string;
+    role: string;
 
   @IsNotEmpty()
   @IsString()
-  name: string;
+    name: string;
 }
 
 //DTO para validar estructura de profile de usuario
 export class UserProfileDTO {
   @IsOptional()
   @IsNumber()
-  id: number;
+    id: number;
 
   @IsOptional()
   @IsString()
-  avatar: string;
+    avatar: string;
 
   @IsOptional()
   @IsNumberString()
-  cellPhone: string;
+    cellPhone: string;
 
   @IsOptional()
   @IsString()
-  address: string;
+    address: string;
 }
 
 export class UserSession {
   @IsString()
   @IsNotEmpty()
-  name: string;
+    name: string;
 
   @IsEmail()
   @IsNotEmpty({ message: "el Mail es un campo requerido" })
-  email: string;
+    email: string;
 
   @IsOptional()
   @IsUUID()
-  id: string;
+    id: string;
 
   @IsOptional()
   @IsString()
   @MinLength(7)
   @MaxLength(11)
-  dni: string;
+    dni: string;
 
   @IsOptional()
   @IsNumber()
-  tFacturaId: number;
+    tFacturaId: number;
 }
 
 //DTO para validar data al momento de crear un usuario
@@ -91,54 +91,54 @@ export class CreateUserDTO {
 
   @IsOptional()
   @IsNumber()
-  tFacturaId: number;
+    tFacturaId: number;
 
   @IsString()
   @IsNotEmpty()
-  name: string;
+    name: string;
 
   @IsEmail()
   @IsNotEmpty({ message: "el Mail es un campo requerido" })
-  email: string;
+    email: string;
 
   @IsOptional()
   @IsString()
   @MinLength(7)
   @MaxLength(11)
-  dni: string;
+    dni: string;
 
   @IsOptional()
   @IsBoolean()
-  active: boolean;
+    active: boolean;
 
   @IsOptional()
   @IsUUID()
-  id: string;
+    id: string;
 
   @IsNotEmpty()
   @IsNumber()
   @IsEnum(Roles)
-  roleId: number;
+    roleId: number;
 
   @IsString()
   @MinLength(7)
   @MaxLength(11)
-  password: string;
+    password: string;
 
   @IsOptional()
   @ValidateNested()
-  profile: UserProfileDTO;
+    profile: UserProfileDTO;
 }
 
 //DTO para validar data al momento de updatear un usuario
 export class UpdateUserDTO {
   @IsNotEmpty()
   @ValidateNested()
-  session: UserSession;
+    session: UserSession;
 
   @IsOptional()
   @ValidateNested()
-  profile: UserProfileDTO;
+    profile: UserProfileDTO;
 }
 
 //DTO para validar estructura de session de usuario
@@ -315,17 +315,17 @@ interface PostAssets {
 export class updatePasswordDto {
   @IsNotEmpty()
   @IsUUID()
-  id: string;
+    id: string;
 
   @IsNotEmpty()
   @IsString()
-  actualPassword: string;
+    actualPassword: string;
 
   @IsNotEmpty()
   @IsString()
-  newPassword: string;
+    newPassword: string;
 
   @IsNotEmpty()
   @IsString()
-  newConfirmPassword: string;
+    newConfirmPassword: string;
 }
