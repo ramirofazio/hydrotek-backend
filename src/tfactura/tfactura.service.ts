@@ -181,7 +181,7 @@ export class TfacturaService {
             return this.prisma.product.upsert({
               where: { id: el.id },
               create: { ...el, arsPrice : el.usdPrice * usdValue },
-              update: { ...el, arsPrice : el.usdPrice * usdValue },
+              update: { ...el },
             });
           })
         );
