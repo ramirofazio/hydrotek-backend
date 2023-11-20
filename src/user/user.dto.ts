@@ -20,6 +20,28 @@ export enum Roles {
   ADMIN = 2,
 }
 
+export class sessionDTO {
+  @IsOptional()
+  @IsString()
+    dni: string;
+
+  @IsNotEmpty()
+  @IsString()
+    id: string;
+
+  @IsNotEmpty()
+  @IsString()
+    email: string;
+
+  @IsNotEmpty()
+  @IsString()
+    role: string;
+
+  @IsNotEmpty()
+  @IsString()
+    name: string;
+}
+
 //DTO para validar estructura de profile de usuario
 export class UserProfileDTO {
   @IsOptional()
@@ -52,7 +74,6 @@ export class UserSession {
   @IsUUID()
     id: string;
 
-
   @IsOptional()
   @IsString()
   @MinLength(7)
@@ -62,7 +83,6 @@ export class UserSession {
   @IsOptional()
   @IsNumber()
     tFacturaId: number;
-
 }
 
 //DTO para validar data al momento de crear un usuario

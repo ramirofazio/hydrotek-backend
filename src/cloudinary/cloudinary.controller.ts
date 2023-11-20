@@ -15,8 +15,13 @@ export class CloudinaryController {
 
   @Post("updateAvatar")
   @UseInterceptors(FileInterceptor("file"))
-  async updateAvatar(@Body() body: object) {
-    console.log(body);
+  async updateAvatar(@Body() body: { file: string; userId: string }) {
     return await this.cloudinaryService.updateAvatar(body);
+  }
+
+  @Post("loadProductImage")
+  @UseInterceptors(FileInterceptor("file"))
+  async loadProductImage(@Body() body: { file: string; productId: string }) {
+    return await this.cloudinaryService.loadProductImage(body);
   }
 }

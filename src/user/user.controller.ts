@@ -13,7 +13,12 @@ import { TfacturaService } from "src/tfactura/tfactura.service";
 //lineas comentadas para evitar error eslint
 // import {  IdentifierDTO } from "src/afip/afip.dto";
 // import { SuccessPostClientDataResponse } from "src/tfactura/tfactura.dto";
-import { CreateUserDTO, UpdateUserDTO, updatePasswordDto } from "./user.dto";
+import {
+  CreateUserDTO,
+  UpdateUserDTO,
+  sessionDTO,
+  updatePasswordDto,
+} from "./user.dto";
 
 @Controller("user")
 export class UserController {
@@ -24,10 +29,19 @@ export class UserController {
   ) {}
   /* eslint-enable */
 
+  @Put("alternAdmin")
+  async alternAdmin(
+    @Body("id") id: string,
+    @Body("currenUser") currentUser: sessionDTO
+  ) {
+    return await this.userService.alternAdmin(id, currentUser);
+  }
+
   @Get()
   async getAll() {
     return await this.userService.getAll();
   }
+
   @Get("/:email")
   async getEmail(@Param("email") email: string) {
     return await this.userService.findByEmail(email);
@@ -95,8 +109,11 @@ export class UserController {
     }
   }
 
+  //? El userId deberia ser string, porque no lo acepta nest? comentamos para q no joda el eslint
+  /* eslint-disable */
   @Get("/savedPosts/:userId")
   getSavedPosts(@Param() userId: any) {
     return this.userService.getSavedPosts(userId);
   }
+  /* eslint-enable */
 }
