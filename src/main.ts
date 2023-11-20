@@ -5,7 +5,6 @@ import type { NestExpressApplication } from "@nestjs/platform-express";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { RoleService } from "./role/role.service";
 import { env } from "process";
-import mobbex from "mobbex";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -39,10 +38,6 @@ async function bootstrap() {
       },
     })
   );
-  mobbex.configurations.configure({
-    apiKey: process.env.MOBBEX_X_API_KEY,
-    accessToken: process.env.MOBBEX_X_ACCESS_TOKEN,
-  });
   await app.listen(3000);
 }
 bootstrap();
