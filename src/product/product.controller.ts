@@ -1,4 +1,4 @@
-import { Controller, Get, Body, Param, Post } from "@nestjs/common";
+import { Controller, Get, Body, Param, Post, Query } from "@nestjs/common";
 import { ProductService } from "./product.service";
 import { ProductDTO, PagDTO, ProductsPaginatedDTO } from "./product.dto";
 
@@ -9,7 +9,7 @@ export class ProductController {
   /* eslint-enable */
 
   @Get("updateDB")
-  async updateDBProductsAndUsd(@Param("full") full: boolean) {
+  async updateDBProductsAndUsd(@Query("full") full: boolean) {
     return await this.productService.updateDBProducts(full);
   }
 
