@@ -42,15 +42,15 @@ import { env } from "process";
     MailerModule.forRoot({
       transport: {
         host: env.MAILTRAP_HOST,
-        port: env.MAILER_PORT,
+        port: env.MAILTRAP_PORT,
         secure: false,
         auth: {
-          user: env.MAILER_USER,
-          pass: env.MAILER_PASSWORD,
+          user: env.MAILTRAP_USER,
+          pass: env.MAILTRAP_PASSWORD,
         },
       },
       defaults: {
-        from: env.MAILER_USER,
+        from: env.MAILTRAP_USER,
       },
       template: {
         dir: "./src/templates",
