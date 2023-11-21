@@ -21,6 +21,7 @@ import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handleba
 import { MailModule } from "./mail/mail.module";
 import { ProductModule } from "./product/product.module";
 import { ApidolarModule } from "./apidolar/apidolar.module";
+import { env } from "process";
 
 @Module({
   imports: [
@@ -40,16 +41,16 @@ import { ApidolarModule } from "./apidolar/apidolar.module";
     MailModule,
     MailerModule.forRoot({
       transport: {
-        host: "sandbox.smtp.mailtrap.io",
-        port: 2525,
-        secure: false, // true for 465, false for other ports
+        host: env.MAILTRAP_HOST,
+        port: env.MAILER_PORT,
+        secure: false,
         auth: {
-          user: "8fa63bb4da955c",
-          pass: "a33c43705a940e",
+          user: env.MAILER_USER,
+          pass: env.MAILER_PASSWORD,
         },
       },
       defaults: {
-        from: "8fa63bb4da955c",
+        from: env.MAILER_USER,
       },
       template: {
         dir: "./src/templates",
