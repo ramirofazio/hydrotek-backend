@@ -1,7 +1,11 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "src/user/user.service";
-import { signInDto, googleSignInDTO, confirmPasswordResetRequest } from "./auth.dto";
+import {
+  signInDto,
+  googleSignInDTO,
+  confirmPasswordResetRequest,
+} from "./auth.dto";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcrypt";
 import {
@@ -173,26 +177,25 @@ export class AuthService {
     }
   }
 
-  async initResetPassword(email:string) {
-
+  async initResetPassword(email: string) {
     const existingUser = await this.userService.findByEmail(email);
     const { id, name, role } = existingUser;
     const payload = { sub: id, name: name, role: role.type };
-    const newAccessToken = await this.jwtService.signAsync(payload, { expiresIn : "1h" });
-    if(existingUser) {
+    const newAccessToken = await this.jwtService.signAsync(payload, {
+      expiresIn: "1h",
+    });
 
+    if (existingUser) {
       this.mailService.sendResetPasswordMail(email, newAccessToken);
     }
   }
 
-  async confirmResetPassword(data:confirmPasswordResetRequest) {
+  async confirmResetPassword(data: confirmPasswordResetRequest) {
     const verify = await this.jwtService.verify(data.token);
-    if(!verify) {
+    if (!verify) {
       throw "token invalido";
     }
 
     return await this.userService.updateForgottenPassword(data);
-
-
   }
 }

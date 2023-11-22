@@ -1,23 +1,26 @@
 import { MailerService } from "@nestjs-modules/mailer";
 import { Injectable } from "@nestjs/common";
+import { env } from "process";
 
 @Injectable()
 export class MailService {
   // eslint-disable-next-line no-unused-vars
   constructor(private readonly mailerService: MailerService) {}
-  async sendResetPasswordMail(email:string, token:string) {
+
+  async sendResetPasswordMail(email: string, token: string) {
     await this.mailerService.sendMail({
       to: email,
-      subject: "Hydrotek -Reestablecer contraseña-",
+      subject: "HYDROTEK -Reestablecer contraseña-",
       template: "recover_password", // Nombre de la plantilla
       context: {
         // Reemplazar por link correcto cuando se complete el front.
-        link : `http://localhost:3000/auth/reset-password?token=${token}&mail=${email}`,
+        link:
+          env.env === "production"
+            ? `https://www.hydrotek.store/?token=${token}&&email=${email}`
+            : `http://localhost:5173/?token=${token}&&email=${email}`,
       },
     });
 
     return "Email sent!";
-
-
   }
 }
