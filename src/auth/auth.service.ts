@@ -5,6 +5,7 @@ import {
   signInDto,
   googleSignInDTO,
   confirmPasswordResetRequest,
+  activeUserDTO,
 } from "./auth.dto";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcrypt";
@@ -30,7 +31,7 @@ export class AuthService {
   ) {}
   /* eslint-enable */
 
-  async signUp(body: CreateUserDTO): Promise<TrueUserDTO> {
+  async signUp(body: CreateUserDTO): Promise<HttpStatus> {
     const isAlready = await this.userService.findByEmail(body.email);
     if (isAlready) {
       throw new HttpException("El email ya esta en uso", HttpStatus.CONFLICT);
@@ -43,7 +44,7 @@ export class AuthService {
       email: body.email,
       password: body.password,
       id: randomUUID(),
-      active: true,
+      active: false,
       roleId: 1,
       profile: {
         id: null,
@@ -53,16 +54,23 @@ export class AuthService {
       },
     };
 
-    const newUser = await this.userService.createUser(data);
+    await this.userService.createUser(data); //? Se crea pero no autologuea en signUp
 
-    const { id, name, role } = newUser;
+    await this.validateSignUp(data.email); //? Se manda mail de confirmacion
 
-    const payload = { sub: id, name: name, role: role.type };
+    return HttpStatus.CREATED;
 
-    const accessToken = await this.jwtService.signAsync(payload);
-    const fullUser = new TrueUserTransformer(newUser, accessToken);
+    //! Comentado para validar signUp con mail
+    // const newUser = await this.userService.createUser(data);
 
-    return fullUser;
+    // const { id, name, role } = newUser;
+
+    // const payload = { sub: id, name: name, role: role.type };
+
+    // const accessToken = await this.jwtService.signAsync(payload);
+    // const fullUser = new TrueUserTransformer(newUser, accessToken);
+
+    // return fullUser;
   }
 
   async signIn({ email, pass }: signInDto): Promise<TrueUserDTO> {
@@ -73,6 +81,14 @@ export class AuthService {
         HttpStatus.NOT_FOUND
       );
     }
+    const userIsActive = await this.userService.checkActiveUser(email); //? Chequea si el usuario esta activo
+    if (!userIsActive) {
+      throw new HttpException(
+        "El usuario no esta activado",
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
     const { password, id, name, role } = user;
 
     const match = await bcrypt.compare(pass, password);
@@ -197,5 +213,26 @@ export class AuthService {
     }
 
     return await this.userService.updateForgottenPassword(data);
+  }
+
+  async validateSignUp(email: string) {
+    const existingUser = await this.userService.findByEmail(email);
+    const { id, name, role } = existingUser;
+    const payload = { sub: id, name: name, role: role.type };
+    const newAccessToken = await this.jwtService.signAsync(payload, {
+      expiresIn: "1h",
+    });
+
+    if (existingUser && newAccessToken) {
+      this.mailService.sendSignUpValidationMail(email, newAccessToken);
+    }
+  }
+
+  async activeUser(data: activeUserDTO) {
+    const verify = await this.jwtService.verify(data.token);
+    if (!verify) {
+      throw "token invalido";
+    }
+    return await this.userService.activeUser(data.email);
   }
 }

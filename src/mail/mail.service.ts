@@ -23,4 +23,21 @@ export class MailService {
 
     return "Email sent!";
   }
+
+  async sendSignUpValidationMail(email: string, token: string) {
+    await this.mailerService.sendMail({
+      to: email,
+      subject: "HYDROTEK -Termina tu registro-",
+      template: "validate_signUp", // Nombre de la plantilla
+      context: {
+        // Reemplazar por link correcto cuando se complete el front.
+        link:
+          env.env === "production"
+            ? `https://www.hydrotek.store/?newUser=true&&token=${token}&&email=${email}`
+            : `http://localhost:5173/?newUser=true&&token=${token}&&email=${email}`,
+      },
+    });
+
+    return "Email sent!";
+  }
 }
