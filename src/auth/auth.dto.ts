@@ -92,5 +92,5 @@ export class confirmPasswordResetRequest {
   @IsString()
   @IsNotEmpty()
   @Validate(IsEqualConstraint, ["newPassword"])
-    confirmNewPassword: string;
+    newConfirmPassword: string;
 }

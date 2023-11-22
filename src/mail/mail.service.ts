@@ -16,8 +16,8 @@ export class MailService {
         // Reemplazar por link correcto cuando se complete el front.
         link:
           env.env === "production"
-            ? `https://www.hydrotek.store/resetPassword/?token=${token}&&email=${email}`
-            : `http://localhost:5173/resetPassword/?token=${token}&&email=${email}`,
+            ? `https://www.hydrotek.store/?token=${token}&&email=${email}`
+            : `http://localhost:5173/?token=${token}&&email=${email}`,
       },
     });
 
