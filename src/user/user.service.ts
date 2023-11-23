@@ -107,6 +107,7 @@ export class UserService {
           tFacturaId: data.tFacturaId,
           email: data.email,
           roleId: data.roleId,
+          active: data.active,
           password: bcrypt.hashSync(data.password, 10),
         },
       });
@@ -298,4 +299,22 @@ export class UserService {
     return posts;
   }
   /* eslint-enable */
+
+  async activeUser(email: string) {
+    await this.prisma.user.update({
+      where: { email: email },
+      data: { active: true },
+    });
+
+    return HttpStatus.OK;
+  }
+
+  async checkActiveUser(email: string): Promise<boolean> {
+    const res = await this.prisma.user.findFirst({
+      where: { email: email },
+      select: { active: true },
+    });
+
+    return res.active;
+  }
 }

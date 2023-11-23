@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>HYDROTEK</title>
+    </head>
+    <body class="body">
+        <h1>Termina tu registro</h1>
+        <div class="flex">
+            <span class="info">Accede a este <a href={{ link }}> link</a> para terminar tu registro. Es valido por una hora</span>
+            <span class="warning">Si no intentaste registrarte en <a href="https://www.hydrotek.store">HYDROTEK</a>, por favor desestima este mensaje</span>
+        </div>
+    </body>
+</html>
+
+
+<style>
+
+    .body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6;
+
+    }
+    .flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: column;
+
+        height: 70vh;
+    }
+    .info {
+        font-size: 1.3em;
+    }
+    .warning {
+        font-size: 0.9em;
+        text-decoration: underline;
+    }
+</style>
