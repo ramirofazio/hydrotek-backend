@@ -16,7 +16,7 @@ export class ProductService {
   constructor(
     private prisma: PrismaService,
     private tfacturaService: TfacturaService,
-    private apidolarService: ApidolarService,
+    private apidolarService: ApidolarService
   ) {}
   /* eslint-enable */
 
@@ -88,6 +88,7 @@ export class ProductService {
     const products = await this.prisma.product.findMany({
       skip: productsPerPage * pag,
       take: productsPerPage,
+      include: { images: { select: { path: true } } },
     });
 
     return {
