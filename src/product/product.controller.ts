@@ -1,6 +1,19 @@
-import { Controller, Get, Body, Param, Post } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Body,
+  Param,
+  Post,
+  Put,
+  Delete,
+} from "@nestjs/common";
 import { ProductService } from "./product.service";
-import { ProductDTO, PagDTO, ProductsPaginatedDTO } from "./product.dto";
+import {
+  ProductDTO,
+  PagDTO,
+  ProductsPaginatedDTO,
+  AddProductImg,
+} from "./product.dto";
 
 @Controller("product")
 export class ProductController {
@@ -28,6 +41,14 @@ export class ProductController {
     return await this.productService.getProductDetail(id);
   }
 
+  @Put("/img/add")
+  async addProductImg(@Body() body: AddProductImg): Promise<any> {
+    return await this.productService.addProductImg(body);
+  }
+  @Delete("/img/delete/:productId")
+  async deleteProductImg(@Param("productId") productId: number): Promise<any> {
+    return await this.productService.deleteProductImg(productId);
+  }
   @Post("/pag")
   findbyId(@Body() body: PagDTO): Promise<ProductsPaginatedDTO> {
     return this.productService.getProductsPaginated(body);
