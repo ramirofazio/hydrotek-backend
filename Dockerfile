@@ -10,6 +10,8 @@ COPY .env ./
 
 COPY tsconfig.json ./
 
+COPY start.sh ./
+
 COPY . .
 
 RUN npm install
