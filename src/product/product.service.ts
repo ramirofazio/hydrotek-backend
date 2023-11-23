@@ -1,5 +1,10 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
-import { PagDTO, ProductDTO, ProductsPaginatedDTO } from "./product.dto";
+import {
+  AddProductImg,
+  PagDTO,
+  ProductDTO,
+  ProductsPaginatedDTO,
+} from "./product.dto";
 import { PrismaService } from "src/prisma/prisma.service";
 import { Error } from "../commonDTO";
 import { TfacturaService } from "src/tfactura/tfactura.service";
@@ -11,7 +16,7 @@ export class ProductService {
   constructor(
     private prisma: PrismaService,
     private tfacturaService: TfacturaService,
-    private apidolarService: ApidolarService
+    private apidolarService: ApidolarService,
   ) {}
   /* eslint-enable */
 
@@ -59,7 +64,12 @@ export class ProductService {
   }
 
   async getAllProducts(): Promise<ProductDTO[]> {
-    return await this.prisma.product.findMany({ orderBy: { name: "asc" } });
+    return await this.prisma.product.findMany({
+      orderBy: { name: "asc" },
+      include: {
+        images: true,
+      },
+    });
   }
 
   async getProductDetail(id: number): Promise<ProductDTO> {
@@ -84,5 +94,23 @@ export class ProductService {
       quantity: Math.ceil(quantity / productsPerPage),
       products,
     };
+  }
+  async addProductImg(data: AddProductImg) {
+    try {
+      const { productId, path, asset_id, publicId } = data;
+      console.log(data);
+      const product = await this.prisma.productImage.create({
+        data: {
+          id: asset_id,
+          publicId,
+          path,
+          productId,
+        },
+      });
+      console.log(product);
+      return product;
+    } catch (e) {
+      console.log(e);
+    }
   }
 }

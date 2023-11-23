@@ -1,6 +1,18 @@
-import { Controller, Get, Body, Param, Post } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Body,
+  Param,
+  Post,
+  Put,
+} from "@nestjs/common";
 import { ProductService } from "./product.service";
-import { ProductDTO, PagDTO, ProductsPaginatedDTO } from "./product.dto";
+import {
+  ProductDTO,
+  PagDTO,
+  ProductsPaginatedDTO,
+  AddProductImg,
+} from "./product.dto";
 
 @Controller("product")
 export class ProductController {
@@ -26,6 +38,11 @@ export class ProductController {
   @Get("detail/:id")
   async getProductDetail(@Param("id") id: number): Promise<ProductDTO> {
     return await this.productService.getProductDetail(id);
+  }
+
+  @Put("/img/add")
+  async addProductImg(@Body() body: AddProductImg): Promise<any> {
+    return await this.productService.addProductImg(body);
   }
 
   @Post("/pag")

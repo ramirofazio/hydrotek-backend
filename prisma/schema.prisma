@@ -147,8 +147,9 @@ model Product {
 }
 
 model ProductImage {
-    id        Int     @id @default(autoincrement())
+    id        String  @id @default(uuid())
     path      String
+    publicId  String  
     product   Product @relation(fields: [productId], references: [id])
     productId Int     @unique
 }
@@ -220,7 +221,7 @@ model TFacturaUserLog {
 }
 
 model DollarPrice {
-    id    Int     @id @default(autoincrement())
+    id    Int    @id @default(autoincrement())
     date  String
     price Float
 }

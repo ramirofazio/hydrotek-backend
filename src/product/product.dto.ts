@@ -21,3 +21,10 @@ export interface ProductsPaginatedDTO {
   quantity: number;
   products: ProductDTO[]
 }
+
+export interface AddProductImg {
+  publicId: string;
+  path: string;
+  productId: number;
+  asset_id: string
+}

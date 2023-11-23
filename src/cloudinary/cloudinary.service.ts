@@ -41,45 +41,70 @@ export class CloudinaryService {
     }
   }
 
-  async loadProductImage(body: { file: string; productId: string }) {
-    try {
-      const { file, productId } = body;
-      console.log(file, productId);
+  // async loadProductImage(body: { file: string; productId: number; publicId: string}) {
+  //   try {
+  //     const { file, productId, publicId } = body;
+  //     console.log(file, productId);
 
-      // Convert productId to an integer
-      const productIdInt = parseInt(productId, 10);
+  //     // Convert productId to an integer
+  //     //const productIdInt = parseInt(productId, 10);
 
-      const result = await cloudinary.uploader.upload(file, {
-        upload_preset: "product_image",
-        api_key: env.CLOUDINARY_API_KEY,
-        api_secret: env.CLOUDINARY_API_SECRET,
-        cloud_name: env.CLOUDINARY_CLOUD_NAME,
-        overwrite: true,
-      });
+  //     const result = await cloudinary.uploader.upload(file, {
+  //       upload_preset: "product_image",
+  //       api_key: env.CLOUDINARY_API_KEY,
+  //       api_secret: env.CLOUDINARY_API_SECRET,
+  //       cloud_name: env.CLOUDINARY_CLOUD_NAME,
+  //       overwrite: true,
+  //     });
 
-      // Crear una nueva imagen asociada al producto
-      const newImage = await this.prisma.productImage.create({
-        data: {
-          path: result.secure_url,
-          product: {
-            connect: { id: productIdInt },
-          },
-        },
-      });
+  //     // Crear una nueva imagen asociada al producto
+  //     const newImage = await this.prisma.productImage.create({
+  //       data: {
+  //         path: result.secure_url,
+  //         publicId,
+  //         productId,
+  //         /* product: {
+  //           connect: { id: productIdInt },
+  //         }, */
+  //       },
+  //     });
 
-      // Actualizar la propiedad 'images' del producto con la nueva imagen
-      const updatedProduct = await this.prisma.product.update({
-        where: { id: productIdInt },
-        data: {
-          images: {
-            connect: { id: newImage.id },
-          },
-        },
-      });
+  //     // Actualizar la propiedad 'images' del producto con la nueva imagen
+  //     const updatedProduct = await this.prisma.product.update({
+  //       where: { id: productIdInt },
+  //       data: {
+  //         images: {
+  //           connect: { id: newImage.id },
+  //         },
+  //       },
+  //     });
 
-      return "success";
-    } catch (e) {
-      console.log(e);
-    }
+  //     return "success";
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // }
+
+  async deleteProductImg(productId: number) {
+    const img = await this.prisma.productImage.findFirst({
+      where: {
+        productId,
+      },
+    });
+    const deleted = await this.prisma.productImage.deleteMany({
+      where: { productId },
+    });
+    cloudinary.config({
+      api_key: env.CLOUDINARY_API_KEY,
+      api_secret: env.CLOUDINARY_API_SECRET,
+      cloud_name: env.CLOUDINARY_CLOUD_NAME,
+    });
+    const deleted_assets = await cloudinary.api.delete_resources(
+      [img.publicId],
+      {
+        all: true,
+      }
+    );
+    return deleted_assets;
   }
 }

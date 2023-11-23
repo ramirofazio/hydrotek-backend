@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, UseInterceptors } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UseInterceptors,
+  Param,
+  Delete,
+} from "@nestjs/common";
 import { CloudinaryService } from "./cloudinary.service";
 //import { UpdateAvatarDTO } from "./cloudinary.DTO";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -19,9 +27,15 @@ export class CloudinaryController {
     return await this.cloudinaryService.updateAvatar(body);
   }
 
-  @Post("loadProductImage")
-  @UseInterceptors(FileInterceptor("file"))
-  async loadProductImage(@Body() body: { file: string; productId: string }) {
-    return await this.cloudinaryService.loadProductImage(body);
+  @Delete("/img/delete/:productId")
+  async deleteProductImg(@Param("productId") productId: number): Promise<any> {
+    return await this.cloudinaryService.deleteProductImg(productId);
   }
+
+  // @Post("loadProductImage") // ? en desuso pero puede srvir
+  // @UseInterceptors(FileInterceptor("file"))
+  // async loadProductImage(@Body() body: { file: string; productId: string }) {
+  //   return await this.cloudinaryService.loadProductImage(body);
+  // }
+
 }
