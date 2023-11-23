@@ -23,6 +23,7 @@ export interface ProductsPaginatedDTO {
 }
 
 export interface AddProductImg {
+  publicId: string;
   path: string;
   productId: number;
   asset_id: string

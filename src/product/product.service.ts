@@ -16,7 +16,7 @@ export class ProductService {
   constructor(
     private prisma: PrismaService,
     private tfacturaService: TfacturaService,
-    private apidolarService: ApidolarService
+    private apidolarService: ApidolarService,
   ) {}
   /* eslint-enable */
 
@@ -71,11 +71,6 @@ export class ProductService {
       },
     });
   }
-  async deleteProductImg(productId: number) {
-    return await this.prisma.productImage.deleteMany({
-      where: { productId },
-    });
-  }
 
   async getProductDetail(id: number): Promise<ProductDTO> {
     const product = await this.prisma.product.findUnique({
@@ -102,11 +97,12 @@ export class ProductService {
   }
   async addProductImg(data: AddProductImg) {
     try {
-      const { productId, path, asset_id } = data;
+      const { productId, path, asset_id, publicId } = data;
       console.log(data);
       const product = await this.prisma.productImage.create({
         data: {
           id: asset_id,
+          publicId,
           path,
           productId,
         },

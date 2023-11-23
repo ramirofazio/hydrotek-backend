@@ -45,10 +45,7 @@ export class ProductController {
   async addProductImg(@Body() body: AddProductImg): Promise<any> {
     return await this.productService.addProductImg(body);
   }
-  @Delete("/img/delete/:productId")
-  async deleteProductImg(@Param("productId") productId: number): Promise<any> {
-    return await this.productService.deleteProductImg(productId);
-  }
+
   @Post("/pag")
   findbyId(@Body() body: PagDTO): Promise<ProductsPaginatedDTO> {
     return this.productService.getProductsPaginated(body);
