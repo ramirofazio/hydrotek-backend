@@ -3,7 +3,6 @@ import { MobbexService } from "./mobbex.service";
 import { mobbex } from "mobbex";
 import { CheckoutGuestRequest, CheckoutRequest } from "./mobbex.dto";
 
-
 @Controller("mobbex")
 export class MobbexController {
   // eslint-disable-next-line no-unused-vars
@@ -12,13 +11,16 @@ export class MobbexController {
   @Post()
   async generateCheckout(@Body() body: CheckoutRequest) {
     try {
-      const mobbexBody = await this.mobbexService.generateBody(body.userId, body.items);
+      const mobbexBody = await this.mobbexService.generateBody(
+        body.userId,
+        body.items
+      );
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const checkout: any = await mobbex.checkout.create(mobbexBody);
-      if("data" in checkout) {
+      if ("data" in checkout) {
         return checkout.data.url;
       }
-      if("error" in checkout) {
+      if ("error" in checkout) {
         throw checkout.error;
       }
     } catch (error) {
@@ -44,10 +46,10 @@ export class MobbexController {
       const mobbexBody = await this.mobbexService.generateGuestBody(body);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const checkout: any = await mobbex.checkout.create(mobbexBody);
-      if("data" in checkout) {
+      if ("data" in checkout) {
         return checkout.data.url;
       }
-      if("error" in checkout) {
+      if ("error" in checkout) {
         throw checkout.error;
       }
     } catch (error) {
