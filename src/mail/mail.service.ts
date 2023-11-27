@@ -18,8 +18,8 @@ export class MailService {
           env.env === "production"
             ? `https://www.hydrotek.store/?token=${token}&&email=${email}`
             : env.env === "staging"
-            ? `http://85.31.231.196:51732/?token=${token}&&email=${email}`
-            : `http://localhost:5173/?token=${token}&&email=${email}`,
+              ? `http://85.31.231.196:51732/?token=${token}&&email=${email}`
+              : `http://localhost:5173/?token=${token}&&email=${email}`,
       },
     });
 
@@ -37,8 +37,8 @@ export class MailService {
           env.env === "production"
             ? `https://www.hydrotek.store/?newUser=true&&token=${token}&&email=${email}`
             : env.env === "staging"
-            ? `http://85.31.231.196:51732/?newUser=true&&token=${token}&&email=${email}`
-            : `http://localhost:5173/?newUser=true&&token=${token}&&email=${email}`,
+              ? `http://85.31.231.196:51732/?newUser=true&&token=${token}&&email=${email}`
+              : `http://localhost:5173/?newUser=true&&token=${token}&&email=${email}`,
       },
     });
 
