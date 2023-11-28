@@ -8,6 +8,6 @@ import { TfacturaModule } from "src/tfactura/tfactura.module";
   providers: [MobbexService],
   controllers: [MobbexController],
   exports: [MobbexService],
-  imports: [PrismaModule, TfacturaModule]
+  imports: [PrismaModule, TfacturaModule],
 })
 export class MobbexModule {}

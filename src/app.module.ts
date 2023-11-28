@@ -19,6 +19,7 @@ import { CloudinaryModule } from "./cloudinary/cloudinary.module";
 import { MailModule } from "./mail/mail.module";
 import { ProductModule } from "./product/product.module";
 import { ApidolarModule } from "./apidolar/apidolar.module";
+import { MobbexModule } from "./mobbex/mobbex.module";
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { ApidolarModule } from "./apidolar/apidolar.module";
     AfipModule,
     MailModule,
     ApidolarModule,
+    MobbexModule,
   ],
 
   controllers: [AppController],
