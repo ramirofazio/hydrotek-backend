@@ -16,12 +16,9 @@ import { ShoppingCartModule } from "./shoppingCart/shoppingCart.module";
 import { AfipModule } from "./afip/afip.module";
 import { BlogModule } from "./blog/blog.module";
 import { CloudinaryModule } from "./cloudinary/cloudinary.module";
-import { MailerModule } from "@nestjs-modules/mailer";
-import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
 import { MailModule } from "./mail/mail.module";
 import { ProductModule } from "./product/product.module";
 import { ApidolarModule } from "./apidolar/apidolar.module";
-import { env } from "process";
 
 @Module({
   imports: [
@@ -39,27 +36,6 @@ import { env } from "process";
     BlogModule,
     AfipModule,
     MailModule,
-    MailerModule.forRoot({
-      transport: {
-        host: env.MAILTRAP_HOST,
-        port: env.MAILTRAP_PORT,
-        secure: false,
-        auth: {
-          user: env.MAILTRAP_USER,
-          pass: env.MAILTRAP_PASSWORD,
-        },
-      },
-      defaults: {
-        from: env.MAILTRAP_USER,
-      },
-      template: {
-        dir: "./src/templates",
-        adapter: new HandlebarsAdapter(), // or any other adapter
-        options: {
-          strict: true,
-        },
-      },
-    }),
     ApidolarModule,
   ],
 
