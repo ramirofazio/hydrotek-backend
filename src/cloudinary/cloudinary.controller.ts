@@ -37,5 +37,4 @@ export class CloudinaryController {
   // async loadProductImage(@Body() body: { file: string; productId: string }) {
   //   return await this.cloudinaryService.loadProductImage(body);
   // }
-
 }

@@ -1,6 +1,7 @@
+/* eslint-disable */
 import { Injectable } from "@nestjs/common";
-import { env } from "process";
 import { MailtrapClient } from "mailtrap";
+import { env } from "process";
 
 const client = new MailtrapClient({
   endpoint: "https://send.api.mailtrap.io/",
@@ -10,8 +11,6 @@ const client = new MailtrapClient({
 const sender = { name: "HYDROTEK", email: "validate@hydrotek.store" };
 @Injectable()
 export class MailService {
-  // eslint-disable-next-line no-unused-vars
-
   async sendResetPasswordMail(email: string, token: string) {
     client
       .send({
