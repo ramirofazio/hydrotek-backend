@@ -139,6 +139,7 @@ model Product {
     published        Boolean
     type             Int
     profile          Int
+    featured         Boolean                     @default(false)
     images           ProductImage[]
     updated          String
     shoppingCarts    ProductsOnCart[]
