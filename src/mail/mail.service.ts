@@ -29,7 +29,6 @@ export class MailService {
       })
       .then((res) => {
         console.log("Email sent!", res);
-        return "Email sent!";
       })
       .catch(console.error);
   }

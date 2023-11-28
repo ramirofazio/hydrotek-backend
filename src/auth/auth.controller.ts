@@ -50,8 +50,7 @@ export class AuthController {
   @Post("init-reset")
   async initResetPassword(@Body() body: initPasswordResetRequest) {
     try {
-      this.authService.initResetPassword(body.email);
-      return "ok";
+      return this.authService.initResetPassword(body.email);
     } catch (error) {
       return error;
     }

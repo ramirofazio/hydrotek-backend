@@ -59,18 +59,6 @@ export class AuthService {
     await this.validateSignUp(data.email); //? Se manda mail de confirmacion
 
     return HttpStatus.CREATED;
-
-    //! Comentado para validar signUp con mail
-    // const newUser = await this.userService.createUser(data);
-
-    // const { id, name, role } = newUser;
-
-    // const payload = { sub: id, name: name, role: role.type };
-
-    // const accessToken = await this.jwtService.signAsync(payload);
-    // const fullUser = new TrueUserTransformer(newUser, accessToken);
-
-    // return fullUser;
   }
 
   async signIn({ email, pass }: signInDto): Promise<TrueUserDTO> {
@@ -197,16 +185,23 @@ export class AuthService {
     }
   }
 
-  async initResetPassword(email: string) {
-    const existingUser = await this.userService.findByEmail(email);
-    const { id, name, role } = existingUser;
-    const payload = { sub: id, name: name, role: role.type };
-    const newAccessToken = await this.jwtService.signAsync(payload, {
-      expiresIn: "1h",
-    });
-
-    if (existingUser) {
-      await this.mailService.sendResetPasswordMail(email, newAccessToken);
+  async initResetPassword(email: string): Promise<HttpStatus> {
+    try {
+      const existingUser = await this.userService.findByEmail(email);
+      if (existingUser) {
+        const { id, name, role } = existingUser;
+        const payload = { sub: id, name: name, role: role.type };
+        const newAccessToken = await this.jwtService.signAsync(payload, {
+          expiresIn: "1h",
+        });
+        await this.mailService.sendResetPasswordMail(email, newAccessToken);
+        return HttpStatus.OK;
+      }
+      return HttpStatus.NOT_FOUND;
+    } catch (e) {
+      console.log(e);
+      return HttpStatus.NOT_FOUND;
+      throw new Error(e.message);
     }
   }
 
