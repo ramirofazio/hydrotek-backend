@@ -98,14 +98,15 @@ export class ProductService {
   }
   async addProductImg(data: AddProductImg) {
     try {
-      const { productId, path, asset_id, publicId } = data;
-      console.log(data);
+      const { productId, path, asset_id, publicId, index } = data;
+
       const product = await this.prisma.productImage.create({
         data: {
           id: asset_id,
           publicId,
           path,
           productId,
+          index,
         },
       });
       console.log(product);

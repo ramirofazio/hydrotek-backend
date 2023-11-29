@@ -26,5 +26,6 @@ export interface AddProductImg {
   publicId: string;
   path: string;
   productId: number;
-  asset_id: string
+  asset_id: string;
+  index: number;
 }

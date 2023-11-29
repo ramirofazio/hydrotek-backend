@@ -77,6 +77,7 @@ model ProductsOnCart {
     quantity       Int
     price          Int?
     name           String?
+
     @@id([shoppingCartId, productId])
 }
 
@@ -151,7 +152,8 @@ model ProductImage {
     path      String
     publicId  String
     product   Product @relation(fields: [productId], references: [id])
-    productId Int     @unique
+    productId Int
+    index     Int?
 }
 
 model PromotionalCode {
