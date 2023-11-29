@@ -11,6 +11,7 @@ import {
 import { DateTime } from "luxon";
 import { TfacturaService } from "src/tfactura/tfactura.service";
 import { SuccessPostClientDataResponse } from "src/tfactura/tfactura.dto";
+import { env } from "process";
 
 @Injectable()
 export class MobbexService {
@@ -24,14 +25,19 @@ export class MobbexService {
   async generateBody(userId: string, items: requestItem[]) {
     const customer: mobbexCustomer = await this.generateCustomer(userId);
     const mobbexItems: mobbexItem[] = await this.generateItems(items);
-    // const total = this.calculateTotal(mobbexItems);
-    const total = 12;
+    const total =
+      env.env === "production" ? this.calculateTotal(mobbexItems) : 1;
     const reference = this.generateReference(customer);
     const description = `Checkout ${reference}`;
     const currency = "ARS";
     const test = false;
     // eslint-disable-next-line camelcase
-    const return_url = "https://mobbex.com/return_url?id=123456";
+    const return_url =
+      env.env === "production"
+        ? `https://www.hydrotek.store/shoppingCart`
+        : env.env === "staging"
+          ? `http://85.31.231.196:51732/shoppingCart`
+          : `http://localhost:5173/shoppingCart`;
 
     const bodyResponse: mobbexBody = {
       total,
@@ -47,19 +53,24 @@ export class MobbexService {
     return bodyResponse;
   }
 
-  async generateGuestBody(body:CheckoutGuestRequest) {
+  async generateGuestBody(body: CheckoutGuestRequest) {
     const customer: mobbexGuestCustomer = await this.generateGuestCustomer({
-      ...body
+      ...body,
     });
     const mobbexItems: mobbexItem[] = await this.generateItems(body.items);
-    // const total = this.calculateTotal(mobbexItems);
-    const total = 12;
+    const total =
+      env.env === "production" ? this.calculateTotal(mobbexItems) : 1;
     const reference = this.generateGuestReference(customer);
     const description = `Checkout ${reference}`;
     const currency = "ARS";
     const test = false;
     // eslint-disable-next-line camelcase
-    const return_url = "https://mobbex.com/return_url?id=123456";
+    const return_url =
+      env.env === "production"
+        ? `https://www.hydrotek.store/shoppingCart`
+        : env.env === "staging"
+          ? `http://85.31.231.196:51732/shoppingCart`
+          : `http://localhost:5173/shoppingCart`;
 
     const bodyResponse: mobbexBody = {
       total,
@@ -82,6 +93,7 @@ export class MobbexService {
         profile: true,
       },
     });
+
     const response: mobbexCustomer = {
       email: user.email,
       name: user.name,
@@ -92,12 +104,12 @@ export class MobbexService {
     return response;
   }
 
-  async generateGuestCustomer(body:CheckoutGuestRequest) {
+  async generateGuestCustomer(body: CheckoutGuestRequest) {
     const response: mobbexGuestCustomer = {
       email: body.email,
       name: `${body.firstName} ${body.lastName}`,
       phone: body.phone ?? "",
-      identification: body.dni ?? ""
+      identification: body.dni ?? "",
     };
     return response;
   }
@@ -144,10 +156,9 @@ export class MobbexService {
     const timestamp = DateTime.now()
       .setLocale("es")
       .toFormat("dd/MM/yyyy HH:mm");
-    if(customer.identification.length > 0) {
+    if (customer.identification.length > 0) {
       return `${customer.name} #${customer.identification} ${timestamp}`;
-    }
-    else {
+    } else {
       return `${customer.name} ${timestamp}`;
     }
   }
@@ -168,7 +179,7 @@ export class MobbexService {
           await tx.user.update({
             where: { id: id },
             data: {
-              dni: Number(id),
+              dni: Number(identifier),
               tFacturaId: res.ClienteID,
             },
           });
@@ -176,7 +187,7 @@ export class MobbexService {
           await tx.user.update({
             where: { id: id },
             data: {
-              dni: Number(id),
+              dni: Number(identifier),
             },
           });
         }

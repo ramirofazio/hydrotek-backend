@@ -33,7 +33,7 @@ export class MobbexController {
   async updateUserAndGenerateCheckout(@Body() body: CheckoutRequest) {
     try {
       await this.mobbexService.updateUser(body.userId, body.identifier);
-      await this.generateCheckout(body);
+      return await this.generateCheckout(body);
     } catch (error) {
       console.log(error);
       throw error;
