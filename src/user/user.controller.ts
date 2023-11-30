@@ -7,6 +7,7 @@ import {
   HttpException,
   HttpStatus,
   Put,
+  Patch,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { TfacturaService } from "src/tfactura/tfactura.service";
@@ -18,6 +19,7 @@ import {
   UpdateUserDTO,
   sessionDTO,
   updatePasswordDto,
+  deliveryInfoDTO,
 } from "./user.dto";
 
 @Controller("user")
@@ -28,6 +30,11 @@ export class UserController {
     private readonly tfacturaService: TfacturaService
   ) {}
   /* eslint-enable */
+
+  @Patch("save-deliveryInfo")
+  async saveDeliveryInfo(@Body() body: deliveryInfoDTO) {
+    return await this.userService.saveDeliveryInfo(body);
+  }
 
   @Put("alternAdmin")
   async alternAdmin(

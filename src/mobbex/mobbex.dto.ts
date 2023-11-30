@@ -12,51 +12,48 @@ import {
 export class CheckoutRequest {
   @IsString()
   @IsOptional()
-    identifier: string;
+  identifier: string;
   @IsString()
   @IsNotEmpty()
-    userId: string;
+  userId: string;
   @IsArray()
   @IsNotEmpty()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => requestItem)
-    items: requestItem[];
+  items: requestItem[];
 }
 
 export class CheckoutGuestRequest {
   @IsString()
   @IsNotEmpty()
-    firstName: string;
+  firstName: string;
   @IsString()
   @IsNotEmpty()
-    lastName: string;
+  lastName: string;
   @IsString()
   @IsNotEmpty()
-    email: string;
+  email: string;
   @IsString()
   @IsOptional()
-    dni: string;
-  @IsString()
-  @IsOptional()
-    phone: string;
+  dni: string;
 
   @IsArray()
   @IsNotEmpty()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => requestItem)
-    items: requestItem[];
+  items: requestItem[];
 }
 
 export class requestItem {
   @IsNotEmpty()
   @IsNumber()
-    id: number;
+  id: number;
 
   @IsNotEmpty()
   @IsNumber()
-    qty: number;
+  qty: number;
 }
 
 export interface mobbexCustomer {
@@ -67,15 +64,12 @@ export interface mobbexCustomer {
   phone?: string;
 }
 
-
 export interface mobbexGuestCustomer {
   email: string;
   name: string;
   identification?: string;
   phone?: string;
 }
-
-
 
 export interface mobbexItem {
   description: string;

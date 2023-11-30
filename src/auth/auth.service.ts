@@ -50,7 +50,6 @@ export class AuthService {
         id: null,
         avatar: null,
         address: null,
-        cellPhone: null,
       },
     };
 
@@ -152,7 +151,6 @@ export class AuthService {
         profile: {
           id: null,
           avatar: picture,
-          cellPhone: null,
           address: null,
         },
       };

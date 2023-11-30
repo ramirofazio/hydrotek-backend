@@ -8,6 +8,7 @@ import {
   SimpleUserDTO,
   updatePasswordDto,
   sessionDTO,
+  deliveryInfoDTO,
 } from "./user.dto";
 import * as bcrypt from "bcrypt";
 import { confirmPasswordResetRequest } from "src/auth/auth.dto";
@@ -70,7 +71,6 @@ export class UserService {
         },
         profile: {
           select: {
-            cellPhone: true,
             address: true,
             avatar: true,
           },
@@ -115,7 +115,6 @@ export class UserService {
         data: {
           user: { connect: { id: user.id } },
           avatar: data.profile.avatar,
-          cellPhone: data.profile.cellPhone,
           address: data.profile.address,
         },
       });
@@ -143,9 +142,11 @@ export class UserService {
         },
         profile: {
           select: {
-            cellPhone: true,
             address: true,
             avatar: true,
+            city: true,
+            postalCode: true,
+            province: true,
           },
         },
         shoppingCart: {
@@ -205,7 +206,6 @@ export class UserService {
           data: {
             avatar: profile.avatar,
             address: profile.address,
-            cellPhone: profile.cellPhone,
           },
         });
         return target;
@@ -222,7 +222,6 @@ export class UserService {
           data: {
             avatar: profile.avatar,
             address: profile.address,
-            cellPhone: profile.cellPhone,
           },
         });
         return target;
@@ -316,5 +315,24 @@ export class UserService {
     });
 
     return res.active;
+  }
+
+  async saveDeliveryInfo({
+    id,
+    address,
+    city,
+    postalCode,
+    province,
+  }: deliveryInfoDTO): Promise<any> {
+    try {
+      const userProfile = await this.prisma.userProfile.update({
+        where: { userId: id },
+        data: { address, city, postalCode, province },
+      });
+
+      return userProfile;
+    } catch (e) {
+      throw new Error(`error al guardar datos de envio: ${e.message}`);
+    }
   }
 }

@@ -99,7 +99,6 @@ export class MobbexService {
       name: user.name,
       identification: user.dni.toString(),
       uid: user.id,
-      phone: user.profile.cellPhone ?? "",
     };
     return response;
   }
@@ -108,7 +107,6 @@ export class MobbexService {
     const response: mobbexGuestCustomer = {
       email: body.email,
       name: `${body.firstName} ${body.lastName}`,
-      phone: body.phone ?? "",
       identification: body.dni ?? "",
     };
     return response;
