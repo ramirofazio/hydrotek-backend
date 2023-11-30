@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { v2 as cloudinary } from "cloudinary";
 import { env } from "process";
-
+import { DeleteOneProductImgDTO } from "./cloudinary.DTO";
 @Injectable()
 export class CloudinaryService {
   /* eslint-disable */
@@ -39,6 +39,50 @@ export class CloudinaryService {
     } catch (e) {
       console.log(e);
     }
+  }
+
+  
+
+  async deleteAllProductImg(productId: number) {
+    const cloudImgs = await this.prisma.productImage.findMany({
+      where: {
+        productId,
+      },
+      select: { publicId: true },
+    });
+    const cloudIds = cloudImgs?.map((img) => img.publicId);
+    const deleted_db = await this.prisma.productImage.deleteMany({
+      where: { productId },
+    });
+    cloudinary.config({
+      api_key: env.CLOUDINARY_API_KEY,
+      api_secret: env.CLOUDINARY_API_SECRET,
+      cloud_name: env.CLOUDINARY_CLOUD_NAME,
+    });
+    const deleted_cloud = await cloudinary.api.delete_resources(cloudIds, {
+      all: true,
+    });
+
+    return { deleted_cloud, deleted_db };
+  }
+  async deleteOneProductImg(body: DeleteOneProductImgDTO) {
+    const {productImgId, publicId} = body
+    console.log(productImgId)
+    const deleted_db = await this.prisma.productImage.delete({
+      where: {
+        id: productImgId,
+      }
+    });
+    cloudinary.config({
+      api_key: env.CLOUDINARY_API_KEY,
+      api_secret: env.CLOUDINARY_API_SECRET,
+      cloud_name: env.CLOUDINARY_CLOUD_NAME,
+    });
+    const deleted_cloud = await cloudinary.api.delete_resources([publicId], {
+      all: true,
+    });
+
+    return { deleted_cloud, deleted_db };
   }
 
   // async loadProductImage(body: { file: string; productId: number; publicId: string}) {
@@ -84,27 +128,4 @@ export class CloudinaryService {
   //     console.log(e);
   //   }
   // }
-
-  async deleteProductImg(productId: number) {
-    const img = await this.prisma.productImage.findFirst({
-      where: {
-        productId,
-      },
-    });
-    const deleted = await this.prisma.productImage.deleteMany({
-      where: { productId },
-    });
-    cloudinary.config({
-      api_key: env.CLOUDINARY_API_KEY,
-      api_secret: env.CLOUDINARY_API_SECRET,
-      cloud_name: env.CLOUDINARY_CLOUD_NAME,
-    });
-    const deleted_assets = await cloudinary.api.delete_resources(
-      [img.publicId],
-      {
-        all: true,
-      }
-    );
-    return deleted_assets;
-  }
 }
