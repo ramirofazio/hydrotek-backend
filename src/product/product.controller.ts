@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Body,
-  Param,
-  Post,
-  Put,
-} from "@nestjs/common";
+import { Controller, Get, Body, Param, Post, Put, Query } from "@nestjs/common";
 import { ProductService } from "./product.service";
 import {
   ProductDTO,
@@ -19,6 +12,16 @@ export class ProductController {
   /* eslint-disable */
   constructor(private productService: ProductService) {}
   /* eslint-enable */
+
+  @Get("featured-products")
+  async getFeaturedProducts() {
+    return await this.productService.getFeaturedProducts();
+  }
+
+  @Put("toggle-featured-product")
+  async toggleFeaturedProduct(@Query("id") id: number) {
+    return await this.productService.toggleFeaturedProduct(id);
+  }
 
   @Get("updateDB")
   async updateDBProductsAndUsd(@Param("full") full: boolean) {

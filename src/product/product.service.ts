@@ -20,6 +20,40 @@ export class ProductService {
   ) {}
   /* eslint-enable */
 
+  async getFeaturedProducts(): Promise<ProductDTO[]> {
+    try {
+      return await this.prisma.product.findMany({
+        where: { featured: true },
+      });
+    } catch (error) {
+      console.error("Error al obtener productos destacados:", error);
+    }
+  }
+
+  async toggleFeaturedProduct(id: number): Promise<HttpStatus> {
+    try {
+      const existingProduct = await this.prisma.product.findUnique({
+        where: { id: id },
+        select: { featured: true },
+      });
+
+      const newFeaturedValue = !existingProduct?.featured;
+
+      await this.prisma.product.update({
+        where: { id: id },
+        data: { featured: newFeaturedValue },
+      });
+
+      return HttpStatus.OK;
+    } catch (error) {
+      console.error(
+        "Error al cambiar el estado destacado del producto:",
+        error
+      );
+      return HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+  }
+
   async updateDBProducts(updateUsd = false): Promise<string | Error> {
     try {
       const token = await this.tfacturaService.postToken();
@@ -98,11 +132,11 @@ export class ProductService {
   }
   async addProductImg(data: AddProductImg) {
     try {
-      const { productId, path, asset_id, publicId, index } = data;
+      const { productId, path, assetId, publicId, index } = data;
 
       const product = await this.prisma.productImage.create({
         data: {
-          id: asset_id,
+          id: assetId,
           publicId,
           path,
           productId,
