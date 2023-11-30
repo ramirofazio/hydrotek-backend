@@ -26,7 +26,9 @@ export class MobbexService {
     const customer: mobbexCustomer = await this.generateCustomer(userId);
     const mobbexItems: mobbexItem[] = await this.generateItems(items);
     const total =
-      env.env === "production" ? this.calculateTotal(mobbexItems) : 12;
+      env.env === "production" || env.env === "staging"
+        ? this.calculateTotal(mobbexItems)
+        : 12;
     const reference = this.generateReference(customer);
     const description = `Checkout ${reference}`;
     const currency = "ARS";
@@ -59,7 +61,9 @@ export class MobbexService {
     });
     const mobbexItems: mobbexItem[] = await this.generateItems(body.items);
     const total =
-      env.env === "production" ? this.calculateTotal(mobbexItems) : 12;
+      env.env === "production" || env.env === "staging"
+        ? this.calculateTotal(mobbexItems)
+        : 12;
     const reference = this.generateGuestReference(customer);
     const description = `Checkout ${reference}`;
     const currency = "ARS";

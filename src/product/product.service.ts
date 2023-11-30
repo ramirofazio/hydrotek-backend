@@ -24,6 +24,7 @@ export class ProductService {
     try {
       return await this.prisma.product.findMany({
         where: { featured: true },
+        include: { images: true },
       });
     } catch (error) {
       console.error("Error al obtener productos destacados:", error);
