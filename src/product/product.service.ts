@@ -109,7 +109,6 @@ export class ProductService {
           index,
         },
       });
-      console.log(product);
       return product;
     } catch (e) {
       console.log(e);

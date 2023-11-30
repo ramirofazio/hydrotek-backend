@@ -8,7 +8,7 @@ import {
   Delete,
 } from "@nestjs/common";
 import { CloudinaryService } from "./cloudinary.service";
-//import { UpdateAvatarDTO } from "./cloudinary.DTO";
+import { DeleteOneProductImgDTO, DeletedImgsDTO } from "./cloudinary.DTO";
 import { FileInterceptor } from "@nestjs/platform-express";
 
 @Controller("cloudinary")
@@ -27,9 +27,16 @@ export class CloudinaryController {
     return await this.cloudinaryService.updateAvatar(body);
   }
 
-  @Delete("/img/delete/:productId")
-  async deleteProductImg(@Param("productId") productId: number): Promise<any> {
-    return await this.cloudinaryService.deleteProductImg(productId);
+  @Delete("/img/deleteAll/:productId")
+  async deleteProductImg(@Param("productId") productId: number): Promise<DeletedImgsDTO> {
+    return await this.cloudinaryService.deleteAllProductImg(productId);
+  }
+
+  @Post("/img/deleteOne")
+  async deleteOneProductImg(
+    @Body() body: DeleteOneProductImgDTO
+  ): Promise<DeletedImgsDTO> {
+    return await this.cloudinaryService.deleteOneProductImg(body);
   }
 
   // @Post("loadProductImage") // ? en desuso pero puede srvir
@@ -37,5 +44,4 @@ export class CloudinaryController {
   // async loadProductImage(@Body() body: { file: string; productId: string }) {
   //   return await this.cloudinaryService.loadProductImage(body);
   // }
-
 }
