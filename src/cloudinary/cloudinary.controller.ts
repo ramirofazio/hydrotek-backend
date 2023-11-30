@@ -8,7 +8,7 @@ import {
   Delete,
 } from "@nestjs/common";
 import { CloudinaryService } from "./cloudinary.service";
-import { DeleteOneProductImgDTO, DeletedImgsDTO } from "./cloudinary.DTO";
+import { DeleteOneProductImgDTO, DeletedImgsDTO } from "./cloudinary.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 
 @Controller("cloudinary")
@@ -28,7 +28,9 @@ export class CloudinaryController {
   }
 
   @Delete("/img/deleteAll/:productId")
-  async deleteProductImg(@Param("productId") productId: number): Promise<DeletedImgsDTO> {
+  async deleteProductImg(
+    @Param("productId") productId: number
+  ): Promise<DeletedImgsDTO> {
     return await this.cloudinaryService.deleteAllProductImg(productId);
   }
 

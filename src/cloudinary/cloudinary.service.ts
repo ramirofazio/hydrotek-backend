@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { v2 as cloudinary } from "cloudinary";
 import { env } from "process";
-import { DeleteOneProductImgDTO } from "./cloudinary.DTO";
+import { DeleteOneProductImgDTO } from "./cloudinary.dto";
 @Injectable()
 export class CloudinaryService {
   /* eslint-disable */
@@ -41,8 +41,6 @@ export class CloudinaryService {
     }
   }
 
-  
-
   async deleteAllProductImg(productId: number) {
     const cloudImgs = await this.prisma.productImage.findMany({
       where: {
@@ -66,12 +64,12 @@ export class CloudinaryService {
     return { deleted_cloud, deleted_db };
   }
   async deleteOneProductImg(body: DeleteOneProductImgDTO) {
-    const {productImgId, publicId} = body
-    console.log(productImgId)
+    const { productImgId, publicId } = body;
+    console.log(productImgId);
     const deleted_db = await this.prisma.productImage.delete({
       where: {
         id: productImgId,
-      }
+      },
     });
     cloudinary.config({
       api_key: env.CLOUDINARY_API_KEY,

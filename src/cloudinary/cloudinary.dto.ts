@@ -1,7 +1,6 @@
-
 export interface DeleteOneProductImgDTO {
   productImgId: string;
-  publicId: string
+  publicId: string;
 }
 
 export interface DeletedImgsDTO {

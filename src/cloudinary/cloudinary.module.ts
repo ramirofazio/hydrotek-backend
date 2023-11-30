@@ -4,12 +4,9 @@ import { CloudinaryService } from "./cloudinary.service";
 import { CloudinaryController } from "./cloudinary.controller";
 
 @Module({
-  imports: [
-    PrismaModule
-  ],
+  imports: [PrismaModule],
   providers: [CloudinaryService],
   controllers: [CloudinaryController],
   exports: [CloudinaryService],
 })
-
 export class CloudinaryModule {}
