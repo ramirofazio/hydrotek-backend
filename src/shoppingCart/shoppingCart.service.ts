@@ -1,20 +1,55 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
-import { UpdateCartDTO } from "./shoppingCartDTO";
+import { NewOrderDTO, UpdateCartDTO } from "./shoppingCartDTO";
 import { PrismaService } from "src/prisma/prisma.service";
 import { Response } from "../commonDTO";
+import { randomUUID } from "crypto";
 
 @Injectable()
 export class ShoppingCartService {
-  /* eslint-disable */
   constructor(private prisma: PrismaService) {}
-  /* eslint-enable */
+
+  async createNewOrder({ id, items, totalPrice }: NewOrderDTO): Promise<any> {
+    try {
+      //todo: No entiendo bien las relaciones, hay que enlazar la orden con los orderProducts y el usuario tambien. luego enviar mail a cliente y a admin
+      // todo: Problemas con el orderId que se repetia ¿¿??
+      //   const user = await this.prisma.user.findUnique({
+      //     where: { id: id },
+      //   });
+
+      //   if (!user) {
+      //     return HttpStatus.NOT_FOUND;
+      //   }
+
+      //   const newOrder = await this.prisma.order.create({
+      //     data: {
+      //       userId: id,
+      //       totalPrice: totalPrice,
+      //       products: {
+      //         create: items.map((item) => ({
+      //           productId: item.productId,
+      //           quantity: item.quantity,
+      //           price: item.price,
+      //           name: item.name,
+      //         })),
+      //       },
+      //     },
+      //   });
+
+      //   return newOrder;
+
+      return HttpStatus.CREATED;
+    } catch (error) {
+      console.error("Error al crear la orden:", error);
+      return HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+  }
 
   async loadCart(data: UpdateCartDTO): Promise<Response> {
     try {
       const { userId, shoppingCart } = data;
       if (!shoppingCart?.products.length) {
         throw new HttpException(
-          "no se encontraron productos que cargar",
+          "No se encontraron productos que cargar",
           HttpStatus.BAD_REQUEST
         );
       }
@@ -44,13 +79,10 @@ export class ShoppingCartService {
           totalPrice: shoppingCart.totalPrice,
         },
       });
-      return { res: "se actualizo shoppingCart", payload: newCart };
+      return { res: "Se actualizó el carrito de compras", payload: newCart };
     } catch (e) {
       console.log(e);
-      throw new HttpException(
-        e.message,
-        HttpStatus.CONFLICT
-      );
+      throw new HttpException(e.message, HttpStatus.CONFLICT);
     }
   }
 
@@ -63,17 +95,16 @@ export class ShoppingCartService {
       published: true,
       type: 1,
       profile: 2,
-      updated: "no updateado",
+      updated: "no actualizado",
     };
     const mock = await this.prisma.product.create({ data: mockProduct });
     return {
-      res: "se creo el mock product",
+      res: "Se creó el producto simulado",
       payload: mock,
     };
   }
 
   async findById(userId: string): Promise<Response> {
-    //fin by userId
     const cart = await this.prisma.shoppingCart.findUnique({
       where: {
         userId,
@@ -84,7 +115,7 @@ export class ShoppingCartService {
     });
 
     return {
-      res: `se encontro el carrito con id de usuario ${userId}`,
+      res: `Se encontró el carrito con el ID de usuario ${userId}`,
       payload: cart,
     };
   }
@@ -98,7 +129,7 @@ export class ShoppingCartService {
     });
     if (!cart.products.length) {
       throw new HttpException(
-        `el carrito de ${userId}, no tiene productos asociados`,
+        `El carrito de ${userId} no tiene productos asociados`,
         HttpStatus.CONFLICT
       );
     }
@@ -113,6 +144,6 @@ export class ShoppingCartService {
       },
     });
 
-    return `se limpios el carrito de ${userId}`;
+    return `Se limpió el carrito de ${userId}`;
   }
 }
