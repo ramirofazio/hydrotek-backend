@@ -24,6 +24,53 @@ export class UserService {
   ) {}
   /* eslint-enable */
 
+  async markOrderAsPay(fresaId: string): Promise<HttpStatus> {
+    try {
+      await this.prisma.order.update({
+        where: { fresaId: fresaId },
+        data: { status: 200 },
+      });
+
+      return HttpStatus.OK;
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(
+        "error al actualizar la orden",
+        HttpStatus.NOT_FOUND
+      );
+    }
+  }
+
+  async getAllOrders() {
+    try {
+      const orders = await this.prisma.order.findMany({
+        select: {
+          user: { select: { name: true, email: true } },
+          totalPrice: true,
+          fresaId: true,
+          status: true,
+          date: true,
+          products: {
+            select: {
+              quantity: true,
+              price: true,
+              name: true,
+            },
+          },
+        },
+      });
+
+      if (!orders) {
+        throw new HttpException("ordenes no encontradas", HttpStatus.NOT_FOUND);
+      }
+
+      return orders;
+    } catch (e) {
+      console.log(e);
+      throw new HttpException("ordenes no encontradas", HttpStatus.NOT_FOUND);
+    }
+  }
+
   async getOneOrder(id: string) {
     try {
       const order = await this.prisma.order.findFirst({

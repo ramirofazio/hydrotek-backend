@@ -32,6 +32,16 @@ export class UserController {
   ) {}
   /* eslint-enable */
 
+  @Patch("mark-order-as-pay")
+  async markOrderAsPay(@Query("fresaId") fresaId: string) {
+    return this.userService.markOrderAsPay(fresaId);
+  }
+
+  @Get("get-all-orders")
+  async getAllOrders() {
+    return this.userService.getAllOrders();
+  }
+
   @Get("get-one-order")
   async getOneOrder(@Query("id") id: string) {
     return this.userService.getOneOrder(id);
