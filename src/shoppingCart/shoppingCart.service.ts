@@ -2,42 +2,42 @@ import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { NewOrderDTO, UpdateCartDTO } from "./shoppingCartDTO";
 import { PrismaService } from "src/prisma/prisma.service";
 import { Response } from "../commonDTO";
-import { randomUUID } from "crypto";
 
 @Injectable()
 export class ShoppingCartService {
   constructor(private prisma: PrismaService) {}
 
-  async createNewOrder({ id, items, totalPrice }: NewOrderDTO): Promise<any> {
+  async createNewOrder({
+    id,
+    items,
+    fresaId,
+    status,
+    totalPrice,
+  }: NewOrderDTO): Promise<HttpStatus> {
     try {
-      //todo: No entiendo bien las relaciones, hay que enlazar la orden con los orderProducts y el usuario tambien. luego enviar mail a cliente y a admin
-      // todo: Problemas con el orderId que se repetia ¿¿??
-      //   const user = await this.prisma.user.findUnique({
-      //     where: { id: id },
-      //   });
+      return await this.prisma.$transaction(async (tx) => {
+        const user = await tx.user.findUnique({ where: { id: id } });
 
-      //   if (!user) {
-      //     return HttpStatus.NOT_FOUND;
-      //   }
+        if (!user) {
+          return HttpStatus.NOT_FOUND;
+        }
 
-      //   const newOrder = await this.prisma.order.create({
-      //     data: {
-      //       userId: id,
-      //       totalPrice: totalPrice,
-      //       products: {
-      //         create: items.map((item) => ({
-      //           productId: item.productId,
-      //           quantity: item.quantity,
-      //           price: item.price,
-      //           name: item.name,
-      //         })),
-      //       },
-      //     },
-      //   });
+        const newOrder = await tx.order.create({
+          data: {
+            totalPrice: totalPrice,
+            fresaId: fresaId.toString(),
+            status: status,
+            user: { connect: { id: user.id } },
+            products: { createMany: { data: items } },
+          },
+        });
 
-      //   return newOrder;
+        if (!newOrder) {
+          return HttpStatus.BAD_REQUEST;
+        }
 
-      return HttpStatus.CREATED;
+        return HttpStatus.CREATED;
+      });
     } catch (error) {
       console.error("Error al crear la orden:", error);
       return HttpStatus.INTERNAL_SERVER_ERROR;

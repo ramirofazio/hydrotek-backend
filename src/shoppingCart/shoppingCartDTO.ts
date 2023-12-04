@@ -30,6 +30,14 @@ export class NewOrderDTO {
 
   @IsNotEmpty()
   @IsNumber()
+  fresaId: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  status: number;
+
+  @IsNotEmpty()
+  @IsNumber()
   totalPrice: number;
 
   @IsArray()

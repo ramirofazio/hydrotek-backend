@@ -31,6 +31,11 @@ export class UserController {
   ) {}
   /* eslint-enable */
 
+  @Get("orders")
+  async getOrders(@Body("id") id: string) {
+    return this.userService.getOrders(id);
+  }
+
   @Patch("save-deliveryInfo")
   async saveDeliveryInfo(@Body() body: deliveryInfoDTO) {
     return await this.userService.saveDeliveryInfo(body);

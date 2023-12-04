@@ -24,6 +24,47 @@ export class UserService {
   ) {}
   /* eslint-enable */
 
+  async getOrders(id: string) {
+    try {
+      const user = await this.prisma.user.findUnique({ where: { id: id } });
+
+      if (!user) {
+        throw new HttpException(
+          "usuario no encontrado",
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      const userOrders = await this.prisma.order.findMany({
+        where: { userId: id },
+        select: {
+          id: true,
+          totalPrice: true,
+          fresaId: true,
+          status: true,
+          products: {
+            select: {
+              price: true,
+              product: { select: { images: true, name: true } },
+            },
+          },
+        },
+      });
+
+      if (!userOrders) {
+        throw new HttpException("usuario sin ordenes", HttpStatus.NOT_FOUND);
+      }
+
+      return userOrders;
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(
+        "error al obtener ordenes del usuario",
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
   async alternAdmin(
     id: string,
     currentUser: sessionDTO
