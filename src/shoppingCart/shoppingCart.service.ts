@@ -5,6 +5,7 @@ import { Response } from "../commonDTO";
 
 @Injectable()
 export class ShoppingCartService {
+  // eslint-disable-next-line no-unused-vars
   constructor(private prisma: PrismaService) {}
 
   async createNewOrder({

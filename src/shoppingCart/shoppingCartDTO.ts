@@ -26,42 +26,42 @@ export interface UpdateCartDTO {
 export class NewOrderDTO {
   @IsNotEmpty()
   @IsUUID()
-  id: string;
+    id: string;
 
   @IsNotEmpty()
   @IsNumber()
-  fresaId: number;
+    fresaId: number;
 
   @IsNotEmpty()
   @IsNumber()
-  status: number;
+    status: number;
 
   @IsNotEmpty()
   @IsNumber()
-  totalPrice: number;
+    totalPrice: number;
 
   @IsArray()
   @IsNotEmpty()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => OrderProducts)
-  items: OrderProducts[];
+    items: OrderProducts[];
 }
 
 export class OrderProducts {
   @IsNotEmpty()
   @IsString()
-  name: string;
+    name: string;
 
   @IsNotEmpty()
   @IsNumber()
-  productId: number;
+    productId: number;
 
   @IsNotEmpty()
   @IsNumber()
-  quantity: number;
+    quantity: number;
 
   @IsNotEmpty()
   @IsNumber()
-  price: number;
+    price: number;
 }
