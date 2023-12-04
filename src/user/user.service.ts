@@ -24,6 +24,36 @@ export class UserService {
   ) {}
   /* eslint-enable */
 
+  async getOneOrder(id: string) {
+    try {
+      const order = await this.prisma.order.findFirst({
+        where: { fresaId: id },
+        select: {
+          totalPrice: true,
+          fresaId: true,
+          status: true,
+          date: true,
+          products: {
+            select: {
+              quantity: true,
+              price: true,
+              product: { select: { images: true, name: true } },
+            },
+          },
+        },
+      });
+
+      if (!order) {
+        throw new HttpException("order no encontrada", HttpStatus.NOT_FOUND);
+      }
+
+      return order;
+    } catch (e) {
+      console.log(e);
+      throw new HttpException("order no encontrada", HttpStatus.NOT_FOUND);
+    }
+  }
+
   async getOrders(id: string) {
     try {
       const user = await this.prisma.user.findUnique({ where: { id: id } });
@@ -38,12 +68,13 @@ export class UserService {
       const userOrders = await this.prisma.order.findMany({
         where: { userId: id },
         select: {
-          id: true,
           totalPrice: true,
           fresaId: true,
           status: true,
+          date: true,
           products: {
             select: {
+              quantity: true,
               price: true,
               product: { select: { images: true, name: true } },
             },

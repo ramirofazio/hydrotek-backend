@@ -8,6 +8,7 @@ import {
   HttpStatus,
   Put,
   Patch,
+  Query,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { TfacturaService } from "src/tfactura/tfactura.service";
@@ -31,8 +32,13 @@ export class UserController {
   ) {}
   /* eslint-enable */
 
+  @Get("get-one-order")
+  async getOneOrder(@Query("id") id: string) {
+    return this.userService.getOneOrder(id);
+  }
+
   @Get("orders")
-  async getOrders(@Body("id") id: string) {
+  async getOrders(@Query("id") id: string) {
     return this.userService.getOrders(id);
   }
 

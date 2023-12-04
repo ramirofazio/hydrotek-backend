@@ -181,6 +181,7 @@ model Order {
     totalPrice Int
     fresaId    String          @unique
     status     Int
+    date       DateTime        @default(now())
     products   OrderProducts[]
 }
 
