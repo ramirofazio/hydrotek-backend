@@ -20,6 +20,33 @@ export class ProductService {
   ) {}
   /* eslint-enable */
 
+  async toggleActiveProduct(id: number): Promise<HttpStatus> {
+    try {
+      const existingProduct = await this.prisma.product.findUnique({
+        where: { id: id },
+        select: { published: true },
+      });
+
+      const newValue = !existingProduct?.published;
+
+      await this.prisma.product.update({
+        where: { id: id },
+        data: { published: newValue },
+      });
+
+      return HttpStatus.OK;
+    } catch (error) {
+      console.error(
+        "Error al cambiar el estado publicado del producto:",
+        error
+      );
+      throw new HttpException(
+        "Error al cambiar el estado publicado del producto:",
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
   async getFeaturedProducts(): Promise<ProductDTO[]> {
     try {
       return await this.prisma.product.findMany({

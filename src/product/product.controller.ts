@@ -1,4 +1,13 @@
-import { Controller, Get, Body, Param, Post, Put, Query } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Body,
+  Param,
+  Post,
+  Put,
+  Query,
+  Patch,
+} from "@nestjs/common";
 import { ProductService } from "./product.service";
 import {
   ProductDTO,
@@ -12,6 +21,10 @@ export class ProductController {
   /* eslint-disable */
   constructor(private productService: ProductService) {}
   /* eslint-enable */
+  @Patch("toggle-active")
+  async toggleActiveProduct(@Query("id") id: number) {
+    return this.productService.toggleActiveProduct(id);
+  }
 
   @Get("featured-products")
   async getFeaturedProducts() {
