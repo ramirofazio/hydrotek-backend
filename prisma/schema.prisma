@@ -148,8 +148,8 @@ model Product {
     shoppingCarts    ProductsOnCart[]
     promotionalCodes PromotionalCodeOnProducts[]
     orders           OrderProducts[]
-    productType     ProductType @relation(fields: [typeId], references: [id])
-    typeId Int
+    productType     ProductType? @relation(fields: [typeId], references: [id])
+    typeId Int?
 }
 model ProductType {
     id        Int  @id @default(autoincrement())
