@@ -26,7 +26,7 @@ export class ShoppingCartService {
         const newOrder = await tx.order.create({
           data: {
             totalPrice: totalPrice,
-            fresaId: fresaId.toString(),
+            fresaId: fresaId,
             status: status,
             user: { connect: { id: user.id } },
             products: { createMany: { data: items } },
