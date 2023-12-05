@@ -24,6 +24,125 @@ export class UserService {
   ) {}
   /* eslint-enable */
 
+  async markOrderAsPay(fresaId: string): Promise<HttpStatus> {
+    try {
+      await this.prisma.order.update({
+        where: { fresaId: fresaId },
+        data: { status: 200 },
+      });
+
+      return HttpStatus.OK;
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(
+        "error al actualizar la orden",
+        HttpStatus.NOT_FOUND
+      );
+    }
+  }
+
+  async getAllOrders() {
+    try {
+      const orders = await this.prisma.order.findMany({
+        select: {
+          user: { select: { name: true, email: true } },
+          totalPrice: true,
+          fresaId: true,
+          status: true,
+          date: true,
+          products: {
+            select: {
+              quantity: true,
+              price: true,
+              name: true,
+            },
+          },
+        },
+      });
+
+      if (!orders) {
+        throw new HttpException("ordenes no encontradas", HttpStatus.NOT_FOUND);
+      }
+
+      return orders;
+    } catch (e) {
+      console.log(e);
+      throw new HttpException("ordenes no encontradas", HttpStatus.NOT_FOUND);
+    }
+  }
+
+  async getOneOrder(id: string) {
+    try {
+      const order = await this.prisma.order.findFirst({
+        where: { fresaId: id },
+        select: {
+          totalPrice: true,
+          fresaId: true,
+          status: true,
+          date: true,
+          products: {
+            select: {
+              quantity: true,
+              price: true,
+              product: { select: { images: true, name: true } },
+            },
+          },
+        },
+      });
+
+      if (!order) {
+        throw new HttpException("order no encontrada", HttpStatus.NOT_FOUND);
+      }
+
+      return order;
+    } catch (e) {
+      console.log(e);
+      throw new HttpException("order no encontrada", HttpStatus.NOT_FOUND);
+    }
+  }
+
+  async getOrders(id: string) {
+    try {
+      const user = await this.prisma.user.findUnique({ where: { id: id } });
+
+      if (!user) {
+        throw new HttpException(
+          "usuario no encontrado",
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      const userOrders = await this.prisma.order.findMany({
+        where: { userId: id },
+        select: {
+          totalPrice: true,
+          fresaId: true,
+          status: true,
+          date: true,
+          products: {
+            select: {
+              quantity: true,
+              price: true,
+              product: { select: { images: true, name: true } },
+            },
+          },
+        },
+      });
+
+      if (!userOrders) {
+        throw new HttpException("usuario sin ordenes", HttpStatus.NOT_FOUND);
+      }
+
+      return userOrders;
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(
+        "error al obtener ordenes del usuario",
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
   async alternAdmin(
     id: string,
     currentUser: sessionDTO

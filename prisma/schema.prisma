@@ -175,32 +175,26 @@ model PromotionalCodeOnProducts {
 }
 
 model Order {
-    id           String          @id @default(uuid())
-    user         User            @relation(fields: [userId], references: [id])
-    userId       String          @unique
-    trackingCode String
-    state        String
-    address      String
-    clientName   String
-    city         City?
-    products     OrderProducts[]
+    id         String          @id @default(uuid())
+    user       User            @relation(fields: [userId], references: [id])
+    userId     String
+    totalPrice Int
+    fresaId    String          @unique
+    status     Int
+    date       DateTime        @default(now())
+    products   OrderProducts[]
 }
 
 model OrderProducts {
+    id String @id @default(uuid())
+
     product   Product @relation(fields: [productId], references: [id])
-    productId Int     @unique
+    productId Int
     order     Order   @relation(fields: [orderId], references: [id])
-    orderId   String  @unique
-
-    @@id([productId, orderId])
-}
-
-model City {
-    postalCode Int    @id // ? Cargar data de ciudades a la DB || esperar a la API de correo
-    order      Order  @relation(fields: [orderId], references: [id])
-    orderId    String @unique
-    name       String
-    province   String
+    orderId   String
+    price     Int
+    name      String
+    quantity  Int
 }
 
 model TokenLog {

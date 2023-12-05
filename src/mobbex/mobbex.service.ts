@@ -36,10 +36,10 @@ export class MobbexService {
     // eslint-disable-next-line camelcase
     const return_url =
       env.env === "production"
-        ? `https://www.hydrotek.store/shoppingCart`
+        ? "https://www.hydrotek.store/shoppingCart"
         : env.env === "staging"
-          ? `http://85.31.231.196:51732/shoppingCart`
-          : `http://localhost:5173/shoppingCart`;
+          ? "http://85.31.231.196:51732/shoppingCart"
+          : "http://localhost:5173/shoppingCart";
 
     const bodyResponse: mobbexBody = {
       total,
@@ -71,10 +71,10 @@ export class MobbexService {
     // eslint-disable-next-line camelcase
     const return_url =
       env.env === "production"
-        ? `https://www.hydrotek.store/shoppingCart`
+        ? "https://www.hydrotek.store/shoppingCart"
         : env.env === "staging"
-          ? `http://85.31.231.196:51732/shoppingCart`
-          : `http://localhost:5173/shoppingCart`;
+          ? "http://85.31.231.196:51732/shoppingCart"
+          : "http://localhost:5173/shoppingCart";
 
     const bodyResponse: mobbexBody = {
       total,
