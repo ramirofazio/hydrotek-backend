@@ -8,18 +8,24 @@ export class CategoryService {
   /* eslint-enable */
 
   async createCategories() {
-    const categories = ["sistemas", "insumos", "fertilizantes", "aditivos"];
+    const categories = [
+      { id: 1, name: "sistemas" },
+      { id: 2, name: "insumos" },
+      { id: 3, name: "fertilizantes" },
+      { id: 4, name: "aditivos" },
+    ];
+
     const res = categories.map(async (c) => {
-      const exist = await this.prisma.productType.findFirst({
-        where: { type: c },
+      await this.prisma.productType.upsert({
+        where: {
+          id: c.id,
+        },
+        update: { type: c.name },
+        create: {
+          id: c.id,
+          type: c.name
+        },
       });
-      if (!exist) {
-        await this.prisma.productType.create({
-          data: {
-            type: c,
-          },
-        });
-      }
     });
 
     return res;
