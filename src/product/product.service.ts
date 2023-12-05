@@ -127,7 +127,7 @@ export class ProductService {
 
   async getAllProducts(): Promise<ProductDTO[]> {
     return await this.prisma.product.findMany({
-      orderBy: { name: "asc" },
+      orderBy: { arsPrice: "desc" },
       include: {
         images: true,
       },
