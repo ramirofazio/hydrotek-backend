@@ -251,6 +251,7 @@ export class UserService {
   }
 
   async findByEmail(email: string): Promise<RawUserDTO | undefined> {
+
     const user = await this.prisma.user.findFirst({
       where: { email: email },
       include: {

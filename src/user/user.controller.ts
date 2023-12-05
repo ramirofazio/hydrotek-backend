@@ -113,6 +113,8 @@ export class UserController {
     const id: string = data.session.id;
     try {
       const update = await this.userService.updateUser(id, user, profile);
+      console.log(update);
+
       return update;
     } catch (error) {
       throw new HttpException(
