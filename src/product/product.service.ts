@@ -103,6 +103,7 @@ export class ProductService {
       orderBy: { name: "asc" },
       include: {
         images: true,
+        productType: true,
       },
     });
   }

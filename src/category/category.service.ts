@@ -8,7 +8,7 @@ export class CategoryService {
   /* eslint-enable */
 
   async createCategories() {
-    const categories = ["Sistemas", "insumos", "fertilizantes", "aditivos"];
+    const categories = ["sistemas", "insumos", "fertilizantes", "aditivos"];
     const res = categories.map(async (c) => {
       const exist = await this.prisma.productType.findFirst({
         where: { type: c },
