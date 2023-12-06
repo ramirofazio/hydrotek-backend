@@ -20,6 +20,7 @@ import { MailModule } from "./mail/mail.module";
 import { ProductModule } from "./product/product.module";
 import { ApidolarModule } from "./apidolar/apidolar.module";
 import { MobbexModule } from "./mobbex/mobbex.module";
+import { CategoryService } from "./category/category.service";
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { MobbexModule } from "./mobbex/mobbex.module";
     },
     PrismaService,
     RoleService,
+    CategoryService,
   ],
 })
 export class AppModule {}

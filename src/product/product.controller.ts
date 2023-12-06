@@ -14,6 +14,7 @@ import {
   PagDTO,
   ProductsPaginatedDTO,
   AddProductImg,
+  UpdateTypeDTO,
 } from "./product.dto";
 
 @Controller("product")
@@ -41,6 +42,11 @@ export class ProductController {
     return await this.productService.updateDBProducts(full);
   }
 
+  @Get("filter/:typeId")
+  async getFilteredProducts(@Param("typeId") typeId: number) {
+    return await this.productService.getFilteredProducts(typeId);
+  }
+
   @Get()
   async getImportantProducts() {
     return await this.productService.importantProducts();
@@ -64,5 +70,10 @@ export class ProductController {
   @Post("/pag")
   findbyId(@Body() body: PagDTO): Promise<ProductsPaginatedDTO> {
     return this.productService.getProductsPaginated(body);
+  }
+
+  @Put("/updateType")
+  updateType(@Body() data: UpdateTypeDTO) {
+    return this.productService.updateType(data);
   }
 }

@@ -4,6 +4,7 @@ import {
   PagDTO,
   ProductDTO,
   ProductsPaginatedDTO,
+  UpdateTypeDTO,
 } from "./product.dto";
 import { PrismaService } from "src/prisma/prisma.service";
 import { Error } from "../commonDTO";
@@ -130,6 +131,7 @@ export class ProductService {
       orderBy: [{ arsPrice: "desc" }, { name: "desc" }],
       include: {
         images: true,
+        productType: { select: { type: true } },
       },
     });
   }
@@ -175,5 +177,27 @@ export class ProductService {
     } catch (e) {
       console.log(e);
     }
+  }
+
+  async updateType(data: UpdateTypeDTO) {
+    const { productId, categoryId } = data;
+    console.log(data);
+    const updated = await this.prisma.product.update({
+      where: {
+        id: productId,
+      },
+      data: {
+        typeId: categoryId,
+      },
+    });
+
+    return updated;
+  }
+
+  async getFilteredProducts(typeId: number) {
+    const products = await this.prisma.product.findMany({
+      where: { typeId },
+    });
+    return products;
   }
 }
