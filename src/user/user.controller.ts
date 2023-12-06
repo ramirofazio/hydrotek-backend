@@ -8,6 +8,7 @@ import {
   HttpStatus,
   Put,
   Patch,
+  Query,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { TfacturaService } from "src/tfactura/tfactura.service";
@@ -30,6 +31,26 @@ export class UserController {
     private readonly tfacturaService: TfacturaService
   ) {}
   /* eslint-enable */
+
+  @Patch("mark-order-as-pay")
+  async markOrderAsPay(@Query("fresaId") fresaId: string) {
+    return this.userService.markOrderAsPay(fresaId);
+  }
+
+  @Get("get-all-orders")
+  async getAllOrders() {
+    return this.userService.getAllOrders();
+  }
+
+  @Get("get-one-order")
+  async getOneOrder(@Query("id") id: string) {
+    return this.userService.getOneOrder(id);
+  }
+
+  @Get("orders")
+  async getOrders(@Query("id") id: string) {
+    return this.userService.getOrders(id);
+  }
 
   @Patch("save-deliveryInfo")
   async saveDeliveryInfo(@Body() body: deliveryInfoDTO) {
@@ -92,6 +113,8 @@ export class UserController {
     const id: string = data.session.id;
     try {
       const update = await this.userService.updateUser(id, user, profile);
+      console.log(update);
+
       return update;
     } catch (error) {
       throw new HttpException(

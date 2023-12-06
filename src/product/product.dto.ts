@@ -32,4 +32,3 @@ export interface UpdateTypeDTO {
   productId: number;
   categoryId: number;
 }
-

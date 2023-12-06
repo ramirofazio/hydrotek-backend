@@ -7,22 +7,20 @@ import { PrismaService } from "src/prisma/prisma.service";
 @Injectable()
 export class ApidolarService {
   constructor(
-        // eslint-disable-next-line no-unused-vars
-        private readonly httpService: HttpService,
-        // eslint-disable-next-line no-unused-vars
-    private prisma: PrismaService,
+    // eslint-disable-next-line no-unused-vars
+    private readonly httpService: HttpService,
+    // eslint-disable-next-line no-unused-vars
+    private prisma: PrismaService
   ) {}
 
-
   async storeUsdValue() {
-
     const data = await this.getDolarApiData();
 
     await this.prisma.dollarPrice.create({
       data: {
         date: data.fechaActualizacion,
-        price : Number(data.venta),
-      }
+        price: Number(data.venta),
+      },
     });
 
     return data.venta;
@@ -30,22 +28,19 @@ export class ApidolarService {
 
   async getDolarApiData() {
     const { data } = await firstValueFrom(
-      this.httpService
-        .get<apiDolarResponse>(process.env.DOLAR_API_URL)
-        .pipe(
-          catchError((error: AxiosError) => {
-            console.log(error);
-            throw "An error happened!";
-          })
-        )
+      this.httpService.get<apiDolarResponse>(process.env.DOLAR_API_URL).pipe(
+        catchError((error: AxiosError) => {
+          console.log(error);
+          throw "An error happened!";
+        })
+      )
     );
 
     return data;
   }
 
-
   async getSimpleUsdValue() {
-    const lastRow =  await this.prisma.dollarPrice.findFirst({
+    const lastRow = await this.prisma.dollarPrice.findFirst({
       select: {
         id: false,
         date: false,
@@ -53,11 +48,11 @@ export class ApidolarService {
       },
       orderBy: [
         {
-          id : "desc"
-        }
-      ]
+          id: "desc",
+        },
+      ],
     });
-    if(!lastRow) {
+    if (!lastRow) {
       throw new HttpException(
         "No se encontró un valor almacenado de Cotización",
         HttpStatus.BAD_REQUEST
@@ -67,7 +62,7 @@ export class ApidolarService {
   }
 
   async getFullUsdValue() {
-    const lastRow =  await this.prisma.dollarPrice.findFirst({
+    const lastRow = await this.prisma.dollarPrice.findFirst({
       select: {
         id: true,
         date: true,
@@ -75,9 +70,9 @@ export class ApidolarService {
       },
       orderBy: [
         {
-          id : "desc"
-        }
-      ]
+          id: "desc",
+        },
+      ],
     });
     return lastRow;
   }
