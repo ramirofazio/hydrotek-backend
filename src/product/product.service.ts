@@ -144,15 +144,18 @@ export class ProductService {
   }
 
   async getProductsPaginated({
-    pag = 0,
-    productsPerPage = 15,
+    pag,
+    productsPerPage,
   }: PagDTO): Promise<ProductsPaginatedDTO> {
-    const quantity = await this.prisma.product.count();
+    const quantity = await this.prisma.product.count({
+      where: { published: true },
+    });
 
     const products = await this.prisma.product.findMany({
       skip: productsPerPage * pag,
       take: productsPerPage,
       include: { images: { select: { path: true } } },
+      where: { published: true },
     });
 
     return {
