@@ -139,6 +139,7 @@ export class ProductService {
   async getProductDetail(id: number): Promise<ProductDTO> {
     const product = await this.prisma.product.findUnique({
       where: { id },
+      include: { images: { select: { path: true } } },
     });
     return product;
   }
