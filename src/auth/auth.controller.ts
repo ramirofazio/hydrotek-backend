@@ -1,6 +1,19 @@
-import { Body, Controller, HttpException, HttpStatus, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  HttpException,
+  HttpStatus,
+  Post,
+  Put,
+} from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { signInDto, googleSignInDTO, confirmPasswordResetRequest, initPasswordResetRequest } from "./auth.dto";
+import {
+  signInDto,
+  googleSignInDTO,
+  confirmPasswordResetRequest,
+  initPasswordResetRequest,
+  activeUserDTO,
+} from "./auth.dto";
 import { CreateUserDTO } from "src/user/user.dto";
 @Controller("auth")
 export class AuthController {
@@ -35,27 +48,37 @@ export class AuthController {
   }
 
   @Post("init-reset")
-  async initResetPassword(@Body() body : initPasswordResetRequest) {
+  async initResetPassword(@Body() body: initPasswordResetRequest) {
     try {
-      this.authService.initResetPassword(body.email);
-      return "ok";
+      return this.authService.initResetPassword(body.email);
     } catch (error) {
       return error;
     }
   }
 
   @Post("reset-password")
-  async resetPassword(@Body() body:confirmPasswordResetRequest) {
+  async resetPassword(@Body() body: confirmPasswordResetRequest) {
     try {
       return await this.authService.confirmResetPassword(body);
     } catch (error) {
-      if(error.name === "JsonWebTokenError") {
+      if (error.name === "JsonWebTokenError") {
         throw new HttpException("token invalido", HttpStatus.UNAUTHORIZED);
-      }
-      else {
+      } else {
         throw new HttpException(error, HttpStatus.BAD_REQUEST);
       }
     }
+  }
 
+  @Put("active-user")
+  async activeUser(@Body() body: activeUserDTO) {
+    try {
+      return await this.authService.activeUser(body);
+    } catch (error) {
+      if (error.name === "JsonWebTokenError") {
+        throw new HttpException("token invalido", HttpStatus.UNAUTHORIZED);
+      } else {
+        throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      }
+    }
   }
 }

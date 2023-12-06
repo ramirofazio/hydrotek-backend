@@ -1,5 +1,5 @@
 import { HttpService } from "@nestjs/axios";
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { AxiosError } from "axios";
 import { catchError, firstValueFrom } from "rxjs";
 import {
@@ -9,7 +9,6 @@ import {
   TFacturaProductsData,
 } from "./tfactura.credentials";
 //linea comentada para evitar errores eslint.
-// import { Cron, CronExpression } from "@nestjs/schedule";
 
 import { DateTime } from "luxon";
 import { PrismaService } from "src/prisma/prisma.service";
@@ -23,9 +22,9 @@ import {
   TokenError,
 } from "./tfactura.dto";
 import { isArray } from "class-validator";
-import {  Token } from "@prisma/client";
+import { Token } from "@prisma/client";
 import { AfipService } from "src/afip/afip.service";
-
+import { ApidolarService } from "src/apidolar/apidolar.service";
 
 @Injectable()
 export class TfacturaService {
@@ -35,7 +34,9 @@ export class TfacturaService {
     // eslint-disable-next-line no-unused-vars
     private prisma: PrismaService,
     // eslint-disable-next-line no-unused-vars
-    private afipService: AfipService
+    private afipService: AfipService,
+    // eslint-disable-next-line no-unused-vars
+    private apidolarService: ApidolarService
   ) {}
 
   //Función auxiliar para obtener ultimo token
@@ -67,7 +68,7 @@ export class TfacturaService {
   }
 
   //Solicitud de productos a TFactura. Utiliza ultimo token guardado en db
-  // @Cron(CronExpression.EVERY_10_SECONDS)
+
   async getProducts(): Promise<RawProductResponse> {
     const { GET_PRODUCTS_URL, TFacturaBaseCredentials } =
       new TFacturaProductsData();
@@ -123,7 +124,7 @@ export class TfacturaService {
           validUntil: timestamp,
         },
       });
-      return { token : "success" };
+      return { token: "success" };
     } else {
       await this.prisma.tokenLog.create({
         data: {
@@ -132,7 +133,7 @@ export class TfacturaService {
           date: timestamp,
         },
       });
-      return { token : "error" };
+      return { token: "error" };
     }
   }
 
@@ -140,6 +141,13 @@ export class TfacturaService {
   //ya que esta estructura sale bien o mal pero siempre en BLOQUE (100%)
   // @Cron(CronExpression.EVERY_10_SECONDS)
   async postProducts() {
+    const usdValue: number = await this.apidolarService.getSimpleUsdValue();
+    if (!usdValue) {
+      throw new HttpException(
+        "No se encontró un valor almacenado de Cotización",
+        HttpStatus.BAD_REQUEST
+      );
+    }
     const res: RawProductResponse = await this.getProducts();
     if (res.Error.length) {
       //manejo el error
@@ -161,82 +169,106 @@ export class TfacturaService {
       res.Data.forEach((el) => {
         formatted.push(new Product(el));
       });
+
       try {
+        //? Marco todos los product de la DB en 0 para saber cuales no se actualizaron en el .map y desactivarlos luego
+        await this.prisma.product.updateMany({
+          data: { arsPrice: 0 },
+        });
+
         await this.prisma.$transaction(
+          //? Mapeo todos y creo/actualizo precios
           formatted.map((el) => {
             return this.prisma.product.upsert({
               where: { id: el.id },
-              create: { ...el },
-              update: { ...el },
+              create: { ...el, arsPrice: el.usdPrice * usdValue },
+              update: { ...el, arsPrice: el.usdPrice * usdValue },
             });
           })
         );
+
+        //? desactivo los productos a los que no se les actualizo el precio (viejos o sin precio)
+        await this.prisma.product.updateMany({
+          where: { arsPrice: 0 },
+          data: { published: false },
+        });
+
         return { products: "success" };
       } catch (error) {
         return { error };
       }
-
     }
   }
 
-
-
-
-  getCategory = (RI:boolean, M:boolean, EX:boolean, CF:boolean) => {
-
+  getCategory = (RI: boolean, M: boolean, EX: boolean, CF: boolean) => {
     switch (true) {
-    case RI:
-      return "RI";
-    case M:
-      return "M";
-    case EX:
-      return "EX";
-    case CF:
-      return "CF";
+      case RI:
+        return "RI";
+      case M:
+        return "M";
+      case EX:
+        return "EX";
+      case CF:
+        return "CF";
 
-    default:
-      return "CF";
-
+      default:
+        return "CF";
     }
-
   };
 
-
-  async createUser(identifier:string) {
-
+  async createUser(identifier: string) {
     const idTypeTranslator = {
-      CUIT : 2,
-      DNI : 1
+      CUIT: 2,
+      DNI: 1,
     };
 
     const lastToken = await this.getLastToken();
 
     const fullTaxData = await this.afipService.handleIdentifier(identifier);
-    if(typeof fullTaxData === "object") {
-      if("error" in fullTaxData === false && "Contribuyente" in fullTaxData) {
-        const { idPersona, tipoClave, nombre, domicilioFiscal, EsRI, EsMonotributo, EsExento, EsConsumidorFinal } = fullTaxData.Contribuyente;
-        const newClient:ClientCreate = {
-          ClienteNombre : nombre,
+    if (typeof fullTaxData === "object") {
+      if ("error" in fullTaxData === false && "Contribuyente" in fullTaxData) {
+        const {
+          idPersona,
+          tipoClave,
+          nombre,
+          domicilioFiscal,
+          EsRI,
+          EsMonotributo,
+          EsExento,
+          EsConsumidorFinal,
+        } = fullTaxData.Contribuyente;
+        const newClient: ClientCreate = {
+          ClienteNombre: nombre,
           ClienteTipoDocumento: idTypeTranslator[tipoClave],
           ClienteNumeroDocumento: idPersona,
           ClienteDireccion: {
-            Calle:                domicilioFiscal.direccion,
-            Numero:               "",
-            Piso:                 "",
-            Departamento:         "",
-            Localidad:            domicilioFiscal.localidad,
-            CodigoPostal:         domicilioFiscal.codPostal,
-            Provincia:            domicilioFiscal.nombreProvincia,
-            PaisID:               null,
-            PaisNombre:           "Argentina",
+            Calle: domicilioFiscal.direccion,
+            Numero: "",
+            Piso: "",
+            Departamento: "",
+            Localidad: domicilioFiscal.localidad,
+            CodigoPostal: domicilioFiscal.codPostal,
+            Provincia: domicilioFiscal.nombreProvincia,
+            PaisID: null,
+            PaisNombre: "Argentina",
           },
-          CategoriaImpositiva :  this.getCategory(EsRI, EsMonotributo, EsExento, EsConsumidorFinal),
-          ClientePerfilImpositivoCodigo :  this.getCategory(EsRI, EsMonotributo, EsExento, EsConsumidorFinal),
-          CrearAunRepetido :  false,
-          AplicacionID :  0,
-          UserIdentifier :  process.env.TFACTURA_USER_IDENTIFIER,
-          ApplicationPublicKey :  process.env.TFACTURA_APPLICATION_PUBLIC_KEY,
-          Token :  lastToken,
+          CategoriaImpositiva: this.getCategory(
+            EsRI,
+            EsMonotributo,
+            EsExento,
+            EsConsumidorFinal
+          ),
+          ClientePerfilImpositivoCodigo: this.getCategory(
+            EsRI,
+            EsMonotributo,
+            EsExento,
+            EsConsumidorFinal
+          ),
+          CrearAunRepetido: false,
+          AplicacionID: 0,
+          UserIdentifier: process.env.TFACTURA_USER_IDENTIFIER,
+          ApplicationPublicKey: process.env.TFACTURA_APPLICATION_PUBLIC_KEY,
+          Token: lastToken,
         };
         try {
           const { POST_CLIENTS_URL } = new TFacturaClientsCreate();
@@ -252,21 +284,17 @@ export class TfacturaService {
               )
           );
 
-          if(!data.Error.length) {
+          if (!data.Error.length) {
             return data.Data;
-          }
-
-          else {
-            const dataError:TFacturaUserLog = {
-              identifier : identifier.toString(),
-              errorCode : data.CodigoError,
-              data: data.Error.map(el => el.Mensaje).join("/"),
-              date: DateTime.now()
-                .setLocale("es")
-                .toFormat("dd/MM/yyyy HH:mm"),
+          } else {
+            const dataError: TFacturaUserLog = {
+              identifier: identifier.toString(),
+              errorCode: data.CodigoError,
+              data: data.Error.map((el) => el.Mensaje).join("/"),
+              date: DateTime.now().setLocale("es").toFormat("dd/MM/yyyy HH:mm"),
             };
             await this.prisma.tFacturaUserLog.create({
-              data : dataError
+              data: dataError,
             });
 
             return "Error";
@@ -276,7 +304,5 @@ export class TfacturaService {
         }
       }
     }
-
-
   }
 }

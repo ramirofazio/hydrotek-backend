@@ -10,7 +10,6 @@ import {
   ValidateNested,
   IsUUID,
   IsBoolean,
-  IsNumberString,
 } from "class-validator";
 
 export enum Roles {
@@ -18,6 +17,28 @@ export enum Roles {
   USER = 1,
   // eslint-disable-next-line no-unused-vars
   ADMIN = 2,
+}
+
+export class sessionDTO {
+  @IsOptional()
+  @IsString()
+    dni: string;
+
+  @IsNotEmpty()
+  @IsString()
+    id: string;
+
+  @IsNotEmpty()
+  @IsString()
+    email: string;
+
+  @IsNotEmpty()
+  @IsString()
+    role: string;
+
+  @IsNotEmpty()
+  @IsString()
+    name: string;
 }
 
 //DTO para validar estructura de profile de usuario
@@ -29,10 +50,6 @@ export class UserProfileDTO {
   @IsOptional()
   @IsString()
     avatar: string;
-
-  @IsOptional()
-  @IsNumberString()
-    cellPhone: string;
 
   @IsOptional()
   @IsString()
@@ -52,7 +69,6 @@ export class UserSession {
   @IsUUID()
     id: string;
 
-
   @IsOptional()
   @IsString()
   @MinLength(7)
@@ -62,7 +78,6 @@ export class UserSession {
   @IsOptional()
   @IsNumber()
     tFacturaId: number;
-
 }
 
 //DTO para validar data al momento de crear un usuario
@@ -127,8 +142,6 @@ interface UserProfileInterface {
   id?: number;
 
   avatar: string;
-
-  cellPhone: string;
 
   address: string;
 }
@@ -240,8 +253,6 @@ export interface SimpleUserDTO {
 //     profile: {
 //     id: number;
 
-//     cellPhone: string;
-
 //     avatar: string;
 
 //     address: string;
@@ -258,7 +269,6 @@ export interface SimpleUserDTO {
 //   profile: {
 //     userName: string;
 //     profile: {
-//       cellPhone: string;
 
 //       avatar: string;
 
@@ -308,4 +318,26 @@ export class updatePasswordDto {
   @IsNotEmpty()
   @IsString()
     newConfirmPassword: string;
+}
+
+export class deliveryInfoDTO {
+  @IsNotEmpty()
+  @IsUUID()
+    id: string;
+
+  @IsNotEmpty()
+  @IsString()
+    city: string;
+
+  @IsNotEmpty()
+  @IsString()
+    province: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+    postalCode: number;
+
+  @IsNotEmpty()
+  @IsString()
+    address: string;
 }

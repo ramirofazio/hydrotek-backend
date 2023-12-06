@@ -16,10 +16,11 @@ import { ShoppingCartModule } from "./shoppingCart/shoppingCart.module";
 import { AfipModule } from "./afip/afip.module";
 import { BlogModule } from "./blog/blog.module";
 import { CloudinaryModule } from "./cloudinary/cloudinary.module";
-import { MailerModule } from "@nestjs-modules/mailer";
-import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
 import { MailModule } from "./mail/mail.module";
 import { ProductModule } from "./product/product.module";
+import { ApidolarModule } from "./apidolar/apidolar.module";
+import { MobbexModule } from "./mobbex/mobbex.module";
+import { CategoryService } from "./category/category.service";
 
 @Module({
   imports: [
@@ -37,27 +38,8 @@ import { ProductModule } from "./product/product.module";
     BlogModule,
     AfipModule,
     MailModule,
-    MailerModule.forRoot({
-      transport: {
-        host: "sandbox.smtp.mailtrap.io",
-        port: 2525,
-        secure: false, // true for 465, false for other ports
-        auth: {
-          user: "8fa63bb4da955c",
-          pass: "a33c43705a940e",
-        },
-      },
-      defaults: {
-        from: "8fa63bb4da955c",
-      },
-      template: {
-        dir: "./src/templates",
-        adapter: new HandlebarsAdapter(), // or any other adapter
-        options: {
-          strict: true,
-        },
-      },
-    }),
+    ApidolarModule,
+    MobbexModule,
   ],
 
   controllers: [AppController],
@@ -69,6 +51,7 @@ import { ProductModule } from "./product/product.module";
     },
     PrismaService,
     RoleService,
+    CategoryService,
   ],
 })
 export class AppModule {}

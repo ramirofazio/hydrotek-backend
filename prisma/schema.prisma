@@ -53,12 +53,14 @@ model User {
 }
 
 model UserProfile {
-    id        Int     @id @default(autoincrement())
-    user      User    @relation(fields: [userId], references: [id])
-    userId    String  @unique
-    avatar    String? @default("https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI=")
-    cellPhone String?
-    address   String?
+    id         Int     @id @default(autoincrement())
+    user       User    @relation(fields: [userId], references: [id])
+    userId     String  @unique
+    avatar     String? @default("https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI=")
+    address    String?
+    province   String?
+    city       String?
+    postalCode Int?
 }
 
 model ShoppingCart {
@@ -76,6 +78,7 @@ model ProductsOnCart {
     productId      Int
     quantity       Int
     price          Int?
+    name           String?
 
     @@id([shoppingCartId, productId])
 }
@@ -87,7 +90,7 @@ model Post {
     text         String
     postAssets   PostAsset[]
     user         User          @relation(fields: [userId], references: [id])
-    userId       String         // camibar de relacion de 1-n
+    userId       String // camibar de relacion de 1-n
     postComments PostComment[]
     userSaveds   SavedPost[] // relacion m-n de post y usuarios
 }
@@ -97,7 +100,7 @@ model PostAsset {
     type   AssetType? @default(IMAGE)
     path   String
     post   Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
-    postId String     
+    postId String
 }
 
 enum AssetType {
@@ -111,19 +114,17 @@ model PostComment {
     comment     String
     show        Boolean?  @default(false)
     post        Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
-    postId      String    
+    postId      String
     user        User      @relation(fields: [userId], references: [id])
-    userId      String    
+    userId      String
 }
 
 model SavedPost {
-    id Int @id @default(autoincrement())
+    id     Int    @id @default(autoincrement())
     post   Post   @relation(fields: [postId], references: [id])
-    postId String 
+    postId String
     user   User   @relation(fields: [userId], references: [id])
-    userId String 
-
-    
+    userId String
 }
 
 model Token {
@@ -135,23 +136,33 @@ model Token {
 model Product {
     id               Int                         @unique
     name             String
-    price            Decimal                     @db.Decimal(10, 2)
+    usdPrice         Float
+    arsPrice         Float
     description      String?
     published        Boolean
     type             Int
     profile          Int
+    featured         Boolean                     @default(false)
     images           ProductImage[]
     updated          String
     shoppingCarts    ProductsOnCart[]
     promotionalCodes PromotionalCodeOnProducts[]
     orders           OrderProducts[]
+    productType     ProductType? @relation(fields: [typeId], references: [id])
+    typeId Int?
 }
-
+model ProductType {
+    id        Int  @id @default(autoincrement())
+    type      String 
+    products Product[]
+}
 model ProductImage {
-    id        Int     @id @default(autoincrement())
+    id        String  @id @default(uuid())
     path      String
+    publicId  String
     product   Product @relation(fields: [productId], references: [id])
-    productId Int     @unique
+    productId Int
+    index     Int?
 }
 
 model PromotionalCode {
@@ -170,32 +181,26 @@ model PromotionalCodeOnProducts {
 }
 
 model Order {
-    id           String          @id @default(uuid())
-    user         User            @relation(fields: [userId], references: [id])
-    userId       String          @unique
-    trackingCode String
-    state        String
-    address      String
-    clientName   String
-    city         City?
-    products     OrderProducts[]
+    id         String          @id @default(uuid())
+    user       User            @relation(fields: [userId], references: [id])
+    userId     String
+    totalPrice Int
+    fresaId    String          @unique
+    status     Int
+    date       DateTime        @default(now())
+    products   OrderProducts[]
 }
 
 model OrderProducts {
+    id String @id @default(uuid())
+
     product   Product @relation(fields: [productId], references: [id])
-    productId Int     @unique
+    productId Int
     order     Order   @relation(fields: [orderId], references: [id])
-    orderId   String  @unique
-
-    @@id([productId, orderId])
-}
-
-model City {
-    postalCode Int    @id // ? Cargar data de ciudades a la DB || esperar a la API de correo
-    order      Order  @relation(fields: [orderId], references: [id])
-    orderId    String @unique
-    name       String
-    province   String
+    orderId   String
+    price     Int
+    name      String
+    quantity  Int
 }
 
 model TokenLog {
@@ -218,4 +223,10 @@ model TFacturaUserLog {
     data       String @db.Text
     date       String
     identifier String
+}
+
+model DollarPrice {
+    id    Int    @id @default(autoincrement())
+    date  String
+    price Float
 }

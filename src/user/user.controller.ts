@@ -7,13 +7,21 @@ import {
   HttpException,
   HttpStatus,
   Put,
+  Patch,
+  Query,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { TfacturaService } from "src/tfactura/tfactura.service";
 //lineas comentadas para evitar error eslint
 // import {  IdentifierDTO } from "src/afip/afip.dto";
 // import { SuccessPostClientDataResponse } from "src/tfactura/tfactura.dto";
-import { CreateUserDTO, UpdateUserDTO, updatePasswordDto } from "./user.dto";
+import {
+  CreateUserDTO,
+  UpdateUserDTO,
+  sessionDTO,
+  updatePasswordDto,
+  deliveryInfoDTO,
+} from "./user.dto";
 
 @Controller("user")
 export class UserController {
@@ -24,10 +32,44 @@ export class UserController {
   ) {}
   /* eslint-enable */
 
+  @Patch("mark-order-as-pay")
+  async markOrderAsPay(@Query("fresaId") fresaId: string) {
+    return this.userService.markOrderAsPay(fresaId);
+  }
+
+  @Get("get-all-orders")
+  async getAllOrders() {
+    return this.userService.getAllOrders();
+  }
+
+  @Get("get-one-order")
+  async getOneOrder(@Query("id") id: string) {
+    return this.userService.getOneOrder(id);
+  }
+
+  @Get("orders")
+  async getOrders(@Query("id") id: string) {
+    return this.userService.getOrders(id);
+  }
+
+  @Patch("save-deliveryInfo")
+  async saveDeliveryInfo(@Body() body: deliveryInfoDTO) {
+    return await this.userService.saveDeliveryInfo(body);
+  }
+
+  @Put("alternAdmin")
+  async alternAdmin(
+    @Body("id") id: string,
+    @Body("currenUser") currentUser: sessionDTO
+  ) {
+    return await this.userService.alternAdmin(id, currentUser);
+  }
+
   @Get()
   async getAll() {
     return await this.userService.getAll();
   }
+
   @Get("/:email")
   async getEmail(@Param("email") email: string) {
     return await this.userService.findByEmail(email);
@@ -95,8 +137,11 @@ export class UserController {
     }
   }
 
+  //? El userId deberia ser string, porque no lo acepta nest? comentamos para q no joda el eslint
+  /* eslint-disable */
   @Get("/savedPosts/:userId")
   getSavedPosts(@Param() userId: any) {
     return this.userService.getSavedPosts(userId);
   }
+  /* eslint-enable */
 }

@@ -128,7 +128,7 @@ export interface ErrorObject {
 export class Product {
   id: number;
   name: string;
-  price: number;
+  usdPrice: number;
   description?: string;
   published: boolean;
   type: number;
@@ -151,7 +151,7 @@ export class Product {
 
     this.id = ProductoId;
     this.name = ProductoNombre;
-    this.price = ProductoPrecioFinal;
+    this.usdPrice = ProductoPrecioFinal;
     this.description = ProductoDescripcion;
     this.published = ProductoPublicado;
     this.type = ProductoTipo;

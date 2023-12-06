@@ -92,5 +92,16 @@ export class confirmPasswordResetRequest {
   @IsString()
   @IsNotEmpty()
   @Validate(IsEqualConstraint, ["newPassword"])
-    confirmNewPassword: string;
+    newConfirmPassword: string;
+}
+
+export class activeUserDTO {
+  @IsString()
+  @IsNotEmpty()
+    token: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsEmail()
+    email: string;
 }

@@ -6,8 +6,6 @@ export class TfacturaController {
   // eslint-disable-next-line no-unused-vars
   constructor(private readonly TfacturaService: TfacturaService) {}
 
-
-
   @Get("token")
   async getToken() {
     return await this.TfacturaService.postToken();

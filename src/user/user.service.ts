@@ -7,6 +7,8 @@ import {
   RawUserDTO,
   SimpleUserDTO,
   updatePasswordDto,
+  sessionDTO,
+  deliveryInfoDTO,
 } from "./user.dto";
 import * as bcrypt from "bcrypt";
 import { confirmPasswordResetRequest } from "src/auth/auth.dto";
@@ -22,15 +24,159 @@ export class UserService {
   ) {}
   /* eslint-enable */
 
+  async markOrderAsPay(fresaId: string): Promise<HttpStatus> {
+    try {
+      await this.prisma.order.update({
+        where: { fresaId: fresaId },
+        data: { status: 200 },
+      });
+
+      return HttpStatus.OK;
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(
+        "error al actualizar la orden",
+        HttpStatus.NOT_FOUND
+      );
+    }
+  }
+
+  async getAllOrders() {
+    try {
+      const orders = await this.prisma.order.findMany({
+        select: {
+          user: { select: { name: true, email: true } },
+          totalPrice: true,
+          fresaId: true,
+          status: true,
+          date: true,
+          products: {
+            select: {
+              quantity: true,
+              price: true,
+              name: true,
+            },
+          },
+        },
+      });
+
+      if (!orders) {
+        throw new HttpException("ordenes no encontradas", HttpStatus.NOT_FOUND);
+      }
+
+      return orders;
+    } catch (e) {
+      console.log(e);
+      throw new HttpException("ordenes no encontradas", HttpStatus.NOT_FOUND);
+    }
+  }
+
+  async getOneOrder(id: string) {
+    try {
+      const order = await this.prisma.order.findFirst({
+        where: { fresaId: id },
+        select: {
+          totalPrice: true,
+          fresaId: true,
+          status: true,
+          date: true,
+          products: {
+            select: {
+              quantity: true,
+              price: true,
+              product: { select: { images: true, name: true } },
+            },
+          },
+        },
+      });
+
+      if (!order) {
+        throw new HttpException("order no encontrada", HttpStatus.NOT_FOUND);
+      }
+
+      return order;
+    } catch (e) {
+      console.log(e);
+      throw new HttpException("order no encontrada", HttpStatus.NOT_FOUND);
+    }
+  }
+
+  async getOrders(id: string) {
+    try {
+      const user = await this.prisma.user.findUnique({ where: { id: id } });
+
+      if (!user) {
+        throw new HttpException(
+          "usuario no encontrado",
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      const userOrders = await this.prisma.order.findMany({
+        where: { userId: id },
+        select: {
+          totalPrice: true,
+          fresaId: true,
+          status: true,
+          date: true,
+          products: {
+            select: {
+              quantity: true,
+              price: true,
+              product: { select: { images: true, name: true } },
+            },
+          },
+        },
+      });
+
+      if (!userOrders) {
+        throw new HttpException("usuario sin ordenes", HttpStatus.NOT_FOUND);
+      }
+
+      return userOrders;
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(
+        "error al obtener ordenes del usuario",
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
+  async alternAdmin(
+    id: string,
+    currentUser: sessionDTO
+  ): Promise<SimpleUserDTO[] | HttpStatus> {
+    const userToUpdate = await this.prisma.user.findFirst({ where: { id } });
+    const admin = await this.prisma.user.findFirst({
+      where: { id: currentUser.id },
+    });
+
+    if (!userToUpdate || admin.roleId !== 2) {
+      return HttpStatus.BAD_REQUEST;
+    }
+
+    const newRoleId = userToUpdate.roleId === 1 ? 2 : 1;
+
+    await this.prisma.user.update({
+      where: { id },
+      data: { roleId: newRoleId },
+    });
+
+    return await this.getAll();
+  }
+
   async getAll(): Promise<SimpleUserDTO[]> {
     return await this.prisma.user.findMany({
       include: {
+        _count: { select: { orders: true } },
         role: {
           select: {
             type: true,
           },
         },
       },
+      orderBy: { name: "asc" },
     });
   }
   async getById(id: string): Promise<RawUserDTO> {
@@ -44,7 +190,6 @@ export class UserService {
         },
         profile: {
           select: {
-            cellPhone: true,
             address: true,
             avatar: true,
           },
@@ -81,6 +226,7 @@ export class UserService {
           tFacturaId: data.tFacturaId,
           email: data.email,
           roleId: data.roleId,
+          active: data.active,
           password: bcrypt.hashSync(data.password, 10),
         },
       });
@@ -88,7 +234,6 @@ export class UserService {
         data: {
           user: { connect: { id: user.id } },
           avatar: data.profile.avatar,
-          cellPhone: data.profile.cellPhone,
           address: data.profile.address,
         },
       });
@@ -117,9 +262,11 @@ export class UserService {
         },
         profile: {
           select: {
-            cellPhone: true,
             address: true,
             avatar: true,
+            city: true,
+            postalCode: true,
+            province: true,
           },
         },
         shoppingCart: {
@@ -179,7 +326,6 @@ export class UserService {
           data: {
             avatar: profile.avatar,
             address: profile.address,
-            cellPhone: profile.cellPhone,
           },
         });
         return target;
@@ -196,7 +342,6 @@ export class UserService {
           data: {
             avatar: profile.avatar,
             address: profile.address,
-            cellPhone: profile.cellPhone,
           },
         });
         return target;
@@ -261,7 +406,8 @@ export class UserService {
     });
     return userCount;
   }
-
+  //? El userId deberia ser string, porque no lo acepta nest? comentamos para q no joda el eslint
+  /* eslint-disable */
   async getSavedPosts(userId: any) {
     const posts = await this.prisma.savedPost.findMany({
       where: { userId: userId.userId },
@@ -270,5 +416,43 @@ export class UserService {
       },
     });
     return posts;
+  }
+  /* eslint-enable */
+
+  async activeUser(email: string) {
+    await this.prisma.user.update({
+      where: { email: email },
+      data: { active: true },
+    });
+
+    return HttpStatus.OK;
+  }
+
+  async checkActiveUser(email: string): Promise<boolean> {
+    const res = await this.prisma.user.findFirst({
+      where: { email: email },
+      select: { active: true },
+    });
+
+    return res.active;
+  }
+
+  async saveDeliveryInfo({
+    id,
+    address,
+    city,
+    postalCode,
+    province,
+  }: deliveryInfoDTO): Promise<any> {
+    try {
+      const userProfile = await this.prisma.userProfile.update({
+        where: { userId: id },
+        data: { address, city, postalCode, province },
+      });
+
+      return userProfile;
+    } catch (e) {
+      throw new Error(`error al guardar datos de envio: ${e.message}`);
+    }
   }
 }

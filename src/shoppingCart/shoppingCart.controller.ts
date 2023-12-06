@@ -1,13 +1,26 @@
-import { Controller, Get, Body, Param, Delete, Put } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Body,
+  Param,
+  Delete,
+  Put,
+  Post,
+} from "@nestjs/common";
 import { ShoppingCartService } from "./shoppingCart.service";
 import { Response } from "src/commonDTO";
-import { UpdateCartDTO } from "./shoppingCartDTO";
+import { NewOrderDTO, UpdateCartDTO } from "./shoppingCartDTO";
 
 @Controller("shoppingCart")
 export class ShoppingCartController {
   /* eslint-disable */
   constructor(private shoppingCartService: ShoppingCartService) {}
   /* eslint-enable */
+
+  @Post("create-new-order")
+  async createNewOrder(@Body() body: NewOrderDTO) {
+    return this.shoppingCartService.createNewOrder(body);
+  }
 
   @Get()
   async createMock() {
