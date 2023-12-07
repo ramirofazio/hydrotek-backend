@@ -201,6 +201,7 @@ export class ProductService {
   async getFilteredProducts(typeId: number) {
     const products = await this.prisma.product.findMany({
       where: { typeId },
+      include: { images: { select: { path: true } } },
     });
     return products;
   }
