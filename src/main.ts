@@ -16,7 +16,6 @@ async function bootstrap() {
     origin: env.ACCESS_URL,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
-
   });
   app.useBodyParser("json", { limit: "20mb" });
   const config = new DocumentBuilder()

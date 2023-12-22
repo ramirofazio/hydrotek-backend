@@ -6,7 +6,7 @@ import {
   ArrayMinSize,
   ValidateNested,
   IsNumber,
-  IsUUID,
+  IsOptional,
 } from "class-validator";
 
 interface ProductOnCartDTO {
@@ -24,8 +24,8 @@ export interface UpdateCartDTO {
 }
 
 export class NewOrderDTO {
-  @IsNotEmpty()
-  @IsUUID()
+  @IsOptional()
+  @IsString()
   id: string;
 
   @IsNotEmpty()
