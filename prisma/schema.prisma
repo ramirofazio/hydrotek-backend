@@ -79,6 +79,7 @@ model ProductsOnCart {
     quantity       Int
     price          Int?
     name           String?
+    img            String?
 
     @@id([shoppingCartId, productId])
 }
