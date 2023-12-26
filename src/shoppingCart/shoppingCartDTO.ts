@@ -28,6 +28,14 @@ export class NewOrderDTO {
   @IsString()
   id: string;
 
+  @IsOptional()
+  @IsString()
+  name: string;
+
+  @IsOptional()
+  @IsString()
+  email: string;
+
   @IsNotEmpty()
   @IsString()
   fresaId: string;

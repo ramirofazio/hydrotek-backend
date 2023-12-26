@@ -10,6 +10,8 @@ export class ShoppingCartService {
 
   async createNewOrder({
     id,
+    name,
+    email,
     items,
     fresaId,
     status,
@@ -23,6 +25,8 @@ export class ShoppingCartService {
           //? Creo ordenes sin usuarios para los NO LOGGED
           await tx.order.create({
             data: {
+              name: name,
+              email: email,
               totalPrice: totalPrice,
               fresaId: fresaId,
               status: status,

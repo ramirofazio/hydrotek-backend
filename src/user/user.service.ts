@@ -50,6 +50,8 @@ export class UserService {
           fresaId: true,
           status: true,
           date: true,
+          name: true,
+          email: true,
           products: {
             select: {
               quantity: true,
