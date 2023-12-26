@@ -13,6 +13,7 @@ interface ProductOnCartDTO {
   quantity: number;
   productId: number;
   price?: number;
+  img?: string;
 }
 
 export interface UpdateCartDTO {
