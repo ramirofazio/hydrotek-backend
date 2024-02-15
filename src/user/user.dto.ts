@@ -99,7 +99,7 @@ export class CreateUserDTO {
   @IsOptional()
   @IsString()
   @MinLength(7)
-  @MaxLength(11)
+  @MaxLength(17)
     dni: string;
 
   @IsOptional()

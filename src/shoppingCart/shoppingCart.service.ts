@@ -10,6 +10,8 @@ export class ShoppingCartService {
 
   async createNewOrder({
     id,
+    name,
+    email,
     items,
     fresaId,
     status,
@@ -20,7 +22,19 @@ export class ShoppingCartService {
         const user = await tx.user.findUnique({ where: { id: id } });
 
         if (!user) {
-          return HttpStatus.NOT_FOUND;
+          //? Creo ordenes sin usuarios para los NO LOGGED
+          await tx.order.create({
+            data: {
+              name: name,
+              email: email,
+              totalPrice: totalPrice,
+              fresaId: fresaId,
+              status: status,
+              products: { createMany: { data: items } },
+            },
+          });
+
+          return HttpStatus.CREATED;
         }
 
         const newOrder = await tx.order.create({

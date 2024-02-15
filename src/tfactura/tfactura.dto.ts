@@ -138,6 +138,7 @@ export class Product {
   constructor(rawProduct: RawDataProduct) {
     const {
       ProductoId,
+
       ProductoNombre,
       ProductoPrecioFinal,
       ProductoDescripcion,

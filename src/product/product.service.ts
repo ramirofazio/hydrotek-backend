@@ -139,20 +139,24 @@ export class ProductService {
   async getProductDetail(id: number): Promise<ProductDTO> {
     const product = await this.prisma.product.findUnique({
       where: { id },
+      include: { images: { select: { path: true } } },
     });
     return product;
   }
 
   async getProductsPaginated({
-    pag = 0,
-    productsPerPage = 15,
+    pag,
+    productsPerPage,
   }: PagDTO): Promise<ProductsPaginatedDTO> {
-    const quantity = await this.prisma.product.count();
+    const quantity = await this.prisma.product.count({
+      where: { published: true },
+    });
 
     const products = await this.prisma.product.findMany({
       skip: productsPerPage * pag,
       take: productsPerPage,
       include: { images: { select: { path: true } } },
+      where: { published: true },
     });
 
     return {
@@ -197,6 +201,7 @@ export class ProductService {
   async getFilteredProducts(typeId: number) {
     const products = await this.prisma.product.findMany({
       where: { typeId },
+      include: { images: { select: { path: true } } },
     });
     return products;
   }

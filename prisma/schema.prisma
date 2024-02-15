@@ -79,6 +79,7 @@ model ProductsOnCart {
     quantity       Int
     price          Int?
     name           String?
+    img            String?
 
     @@id([shoppingCartId, productId])
 }
@@ -148,12 +149,13 @@ model Product {
     shoppingCarts    ProductsOnCart[]
     promotionalCodes PromotionalCodeOnProducts[]
     orders           OrderProducts[]
-    productType     ProductType? @relation(fields: [typeId], references: [id])
-    typeId Int?
+    productType      ProductType?                @relation(fields: [typeId], references: [id])
+    typeId           Int?
 }
+
 model ProductType {
-    id        Int  @id @default(autoincrement())
-    type      String 
+    id       Int       @id @default(autoincrement())
+    type     String
     products Product[]
 }
 model ProductImage {
@@ -182,8 +184,10 @@ model PromotionalCodeOnProducts {
 
 model Order {
     id         String          @id @default(uuid())
-    user       User            @relation(fields: [userId], references: [id])
-    userId     String
+    user       User?           @relation(fields: [userId], references: [id])
+    userId     String?
+    email      String?
+    name       String?
     totalPrice Int
     fresaId    String          @unique
     status     Int

@@ -50,6 +50,8 @@ export class UserService {
           fresaId: true,
           status: true,
           date: true,
+          name: true,
+          email: true,
           products: {
             select: {
               quantity: true,
@@ -250,8 +252,7 @@ export class UserService {
     // return new TrueUserTransformer(fullUser);
   }
 
-  async findByEmail(email: string): Promise<RawUserDTO | undefined> {
-
+  async findByEmail(email: string): Promise<any /* RawUserDTO | undefined */> {
     const user = await this.prisma.user.findFirst({
       where: { email: email },
       include: {
@@ -270,7 +271,9 @@ export class UserService {
           },
         },
         shoppingCart: {
-          include: { products: true },
+          include: {
+            products: { include: { product: { include: { images: true } } } },
+          },
         },
         savedPosts: {
           select: {
