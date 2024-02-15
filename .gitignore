@@ -23,6 +23,7 @@ logs/
 build/
 out/
 db-data
+db-data-backup
 /prisma/migrations
 start.sh
 package-lock.json
