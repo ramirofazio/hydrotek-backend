@@ -158,6 +158,7 @@ model ProductType {
     type     String
     products Product[]
 }
+
 model ProductImage {
     id        String  @id @default(uuid())
     path      String
@@ -169,6 +170,7 @@ model ProductImage {
 
 model PromotionalCode {
     id       String                      @id @default(uuid())
+    code     String
     discount Int
     products PromotionalCodeOnProducts[]
 }
