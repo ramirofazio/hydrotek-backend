@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Patch, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from "@nestjs/common";
 import {
   DeletePromotionalCodeDTO,
   EditPromotionalCodeDTO,
@@ -20,13 +29,18 @@ export class PromotionalCodeController {
     return this.promotionalCodeService.editPromotionalCode(body);
   }
 
-  @Delete()
-  async deletePromotionalCode(@Body() id: DeletePromotionalCodeDTO) {
+  @Delete("/:id")
+  async deletePromotionalCode(@Param("id") id: string) {
     return this.promotionalCodeService.deletePromotionalCode(id);
   }
 
   @Get()
   async getPromotionalCode() {
     return this.promotionalCodeService.getPromotionalCode();
+  }
+
+  @Get("/validate/:coupon")
+  async validatePromotionalCode(@Param("coupon") coupon: string) {
+    return this.promotionalCodeService.validatePromotionalCode(coupon);
   }
 }

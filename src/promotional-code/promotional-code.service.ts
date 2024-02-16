@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import {
   DeletePromotionalCodeDTO,
   EditPromotionalCodeDTO,
@@ -23,7 +23,7 @@ export class PromotionalCodeService {
     });
   }
 
-  async deletePromotionalCode({ id }: DeletePromotionalCodeDTO) {
+  async deletePromotionalCode(id: string) {
     return await this.prisma.promotionalCode.delete({ where: { id: id } });
   }
 
@@ -31,5 +31,18 @@ export class PromotionalCodeService {
     return await this.prisma.promotionalCode.findMany({
       select: { id: true, code: true, discount: true },
     });
+  }
+
+  async validatePromotionalCode(coupon: string): Promise<PromotionalCodeDTO> {
+    const res = await this.prisma.promotionalCode.findFirst({
+      where: { code: coupon },
+      select: { id: true, code: true, discount: true },
+    });
+
+    if (!res) {
+      throw new HttpException("Cupon invalido", HttpStatus.BAD_REQUEST);
+    }
+
+    return res;
   }
 }
