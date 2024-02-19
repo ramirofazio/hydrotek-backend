@@ -22,6 +22,7 @@ export class ProductController {
   /* eslint-disable */
   constructor(private productService: ProductService) {}
   /* eslint-enable */
+
   @Patch("toggle-active")
   async toggleActiveProduct(@Query("id") id: number) {
     return this.productService.toggleActiveProduct(id);

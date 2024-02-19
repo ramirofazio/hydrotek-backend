@@ -10,6 +10,10 @@ import {
 } from "class-validator";
 
 export class CheckoutRequest {
+  @IsNumber()
+  @IsOptional()
+    discount: number;
+
   @IsString()
   @IsOptional()
     identifier: string;
@@ -44,6 +48,10 @@ export class CheckoutGuestRequest {
   @ValidateNested({ each: true })
   @Type(() => requestItem)
     items: requestItem[];
+
+  @IsNumber()
+  @IsOptional()
+    discount: number;
 }
 
 export class requestItem {

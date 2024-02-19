@@ -16,6 +16,7 @@ export class ShoppingCartService {
     fresaId,
     status,
     totalPrice,
+    discount,
   }: NewOrderDTO): Promise<HttpStatus> {
     try {
       return await this.prisma.$transaction(async (tx) => {
@@ -30,6 +31,7 @@ export class ShoppingCartService {
               totalPrice: totalPrice,
               fresaId: fresaId,
               status: status,
+              discount: discount,
               products: { createMany: { data: items } },
             },
           });
@@ -42,6 +44,7 @@ export class ShoppingCartService {
             totalPrice: totalPrice,
             fresaId: fresaId,
             status: status,
+            discount: discount,
             user: { connect: { id: user.id } },
             products: { createMany: { data: items } },
           },

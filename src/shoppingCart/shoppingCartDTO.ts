@@ -26,50 +26,54 @@ export interface UpdateCartDTO {
 export class NewOrderDTO {
   @IsOptional()
   @IsString()
-  id: string;
+    id: string;
 
   @IsOptional()
   @IsString()
-  name: string;
+    name: string;
 
   @IsOptional()
   @IsString()
-  email: string;
+    email: string;
 
   @IsNotEmpty()
   @IsString()
-  fresaId: string;
+    fresaId: string;
 
   @IsNotEmpty()
   @IsNumber()
-  status: number;
+    status: number;
 
   @IsNotEmpty()
   @IsNumber()
-  totalPrice: number;
+    totalPrice: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+    discount: number;
 
   @IsArray()
   @IsNotEmpty()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => OrderProducts)
-  items: OrderProducts[];
+    items: OrderProducts[];
 }
 
 export class OrderProducts {
   @IsNotEmpty()
   @IsString()
-  name: string;
+    name: string;
 
   @IsNotEmpty()
   @IsNumber()
-  productId: number;
+    productId: number;
 
   @IsNotEmpty()
   @IsNumber()
-  quantity: number;
+    quantity: number;
 
   @IsNotEmpty()
   @IsNumber()
-  price: number;
+    price: number;
 }

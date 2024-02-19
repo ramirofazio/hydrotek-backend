@@ -22,13 +22,13 @@ export class MobbexService {
     private readonly tfacturaService: TfacturaService
   ) {}
 
-  async generateBody(userId: string, items: requestItem[]) {
+  async generateBody(userId: string, items: requestItem[], discount: number) {
     const customer: mobbexCustomer = await this.generateCustomer(userId);
     const mobbexItems: mobbexItem[] = await this.generateItems(items);
     const total =
       env.env === "production" || env.env === "staging"
-        ? this.calculateTotal(mobbexItems)
-        : 12;
+        ? this.calculateTotal(mobbexItems, discount)
+        : this.calculateTotal(mobbexItems, discount);
     const reference = this.generateReference(customer);
     const description = `Checkout ${reference}`;
     const currency = "ARS";
@@ -62,8 +62,8 @@ export class MobbexService {
     const mobbexItems: mobbexItem[] = await this.generateItems(body.items);
     const total =
       env.env === "production" || env.env === "staging"
-        ? this.calculateTotal(mobbexItems)
-        : 12;
+        ? this.calculateTotal(mobbexItems, body.discount)
+        : this.calculateTotal(mobbexItems, body.discount);
     const reference = this.generateGuestReference(customer);
     const description = `Checkout ${reference}`;
     const currency = "ARS";
@@ -141,10 +141,14 @@ export class MobbexService {
     return mobbexItems;
   }
 
-  calculateTotal(items: mobbexItem[]) {
-    return items.reduce((acc, curr) => {
+  calculateTotal(items: mobbexItem[], discount: number) {
+    const totalItemsPrice = items.reduce((acc, curr) => {
       return curr.total + acc;
     }, 0);
+
+    const totalDiscount = (discount / 100) * totalItemsPrice;
+
+    return totalItemsPrice - totalDiscount;
   }
 
   generateReference(customer: mobbexCustomer) {

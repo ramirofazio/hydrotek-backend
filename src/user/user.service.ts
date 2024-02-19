@@ -52,6 +52,7 @@ export class UserService {
           date: true,
           name: true,
           email: true,
+          discount: true,
           products: {
             select: {
               quantity: true,
@@ -82,6 +83,7 @@ export class UserService {
           fresaId: true,
           status: true,
           date: true,
+          discount: true,
           products: {
             select: {
               quantity: true,
@@ -121,6 +123,7 @@ export class UserService {
           fresaId: true,
           status: true,
           date: true,
+          discount: true,
           products: {
             select: {
               quantity: true,
@@ -252,7 +255,7 @@ export class UserService {
     // return new TrueUserTransformer(fullUser);
   }
 
-  async findByEmail(email: string): Promise<any /* RawUserDTO | undefined */> {
+  async findByEmail(email: string): Promise<RawUserDTO | undefined> {
     const user = await this.prisma.user.findFirst({
       where: { email: email },
       include: {

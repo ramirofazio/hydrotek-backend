@@ -21,6 +21,7 @@ import { ProductModule } from "./product/product.module";
 import { ApidolarModule } from "./apidolar/apidolar.module";
 import { MobbexModule } from "./mobbex/mobbex.module";
 import { CategoryService } from "./category/category.service";
+import { PromotionalCodeModule } from "./promotional-code/promotional-code.module";
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { CategoryService } from "./category/category.service";
     MailModule,
     ApidolarModule,
     MobbexModule,
+    PromotionalCodeModule,
   ],
 
   controllers: [AppController],

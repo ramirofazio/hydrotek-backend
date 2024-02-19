@@ -202,17 +202,17 @@ export class TfacturaService {
 
   getCategory = (RI: boolean, M: boolean, EX: boolean, CF: boolean) => {
     switch (true) {
-      case RI:
-        return "RI";
-      case M:
-        return "M";
-      case EX:
-        return "EX";
-      case CF:
-        return "CF";
+    case RI:
+      return "RI";
+    case M:
+      return "M";
+    case EX:
+      return "EX";
+    case CF:
+      return "CF";
 
-      default:
-        return "CF";
+    default:
+      return "CF";
     }
   };
 

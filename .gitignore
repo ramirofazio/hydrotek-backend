@@ -13,7 +13,7 @@ node_modules/
 
 # Ignore environment files
 .env
-.env.*
+
 
 # Ignore logs
 logs/
@@ -23,5 +23,7 @@ logs/
 build/
 out/
 db-data
+db-data-backup
 /prisma/migrations
 start.sh
+package-lock.json

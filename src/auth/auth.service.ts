@@ -100,8 +100,8 @@ export class AuthService {
         env.env === "production"
           ? "https://hydrotek.store/session/signIn"
           : env.env === "staging"
-          ? "http://85.31.231.196:51732/session/signIn"
-          : "http://localhost:5173/session/signIn"
+            ? "http://85.31.231.196:51732/session/signIn"
+            : "http://localhost:5173/session/signIn"
         // ? Para que sea valido el url debe estar autorizado en la google console y coincidir con el "redirect_uri" de la instancia de react-oAuth en el front
       );
       const { tokens } = await oAuth2Client.getToken(code);
