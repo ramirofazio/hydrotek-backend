@@ -15,52 +15,52 @@ import {
 export class signUpDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+    name: string;
 
   @IsOptional()
   @IsNumber()
   @MinLength(7)
   @MaxLength(11)
-  dni: string;
+    dni: string;
 
   @IsString()
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+    email: string;
 
   @IsString()
   //@IsStrongPassword()
   @IsNotEmpty()
-  password: string;
+    password: string;
 }
 export class signInDto {
   //? Aca irian mas props si loguea por 3ro (calculo)
   @IsString()
   @IsNotEmpty()
-  email: string;
+    email: string;
 
   @IsString()
   @IsNotEmpty()
-  pass: string;
+    pass: string;
 }
 
 export class googleSignInDTO {
   @IsString()
   @IsNotEmpty()
-  email: string;
+    email: string;
   @IsString()
   @IsNotEmpty()
-  name: string;
+    name: string;
   @IsString()
   @IsNotEmpty()
-  picture: string;
+    picture: string;
 }
 
 export class initPasswordResetRequest {
   @IsString()
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+    email: string;
 }
 
 @ValidatorConstraint({ name: "isEqual", async: false })
@@ -78,30 +78,30 @@ class IsEqualConstraint implements ValidatorConstraintInterface {
 export class confirmPasswordResetRequest {
   @IsString()
   @IsNotEmpty()
-  token: string;
+    token: string;
 
   @IsString()
   @IsNotEmpty()
-  newPassword: string;
+    newPassword: string;
 
   @IsString()
   @IsNotEmpty()
   @IsEmail()
-  email: string;
+    email: string;
 
   @IsString()
   @IsNotEmpty()
   @Validate(IsEqualConstraint, ["newPassword"])
-  newConfirmPassword: string;
+    newConfirmPassword: string;
 }
 
 export class activeUserDTO {
   @IsString()
   @IsNotEmpty()
-  token: string;
+    token: string;
 
   @IsString()
   @IsNotEmpty()
   @IsEmail()
-  email: string;
+    email: string;
 }

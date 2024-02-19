@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import {
-  DeletePromotionalCodeDTO,
   EditPromotionalCodeDTO,
   PromotionalCodeDTO,
 } from "./promotional-code.dto";
@@ -8,7 +7,9 @@ import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
 export class PromotionalCodeService {
+  /* eslint-disable */
   constructor(private prisma: PrismaService) {}
+  /* eslint-enable */
 
   async addPromotionalCode({ discount, code }: PromotionalCodeDTO) {
     return await this.prisma.promotionalCode.create({

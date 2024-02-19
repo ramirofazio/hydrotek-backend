@@ -255,7 +255,7 @@ export class UserService {
     // return new TrueUserTransformer(fullUser);
   }
 
-  async findByEmail(email: string): Promise<any /* RawUserDTO | undefined */> {
+  async findByEmail(email: string): Promise<RawUserDTO | undefined> {
     const user = await this.prisma.user.findFirst({
       where: { email: email },
       include: {

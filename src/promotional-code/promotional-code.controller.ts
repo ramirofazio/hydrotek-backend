@@ -6,10 +6,8 @@ import {
   Param,
   Patch,
   Post,
-  Query,
 } from "@nestjs/common";
 import {
-  DeletePromotionalCodeDTO,
   EditPromotionalCodeDTO,
   PromotionalCodeDTO,
 } from "./promotional-code.dto";
@@ -17,7 +15,9 @@ import { PromotionalCodeService } from "./promotional-code.service";
 
 @Controller("promotionalCode")
 export class PromotionalCodeController {
+  /* eslint-disable */
   constructor(private promotionalCodeService: PromotionalCodeService) {}
+  /* eslint-enable */
 
   @Post()
   async addPromotionalCode(@Body() body: PromotionalCodeDTO) {
