@@ -48,6 +48,10 @@ export class NewOrderDTO {
   @IsNumber()
   totalPrice: number;
 
+  @IsNotEmpty()
+  @IsNumber()
+  discount: number;
+
   @IsArray()
   @IsNotEmpty()
   @ArrayMinSize(1)

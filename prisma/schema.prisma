@@ -191,6 +191,7 @@ model Order {
     email      String?
     name       String?
     totalPrice Int
+    discount   Int             @default(0)
     fresaId    String          @unique
     status     Int
     date       DateTime        @default(now())

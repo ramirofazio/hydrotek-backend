@@ -13,7 +13,8 @@ export class MobbexController {
     try {
       const mobbexBody = await this.mobbexService.generateBody(
         body.userId,
-        body.items
+        body.items,
+        body.discount
       );
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const checkout: any = await mobbex.checkout.create(mobbexBody);
