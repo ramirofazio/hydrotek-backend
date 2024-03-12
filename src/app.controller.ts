@@ -1,4 +1,9 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Get, HttpStatus } from "@nestjs/common";
 
 @Controller()
-export class AppController {}
+export class AppController {
+  @Get("/favicon.ico")
+  ignoreFavicon() {
+    return HttpStatus.NO_CONTENT;
+  }
+}
