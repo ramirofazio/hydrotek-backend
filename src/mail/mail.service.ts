@@ -4,7 +4,6 @@ import { MailtrapClient } from "mailtrap";
 import { env } from "process";
 
 const client = new MailtrapClient({
-  endpoint: "https://send.api.mailtrap.io/",
   token: env.MAILTRAP_TOKEN,
 });
 
