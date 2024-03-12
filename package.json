@@ -3,7 +3,7 @@
   "description": "Hydrotek-backend",
   "version": "1",
   "engines": {
-    "node": "20.1.1"
+    "node": "20.11.1"
   },
   "author": "",
   "private": true,
