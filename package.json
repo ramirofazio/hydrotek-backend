@@ -1,7 +1,10 @@
 {
-  "name": "hydrotek-api",
-  "version": "0.0.1",
-  "description": "",
+  "name": "hydrotek-backend",
+  "description": "Hydrotek-backend",
+  "version": "1",
+  "engines": {
+    "node": "20.1.1"
+  },
   "author": "",
   "private": true,
   "license": "UNLICENSED",
