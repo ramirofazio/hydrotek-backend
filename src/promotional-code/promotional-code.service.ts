@@ -27,20 +27,26 @@ export class PromotionalCodeService {
 
   async deletePromotionalCode(id: string) {
     try {
-      console.log(id);
+      const promotionalCode = await this.prisma.promotionalCode.findUnique({
+        where: { id },
+      });
+      if (!promotionalCode) {
+        throw new HttpException(
+          "El codigo promocional no existe",
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
+      }
       const deleted = await this.prisma.promotionalCode.delete({
         where: {
-          id: "c1fc3404-cf69-4b8c-8b01-9ef4229a805b",
+          id,
         },
       });
       console.log(deleted);
+
+      return deleted;
     } catch (err) {
       console.log(err);
       return err;
-      throw new HttpException(
-        "No se elimino el codigo",
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
     }
   }
 
