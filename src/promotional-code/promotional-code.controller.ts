@@ -10,6 +10,7 @@ import {
 import {
   EditPromotionalCodeDTO,
   PromotionalCodeDTO,
+  RelatePromotionalCode,
 } from "./promotional-code.dto";
 import { PromotionalCodeService } from "./promotional-code.service";
 
@@ -29,6 +30,10 @@ export class PromotionalCodeController {
     return this.promotionalCodeService.editPromotionalCode(body);
   }
 
+  @Post("/relate")
+  async relatePromotionalCode(@Body() body: RelatePromotionalCode) {
+    return this.promotionalCodeService.relatePromotionalCode(body);
+  }
   @Delete("/:id")
   async deletePromotionalCode(@Param("id") id: string) {
     return this.promotionalCodeService.deletePromotionalCode(id);

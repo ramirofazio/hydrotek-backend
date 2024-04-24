@@ -125,15 +125,45 @@ export class ProductService {
     });
     return products;
   }
+  async addProductImg(data: AddProductImg) {
+    try {
+      const { productId, path, assetId, publicId, index } = data;
 
-  async getAllProducts(): Promise<ProductDTO[]> {
-    return await this.prisma.product.findMany({
-      orderBy: [{ arsPrice: "desc" }, { name: "desc" }],
-      include: {
-        images: true,
-        productType: { select: { type: true } },
-      },
-    });
+      const product = await this.prisma.productImage.create({
+        data: {
+          id: assetId,
+          publicId,
+          path,
+          productId,
+          index,
+        },
+      });
+      return product;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async getAllProducts(promotionalCode: boolean): Promise<ProductDTO[]> {
+    try {
+      return await this.prisma.product.findMany({
+        orderBy: [{ arsPrice: "desc" }, { name: "desc" }],
+        where: {
+          id: 4068731,
+        },
+        include: {
+          images: true,
+          productType: { select: { type: true } },
+          promotionalCodes: promotionalCode,
+        },
+      });
+    } catch (err) {
+      console.log(err);
+      throw new HttpException(
+        "Error del servidor",
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   async getProductDetail(id: number): Promise<ProductDTO> {
@@ -163,24 +193,6 @@ export class ProductService {
       quantity: Math.ceil(quantity / productsPerPage),
       products,
     };
-  }
-  async addProductImg(data: AddProductImg) {
-    try {
-      const { productId, path, assetId, publicId, index } = data;
-
-      const product = await this.prisma.productImage.create({
-        data: {
-          id: assetId,
-          publicId,
-          path,
-          productId,
-          index,
-        },
-      });
-      return product;
-    } catch (e) {
-      console.log(e);
-    }
   }
 
   async updateType(data: UpdateTypeDTO) {

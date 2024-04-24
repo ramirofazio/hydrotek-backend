@@ -54,8 +54,8 @@ export class ProductController {
   }
 
   @Get("all")
-  async getAllProducts() {
-    return await this.productService.getAllProducts();
+  async getAllProducts(@Query("includeCode") includeCode: boolean) {
+    return await this.productService.getAllProducts(includeCode);
   }
 
   @Get("detail/:id")

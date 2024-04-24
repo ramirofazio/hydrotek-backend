@@ -1,37 +1,37 @@
-import {
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  IsUUID,
-} from "class-validator";
+import { IsNotEmpty, IsNumber, IsString, IsUUID } from "class-validator";
 
 export class PromotionalCodeDTO {
   @IsNotEmpty()
   @IsString()
-    code: string;
+  code: string;
 
   @IsNotEmpty()
   @IsNumber()
-    discount: number;
+  discount: number;
 }
 
 export class EditPromotionalCodeDTO {
   @IsNotEmpty()
   @IsString()
   @IsUUID()
-    id: string;
+  id: string;
 
   @IsNotEmpty()
   @IsString()
-    code: string;
+  code: string;
 
   @IsNotEmpty()
   @IsNumber()
-    discount: number;
+  discount: number;
 }
 
 export class DeletePromotionalCodeDTO {
   @IsNotEmpty()
   @IsString()
-    id: string;
+  id: string;
+}
+
+export interface RelatePromotionalCode {
+  promotionalCodeId: string;
+  productId: number;
 }

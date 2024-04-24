@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import {
   EditPromotionalCodeDTO,
   PromotionalCodeDTO,
+  RelatePromotionalCode,
 } from "./promotional-code.dto";
 import { PrismaService } from "src/prisma/prisma.service";
 
@@ -25,13 +26,63 @@ export class PromotionalCodeService {
   }
 
   async deletePromotionalCode(id: string) {
-    return await this.prisma.promotionalCode.delete({ where: { id: id } });
+    try {
+      console.log(id);
+      const deleted = await this.prisma.promotionalCode.delete({
+        where: {
+          id: "c1fc3404-cf69-4b8c-8b01-9ef4229a805b",
+        },
+      });
+      console.log(deleted);
+    } catch (err) {
+      console.log(err);
+      return err;
+      throw new HttpException(
+        "No se elimino el codigo",
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   async getPromotionalCode(): Promise<PromotionalCodeDTO[]> {
     return await this.prisma.promotionalCode.findMany({
       select: { id: true, code: true, discount: true },
     });
+  }
+
+  async relatePromotionalCode({
+    promotionalCodeId,
+    productId,
+  }: RelatePromotionalCode) {
+    try {
+      const code = await this.prisma.promotionalCode.findFirst({
+        where: {
+          id: promotionalCodeId,
+        },
+      });
+
+      if (!code) {
+        throw new HttpException(
+          "El codigo promocional no existe",
+          HttpStatus.NOT_FOUND
+        );
+      }
+
+      const relation = await this.prisma.promotionalCodeOnProducts.create({
+        data: {
+          productId,
+          promotionalCodeId,
+        },
+      });
+      console.log(relation);
+      return relation;
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(
+        `Error al relacionar codigo ${e.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   async validatePromotionalCode(coupon: string): Promise<PromotionalCodeDTO> {
