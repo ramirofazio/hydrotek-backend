@@ -170,7 +170,7 @@ model ProductImage {
 
 model PromotionalCode {
     id       String                      @id @default(uuid())
-    code     String
+    code     String                      @unique
     discount Int
     active   Boolean                     @default(true)
     products PromotionalCodeOnProducts[]

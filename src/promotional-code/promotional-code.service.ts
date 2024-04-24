@@ -72,7 +72,7 @@ export class PromotionalCodeService {
           HttpStatus.NOT_FOUND
         );
       }
-
+      // conidiconal para borrar
       const relation = await this.prisma.promotionalCodeOnProducts.create({
         data: {
           productId,
