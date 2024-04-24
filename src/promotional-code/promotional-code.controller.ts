@@ -40,6 +40,13 @@ export class PromotionalCodeController {
     return this.promotionalCodeService.unRelatePromotionalCode(body);
   }
 
+  @Patch("/state")
+  async setPromotionalCodeState(
+    @Body() body: { promotionalCodeId: string; active: boolean }
+  ) {
+    return this.promotionalCodeService.setPromotionalCodeState(body);
+  }
+
   @Delete("/:id")
   async deletePromotionalCode(@Param("id") id: string) {
     return this.promotionalCodeService.deletePromotionalCode(id);

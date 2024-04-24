@@ -128,6 +128,45 @@ export class PromotionalCodeService {
     }
   }
 
+  async setPromotionalCodeState({
+    promotionalCodeId,
+    active,
+  }: {
+    promotionalCodeId: string;
+    active: boolean;
+  }) {
+    try {
+      const code = await this.prisma.promotionalCode.findFirst({
+        where: {
+          id: promotionalCodeId,
+        },
+      });
+
+      if (!code) {
+        throw new HttpException(
+          "El codigo promocional no existe",
+          HttpStatus.NOT_FOUND
+        );
+      }
+
+      const updatedCode = await this.prisma.promotionalCode.update({
+        where: {
+          id: promotionalCodeId,
+        },
+        data: {
+          active,
+        },
+      });
+      return updatedCode;
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(
+        `Error al desvincular codigo ${e.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
   async validatePromotionalCode(coupon: string): Promise<PromotionalCodeDTO> {
     const res = await this.prisma.promotionalCode.findFirst({
       where: { code: coupon },
