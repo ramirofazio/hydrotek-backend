@@ -178,9 +178,9 @@ model PromotionalCode {
 
 model PromotionalCodeOnProducts {
     product           Product         @relation(fields: [productId], references: [id], onDelete: NoAction)
-    productId         Int             @unique
+    productId         Int
     promotionalCode   PromotionalCode @relation(fields: [promotionalCodeId], references: [id], onDelete: Cascade)
-    promotionalCodeId String          @unique
+    promotionalCodeId String
 
     @@id([productId, promotionalCodeId])
 }

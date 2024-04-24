@@ -153,7 +153,7 @@ export class ProductService {
           productType: { select: { type: true } },
 
           promotionalCodes: {
-            include: { promotionalCode: true },
+            include: { promotionalCode: includeCode },
           },
         },
       });

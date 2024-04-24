@@ -51,7 +51,7 @@ export class PromotionalCodeService {
 
   async getPromotionalCode(): Promise<PromotionalCodeDTO[]> {
     return await this.prisma.promotionalCode.findMany({
-      select: { id: true, code: true, discount: true },
+      select: { id: true, code: true, discount: true, active: true },
     });
   }
 
@@ -72,19 +72,57 @@ export class PromotionalCodeService {
           HttpStatus.NOT_FOUND
         );
       }
-      // conidiconal para borrar
+
       const relation = await this.prisma.promotionalCodeOnProducts.create({
         data: {
           productId,
           promotionalCodeId,
         },
       });
-      console.log(relation);
+
       return relation;
     } catch (e) {
       console.log(e);
       throw new HttpException(
         `Error al relacionar codigo ${e.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async unRelatePromotionalCode({
+    promotionalCodeId,
+    productId,
+  }: RelatePromotionalCode) {
+    try {
+      const code = await this.prisma.promotionalCode.findFirst({
+        where: {
+          id: promotionalCodeId,
+        },
+      });
+
+      if (!code) {
+        throw new HttpException(
+          "El codigo promocional no existe",
+          HttpStatus.NOT_FOUND
+        );
+      }
+      console.log(productId, promotionalCodeId);
+      const deletedRelation =
+        await this.prisma.promotionalCodeOnProducts.delete({
+          where: {
+            productId_promotionalCodeId: {
+              productId,
+              promotionalCodeId,
+            },
+          },
+        });
+
+      return deletedRelation;
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(
+        `Error al desvincular codigo ${e.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }

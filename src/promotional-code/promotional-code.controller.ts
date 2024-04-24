@@ -37,7 +37,7 @@ export class PromotionalCodeController {
 
   @Post("/un-relate")
   async unRelatePromotionalCode(@Body() body: RelatePromotionalCode) {
-    return this.promotionalCodeService.relatePromotionalCode(body);
+    return this.promotionalCodeService.unRelatePromotionalCode(body);
   }
 
   @Delete("/:id")
