@@ -41,7 +41,6 @@ export class PromotionalCodeService {
           id,
         },
       });
-      console.log(deleted);
 
       return deleted;
     } catch (err) {

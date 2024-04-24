@@ -172,6 +172,7 @@ model PromotionalCode {
     id       String                      @id @default(uuid())
     code     String
     discount Int
+    active   Boolean                     @default(true)
     products PromotionalCodeOnProducts[]
 }
 

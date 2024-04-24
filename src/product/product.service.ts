@@ -144,21 +144,20 @@ export class ProductService {
     }
   }
 
-  async getAllProducts(promotionalCode: boolean): Promise<ProductDTO[]> {
+  async getAllProducts(includeCode: boolean): Promise<ProductDTO[]> {
     try {
       return await this.prisma.product.findMany({
         orderBy: [{ arsPrice: "desc" }, { name: "desc" }],
-        where: {
-          id: 4068731,
-        },
         include: {
           images: true,
           productType: { select: { type: true } },
-          promotionalCodes: promotionalCode,
+
+          promotionalCodes: {
+            include: { promotionalCode: true },
+          },
         },
       });
     } catch (err) {
-      console.log(err);
       throw new HttpException(
         "Error del servidor",
         HttpStatus.INTERNAL_SERVER_ERROR
@@ -197,7 +196,6 @@ export class ProductService {
 
   async updateType(data: UpdateTypeDTO) {
     const { productId, categoryId } = data;
-    console.log(data);
     const updated = await this.prisma.product.update({
       where: {
         id: productId,
