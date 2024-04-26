@@ -167,16 +167,33 @@ export class PromotionalCodeService {
     }
   }
 
-  async validatePromotionalCode(coupon: string): Promise<PromotionalCodeDTO> {
-    const res = await this.prisma.promotionalCode.findFirst({
-      where: { code: coupon },
-      select: { id: true, code: true, discount: true },
+  async validatePromotionalCode(coupon: string): Promise<any> {
+    const isValid = await this.prisma.promotionalCode.findFirst({
+      where: { code: coupon, active: true },
+      select: {
+        id: true,
+        discount: true,
+      },
     });
 
-    if (!res) {
+    if (!isValid) {
       throw new HttpException("Cupon invalido", HttpStatus.BAD_REQUEST);
     }
 
-    return res;
+    const products = await this.prisma.promotionalCodeOnProducts.findMany({
+      where: { promotionalCodeId: isValid.id },
+    });
+    console.log(products);
+    if (!products.length) {
+      throw new HttpException(
+        "No hay productos con este cupon",
+        HttpStatus.NOT_FOUND
+      );
+    }
+
+    return {
+      discount: isValid.discount,
+      products: products,
+    };
   }
 }
