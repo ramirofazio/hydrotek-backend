@@ -173,6 +173,7 @@ export class PromotionalCodeService {
       select: {
         id: true,
         discount: true,
+        code: true,
       },
     });
 
@@ -183,7 +184,7 @@ export class PromotionalCodeService {
     const products = await this.prisma.promotionalCodeOnProducts.findMany({
       where: { promotionalCodeId: isValid.id },
     });
-    console.log(products);
+
     if (!products.length) {
       throw new HttpException(
         "No hay productos con este cupon",
@@ -192,8 +193,8 @@ export class PromotionalCodeService {
     }
 
     return {
-      discount: isValid.discount,
-      products: products,
+      promotionalCode: isValid,
+      products,
     };
   }
 }
