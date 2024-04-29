@@ -125,15 +125,44 @@ export class ProductService {
     });
     return products;
   }
+  async addProductImg(data: AddProductImg) {
+    try {
+      const { productId, path, assetId, publicId, index } = data;
 
-  async getAllProducts(): Promise<ProductDTO[]> {
-    return await this.prisma.product.findMany({
-      orderBy: [{ arsPrice: "desc" }, { name: "desc" }],
-      include: {
-        images: true,
-        productType: { select: { type: true } },
-      },
-    });
+      const product = await this.prisma.productImage.create({
+        data: {
+          id: assetId,
+          publicId,
+          path,
+          productId,
+          index,
+        },
+      });
+      return product;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async getAllProducts(includeCode: boolean): Promise<ProductDTO[]> {
+    try {
+      return await this.prisma.product.findMany({
+        orderBy: [{ arsPrice: "desc" }, { name: "desc" }],
+        include: {
+          images: true,
+          productType: { select: { type: true } },
+
+          promotionalCodes: {
+            include: { promotionalCode: includeCode },
+          },
+        },
+      });
+    } catch (err) {
+      throw new HttpException(
+        "Error del servidor",
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   async getProductDetail(id: number): Promise<ProductDTO> {
@@ -164,28 +193,9 @@ export class ProductService {
       products,
     };
   }
-  async addProductImg(data: AddProductImg) {
-    try {
-      const { productId, path, assetId, publicId, index } = data;
-
-      const product = await this.prisma.productImage.create({
-        data: {
-          id: assetId,
-          publicId,
-          path,
-          productId,
-          index,
-        },
-      });
-      return product;
-    } catch (e) {
-      console.log(e);
-    }
-  }
 
   async updateType(data: UpdateTypeDTO) {
     const { productId, categoryId } = data;
-    console.log(data);
     const updated = await this.prisma.product.update({
       where: {
         id: productId,

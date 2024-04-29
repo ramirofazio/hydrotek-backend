@@ -170,16 +170,17 @@ model ProductImage {
 
 model PromotionalCode {
     id       String                      @id @default(uuid())
-    code     String
+    code     String                      @unique
     discount Int
+    active   Boolean                     @default(true)
     products PromotionalCodeOnProducts[]
 }
 
 model PromotionalCodeOnProducts {
-    product           Product         @relation(fields: [productId], references: [id])
-    productId         Int             @unique
-    promotionalCode   PromotionalCode @relation(fields: [promotionalCodeId], references: [id])
-    promotionalCodeId String          @unique
+    product           Product         @relation(fields: [productId], references: [id], onDelete: NoAction)
+    productId         Int
+    promotionalCode   PromotionalCode @relation(fields: [promotionalCodeId], references: [id], onDelete: Cascade)
+    promotionalCodeId String
 
     @@id([productId, promotionalCodeId])
 }
