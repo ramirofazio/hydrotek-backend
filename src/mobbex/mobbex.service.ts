@@ -34,12 +34,7 @@ export class MobbexService {
     const currency = "ARS";
     const test = false;
     // eslint-disable-next-line camelcase
-    const return_url =
-      env.env === "production"
-        ? "https://www.hydrotek.store/shoppingCart"
-        : env.env === "staging"
-          ? "http://85.31.231.196:51732/shoppingCart"
-          : "http://localhost:5173/shoppingCart";
+    const return_url = "https://www.hydrotek.store/shoppingCart";
 
     const bodyResponse: mobbexBody = {
       total,
@@ -51,6 +46,18 @@ export class MobbexService {
       return_url,
       customer,
       items: mobbexItems,
+      sources: [
+        "naranja",
+        "mastercard",
+        "mastercard.debit",
+        "maestro",
+        "visa.debit",
+        "visa",
+        "cabal",
+        "cabal.debit",
+        "visa.prepaid",
+        "mastercard.prepaid",
+      ],
     };
     return bodyResponse;
   }
@@ -86,6 +93,18 @@ export class MobbexService {
       return_url,
       customer,
       items: mobbexItems,
+      sources: [
+        "naranja",
+        "mastercard",
+        "mastercard.debit",
+        "maestro",
+        "visa.debit",
+        "visa",
+        "cabal",
+        "cabal.debit",
+        "visa.prepaid",
+        "mastercard.prepaid",
+      ],
     };
     return bodyResponse;
   }
