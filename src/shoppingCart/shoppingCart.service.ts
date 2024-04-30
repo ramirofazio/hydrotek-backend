@@ -95,42 +95,6 @@ export class ShoppingCartService {
         return productCopy;
       });
 
-      // console.log("*******", bulkCartProducts);
-
-      //TODO TOMI ACA ESTA LLEGANOD UNA PROP DE LOS CUPONES QUE PRISMA NO RECONOCE
-      //TODO CUANDO EL CARRITO NO TIENE CUPONES ANDA BIEN, EL TEMA ES CUANDO TIENE
-      /*
-!LLEGA ESTO:
-
-[
-  {
-    quantity: 1,
-    productId: 4068731,
-    price: 2662,
-    name: 'PLUG COMBO X1U',
-    img: 'https://res.cloudinary.com/djdtbqhxm/image/upload/v1693325847/HYD/logos/blackLogo.png',
-  !  discountPrice: 266.2,
-    shoppingCartId: 1
-  },
-  {
-    quantity: 1,
-    productId: 4068732,
-    price: 4784,
-    name: 'PLUG COMBO X 2U',    img: 'https://res.cloudinary.com/djdtbqhxm/image/upload/v1693325847/HYD/logos/blackLogo.png',
-  !  discountPrice: 478.40000000000003,
-    shoppingCartId: 1
-  },
-  {
-    quantity: 1,
-    productId: 4068736,
-    price: 4160,
-    name: 'CANASTA INYECTADA N15 NEGRA',
-    img: 'https://res.cloudinary.com/djdtbqhxm/image/upload/v1693325847/HYD/logos/blackLogo.png',
-    shoppingCartId: 1
-  }
-]
-
- */
       await this.prisma.productsOnCart.createMany({ data: bulkCartProducts });
       const newCart = await this.prisma.shoppingCart.update({
         where: { id: id },
