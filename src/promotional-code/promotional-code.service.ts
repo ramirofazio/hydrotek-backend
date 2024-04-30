@@ -107,7 +107,6 @@ export class PromotionalCodeService {
           HttpStatus.NOT_FOUND
         );
       }
-      console.log(productId, promotionalCodeId);
       const deletedRelation =
         await this.prisma.promotionalCodeOnProducts.delete({
           where: {
@@ -176,7 +175,7 @@ export class PromotionalCodeService {
         code: true,
       },
     });
-    console.log(isValid);
+
     if (!isValid) {
       throw new HttpException("Cupon invalido", HttpStatus.BAD_REQUEST);
     }

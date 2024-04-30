@@ -144,7 +144,7 @@ export class MobbexService {
   }
 
   async generateItems(items: requestItem[], promCode: boolean) {
-    async function rawArssPrice(
+    async function rawArsPrice(
       prisma,
       items: requestItem[],
       promCode: boolean
@@ -180,7 +180,7 @@ export class MobbexService {
         return dbproducts;
       }
     }
-    const dbproducts = await rawArssPrice(this.prisma, items, promCode);
+    const dbproducts = await rawArsPrice(this.prisma, items, promCode);
     const mobbexItems: mobbexItem[] = dbproducts.map((el) => {
       return {
         description: el.name,
