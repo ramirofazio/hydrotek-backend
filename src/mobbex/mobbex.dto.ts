@@ -20,11 +20,11 @@ export class CheckoutRequest {
   @IsString()
   @IsNotEmpty()
   userId: string;
-  @IsArray()
+  // @ValidateNested({ each: true })
+  @Type(() => requestItem)
   @IsNotEmpty()
   @ArrayMinSize(1)
-  @ValidateNested({ each: true })
-  @Type(() => requestItem)
+  @IsArray()
   items: requestItem[];
 }
 
@@ -62,6 +62,9 @@ export class requestItem {
   @IsNotEmpty()
   @IsNumber()
   qty: number;
+
+  @IsOptional()
+  discountPrice: number;
 }
 
 export interface mobbexCustomer {

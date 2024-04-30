@@ -85,13 +85,17 @@ export class ShoppingCartService {
         });
       }
       const bulkCartProducts = shoppingCart.products.map((p) => {
-        return {
+        const productCopy = {
           ...p,
           shoppingCartId: id,
         };
+        if (productCopy.discountPrice) {
+          delete productCopy.discountPrice;
+        }
+        return productCopy;
       });
 
-      console.log("*******", bulkCartProducts);
+      // console.log("*******", bulkCartProducts);
 
       //TODO TOMI ACA ESTA LLEGANOD UNA PROP DE LOS CUPONES QUE PRISMA NO RECONOCE
       //TODO CUANDO EL CARRITO NO TIENE CUPONES ANDA BIEN, EL TEMA ES CUANDO TIENE

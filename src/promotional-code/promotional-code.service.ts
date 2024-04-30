@@ -176,7 +176,7 @@ export class PromotionalCodeService {
         code: true,
       },
     });
-
+    console.log(isValid);
     if (!isValid) {
       throw new HttpException("Cupon invalido", HttpStatus.BAD_REQUEST);
     }

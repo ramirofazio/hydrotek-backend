@@ -24,11 +24,15 @@ export class MobbexService {
 
   async generateBody(userId: string, items: requestItem[], discount: number) {
     const customer: mobbexCustomer = await this.generateCustomer(userId);
-    const mobbexItems: mobbexItem[] = await this.generateItems(items);
+    const mobbexItems: mobbexItem[] = await this.generateItems(
+      items,
+      Boolean(discount)
+    );
+
     const total =
       env.env === "production" || env.env === "staging"
-        ? this.calculateTotal(mobbexItems, discount)
-        : this.calculateTotal(mobbexItems, discount);
+        ? this.calculateTotal(mobbexItems)
+        : this.calculateTotal(mobbexItems);
     const reference = this.generateReference(customer);
     const description = `Checkout ${reference}`;
     const currency = "ARS";
@@ -66,11 +70,15 @@ export class MobbexService {
     const customer: mobbexGuestCustomer = await this.generateGuestCustomer({
       ...body,
     });
-    const mobbexItems: mobbexItem[] = await this.generateItems(body.items);
+    const mobbexItems: mobbexItem[] = await this.generateItems(
+      body.items,
+      Boolean(body.discount)
+    );
     const total =
       env.env === "production" || env.env === "staging"
-        ? this.calculateTotal(mobbexItems, body.discount)
-        : this.calculateTotal(mobbexItems, body.discount);
+        ? this.calculateTotal(mobbexItems)
+        : this.calculateTotal(mobbexItems);
+
     const reference = this.generateGuestReference(customer);
     const description = `Checkout ${reference}`;
     const currency = "ARS";
@@ -135,21 +143,45 @@ export class MobbexService {
     return response;
   }
 
-  async generateItems(items: requestItem[]) {
-    const ids: number[] = items.map((el) => el.id);
-    const dbProducts = await this.prisma.product.findMany({
-      where: {
-        id: {
-          in: ids,
+  async generateItems(items: requestItem[], promCode: boolean) {
+    async function rawArssPrice(
+      prisma,
+      items: requestItem[],
+      promCode: boolean
+    ) {
+      const ids: number[] = items.map((el) => el.id);
+      const dbproducts = await prisma.product.findMany({
+        where: {
+          id: {
+            in: ids,
+          },
         },
-      },
-      select: {
-        id: true,
-        name: true,
-        arsPrice: true,
-      },
-    });
-    const mobbexItems: mobbexItem[] = dbProducts.map((el) => {
+        select: {
+          id: true,
+          name: true,
+          arsPrice: true,
+        },
+      });
+
+      if (promCode) {
+        const rawProdructs = dbproducts.map((p) => {
+          const product = items.find((item) => item.id === p.id);
+          if (product.discountPrice) {
+            return {
+              ...p,
+              arsPrice: product.discountPrice,
+            };
+          } else {
+            return p;
+          }
+        });
+        return rawProdructs;
+      } else {
+        return dbproducts;
+      }
+    }
+    const dbproducts = await rawArssPrice(this.prisma, items, promCode);
+    const mobbexItems: mobbexItem[] = dbproducts.map((el) => {
       return {
         description: el.name,
         quantity: items.find((item) => item.id === el.id).qty,
@@ -160,14 +192,11 @@ export class MobbexService {
     return mobbexItems;
   }
 
-  calculateTotal(items: mobbexItem[], discount: number) {
+  calculateTotal(items: mobbexItem[]) {
     const totalItemsPrice = items.reduce((acc, curr) => {
       return curr.total + acc;
     }, 0);
-
-    const totalDiscount = (discount / 100) * totalItemsPrice;
-
-    return totalItemsPrice - totalDiscount;
+    return totalItemsPrice;
   }
 
   generateReference(customer: mobbexCustomer) {
