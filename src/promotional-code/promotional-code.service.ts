@@ -167,7 +167,7 @@ export class PromotionalCodeService {
     }
   }
 
-  async validatePromotionalCode(coupon: string): Promise<any> {
+  async validatePromotionalCode(coupon: string): Promise<object> {
     const isValid = await this.prisma.promotionalCode.findFirst({
       where: { code: coupon, active: true },
       select: {
