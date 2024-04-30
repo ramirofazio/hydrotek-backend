@@ -10,6 +10,7 @@ import {
 import {
   EditPromotionalCodeDTO,
   PromotionalCodeDTO,
+  RelatePromotionalCode,
 } from "./promotional-code.dto";
 import { PromotionalCodeService } from "./promotional-code.service";
 
@@ -27,6 +28,23 @@ export class PromotionalCodeController {
   @Patch()
   async editPromotionalCode(@Body() body: EditPromotionalCodeDTO) {
     return this.promotionalCodeService.editPromotionalCode(body);
+  }
+
+  @Post("/relate")
+  async relatePromotionalCode(@Body() body: RelatePromotionalCode) {
+    return this.promotionalCodeService.relatePromotionalCode(body);
+  }
+
+  @Post("/un-relate")
+  async unRelatePromotionalCode(@Body() body: RelatePromotionalCode) {
+    return this.promotionalCodeService.unRelatePromotionalCode(body);
+  }
+
+  @Patch("/state")
+  async setPromotionalCodeState(
+    @Body() body: { promotionalCodeId: string; active: boolean }
+  ) {
+    return this.promotionalCodeService.setPromotionalCodeState(body);
   }
 
   @Delete("/:id")
