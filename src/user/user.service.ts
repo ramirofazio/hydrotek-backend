@@ -1,5 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
+import { UserProfile } from "@prisma/client";
 import {
   CreateUserDTO,
   UserProfileDTO,
@@ -449,7 +450,7 @@ export class UserService {
     city,
     postalCode,
     province,
-  }: deliveryInfoDTO): Promise<any> {
+  }: deliveryInfoDTO): Promise<UserProfile | Error> {
     try {
       const userProfile = await this.prisma.userProfile.update({
         where: { userId: id },
