@@ -107,6 +107,7 @@ export class PromotionalCodeService {
           HttpStatus.NOT_FOUND
         );
       }
+      /* eslint-disable */
       const deletedRelation =
         await this.prisma.promotionalCodeOnProducts.delete({
           where: {
