@@ -14,10 +14,10 @@ import { MailModule } from "src/mail/mail.module";
       //? Se registra globalmente el JWT para no tener que importar el servicio en todos lados
       global: true,
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: "2h" },
+      signOptions: { expiresIn: "15d" },
     }),
     PrismaModule,
-    MailModule
+    MailModule,
   ],
   providers: [AuthService],
   controllers: [AuthController],
