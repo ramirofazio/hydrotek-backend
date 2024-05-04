@@ -41,9 +41,5 @@ services:
       - ${NEST_PORT}:3000
     networks:
       - hydrotek
-    depends_on:
-      postgres:
-        condition: service_healthy
-        restart: true
 networks:
    hydrotek:
