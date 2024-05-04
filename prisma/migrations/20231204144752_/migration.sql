@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Order" ALTER COLUMN "fresaId" SET DATA TYPE BIGINT;
