@@ -32,7 +32,8 @@ services:
   #     - hydrotek
   #   depends_on:
   #     - backend
-  backend:
+  hydrotek-backend:
+    container_name: hydrotek-backend
     build:
       context: ./
       dockerfile: Dockerfile
