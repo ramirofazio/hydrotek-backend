@@ -7,7 +7,3 @@ services:
       dockerfile: Dockerfile
     ports:
       - ${NEST_PORT}:3000
-    networks:
-      - hydrotek
-networks:
-   hydrotek:
