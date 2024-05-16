@@ -36,9 +36,11 @@ export class MobbexService {
     const reference = this.generateReference(customer);
     const description = `Checkout ${reference}`;
     const currency = "ARS";
-    const test = false;
+    // const test = false;
+    const test = true;
     // eslint-disable-next-line camelcase
     const return_url = "https://www.hydrotek.store/shoppingCart";
+    const webhook = "http://localhost:3000/mobbex/create-order";
 
     const bodyResponse: mobbexBody = {
       total,
@@ -46,6 +48,7 @@ export class MobbexService {
       reference,
       currency,
       test,
+      webhook: "http://localhost:3000/mobbex/create-order",
       // eslint-disable-next-line camelcase
       return_url,
       customer,

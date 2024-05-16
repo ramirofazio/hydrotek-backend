@@ -94,6 +94,8 @@ export interface mobbexBody {
   description: string;
   reference: string;
   currency: string;
+  webhook?: string;
+  webhooksType?: string;
   test: boolean;
   return_url: string;
   customer: mobbexCustomer | mobbexGuestCustomer;

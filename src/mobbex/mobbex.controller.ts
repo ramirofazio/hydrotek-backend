@@ -19,11 +19,24 @@ export class MobbexController {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const checkout: any = await mobbex.checkout.create(mobbexBody);
       if ("data" in checkout) {
+        console.log(" DATA", checkout.data);
         return checkout.data.url;
       }
       if ("error" in checkout) {
         throw checkout.error;
       }
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  @Post("create-order")
+  async createOrder(@Body() body: any) {
+    try {
+      console.log(body);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      console.log("ENTRO AL ORDERR");
     } catch (error) {
       console.log(error);
       throw error;
