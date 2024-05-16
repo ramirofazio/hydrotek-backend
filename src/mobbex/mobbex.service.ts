@@ -39,7 +39,8 @@ export class MobbexService {
     // const test = false;
     const test = true;
     // eslint-disable-next-line camelcase
-    const return_url = "https://www.hydrotek.store/shoppingCart";
+    const return_url = "http://localhost:5173/shoppingCart";
+    // const return_url = "https://www.hydrotek.store/shoppingCart";
     const webhook = "http://localhost:3000/mobbex/create-order";
 
     const bodyResponse: mobbexBody = {
@@ -85,14 +86,15 @@ export class MobbexService {
     const reference = this.generateGuestReference(customer);
     const description = `Checkout ${reference}`;
     const currency = "ARS";
-    const test = false;
+    // const test = false;
+    const test = true;
     // eslint-disable-next-line camelcase
-    const return_url =
-      env.env === "production"
-        ? "https://www.hydrotek.store/shoppingCart"
-        : env.env === "staging"
-          ? "http://85.31.231.196:51732/shoppingCart"
-          : "http://localhost:5173/shoppingCart";
+    const return_url = "http://localhost:5173/shoppingCart";
+    // env.env === "production"
+    //   ? "https://www.hydrotek.store/shoppingCart"
+    //   : env.env === "staging"
+    //     ? "http://85.31.231.196:51732/shoppingCart"
+    //     : "http://localhost:5173/shoppingCart";
 
     const bodyResponse: mobbexBody = {
       total,
