@@ -26,3 +26,4 @@ db-data
 db-data-backup
 package-lock.json
 update.sh
+start.sh
