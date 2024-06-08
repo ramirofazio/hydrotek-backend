@@ -27,3 +27,4 @@ db-data-backup
 package-lock.json
 update.sh
 start.sh
+docker-compose.yml
