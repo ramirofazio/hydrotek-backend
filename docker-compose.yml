@@ -1,9 +1,0 @@
-version: "3"
-services:
-  hydrotek-backend:
-    container_name: ${NEST_CONTAINER_NAME}
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    ports:
-      - ${NEST_PORT}:3000
