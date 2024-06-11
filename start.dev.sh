@@ -3,7 +3,7 @@
 # Ejecuta contenedor DB
 docker compose -p hydrotek up postgres --build -d
 
-# Espera 40 segundos
+# Espera 20 segundos
 sleep 20
 
 # Ejecuta las migraciones de Prisma
