@@ -85,6 +85,7 @@ export class ProductService {
 
   async updateDBProducts(updateUsd = false): Promise<string | Error> {
     try {
+      //? Este service actualiza la DB, crea el token de TFACTURA y guarda todo en nuestra DB. Tambien si se le pasa el param en true actualiza la cotizacion del dolar.
       const token = await this.tfacturaService.postToken();
       if (!token) {
         throw new HttpException(

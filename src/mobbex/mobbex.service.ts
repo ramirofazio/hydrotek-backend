@@ -82,7 +82,7 @@ export class MobbexService {
     const reference = this.generateGuestReference(customer);
     const description = `Checkout ${reference}`;
     const currency = "ARS";
-    const test = false;
+    const test = env.env === "production" ? false : true;
     // eslint-disable-next-line camelcase
     const return_url =
       env.env === "production"
