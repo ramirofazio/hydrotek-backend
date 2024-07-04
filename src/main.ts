@@ -27,7 +27,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("docu", app, document);
 
-  await app.get(RoleService).createRolesIfNotExist();
+  await app.get(RoleService).createRolesAndTestUsersIfNotExist();
   await app.get(CategoryService).createCategories();
 
   app.useGlobalPipes(

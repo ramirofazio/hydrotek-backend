@@ -86,7 +86,7 @@ export class CreateUserDTO {
 
   @IsOptional()
   @IsNumber()
-    tFacturaId: number;
+    tFacturaId?: number;
 
   @IsString()
   @IsNotEmpty()
@@ -100,15 +100,15 @@ export class CreateUserDTO {
   @IsString()
   @MinLength(7)
   @MaxLength(17)
-    dni: string;
+    dni?: string;
 
   @IsOptional()
   @IsBoolean()
-    active: boolean;
+    active?: boolean;
 
   @IsOptional()
   @IsUUID()
-    id: string;
+    id?: string;
 
   @IsNotEmpty()
   @IsNumber()
@@ -122,7 +122,7 @@ export class CreateUserDTO {
 
   @IsOptional()
   @ValidateNested()
-    profile: UserProfileDTO;
+    profile?: UserProfileDTO;
 }
 
 //DTO para validar data al momento de updatear un usuario

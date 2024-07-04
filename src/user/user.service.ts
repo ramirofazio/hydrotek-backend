@@ -239,8 +239,6 @@ export class UserService {
       await tx.userProfile.create({
         data: {
           user: { connect: { id: user.id } },
-          avatar: data.profile.avatar,
-          address: data.profile.address,
         },
       });
       await tx.shoppingCart.create({
@@ -309,7 +307,7 @@ export class UserService {
     });
 
     if (!existingUser.dni && !existingUser.tFacturaId && user.dni) {
-      // Este bloque solo se puede ejecutar teniendo las credenciales TFactura
+      // ! Este bloque solo se puede ejecutar teniendo las credenciales TFactura
       // const res:SuccessPostClientDataResponse = await this.tfacturaService.createUser(user.dni);
       // if(typeof res === "object" && "ClienteID" in res) {
       //   user.tFacturaId = res.ClienteID;
@@ -319,7 +317,7 @@ export class UserService {
       const existingUser = await tx.user.findUnique({
         where: { id: id },
       });
-      if (existingUser && existingUser.dni === null) {
+      if (existingUser) {
         const target = await tx.user.update({
           where: { id: id },
           data: {
@@ -337,22 +335,23 @@ export class UserService {
         });
         return target;
       }
-      if (existingUser && existingUser.dni !== null) {
-        const target = await tx.user.update({
-          where: { id: id },
-          data: {
-            name: user.name,
-          },
-        });
-        await tx.userProfile.update({
-          where: { userId: id },
-          data: {
-            avatar: profile.avatar,
-            address: profile.address,
-          },
-        });
-        return target;
-      }
+      //? No se que onda este bloque de codigo
+      //   if (existingUser && existingUser.dni !== null) {
+      //     const target = await tx.user.update({
+      //       where: { id: id },
+      //       data: {
+      //         name: user.name,
+      //       },
+      //     });
+      //     await tx.userProfile.update({
+      //       where: { userId: id },
+      //       data: {
+      //         avatar: profile.avatar,
+      //         address: profile.address,
+      //       },
+      //     });
+      //     return target;
+      //   }
     });
 
     return await this.findByEmail(user.email);
