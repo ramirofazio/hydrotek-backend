@@ -69,7 +69,7 @@ export class MobbexService {
 
       await this.prisma.order.update({
         where: { id: orderId, type: "TEMPORAL" },
-        data: { type, fresaId: transactionId },
+        data: { type, fresaId: transactionId, status },
       });
 
       //! DE ACA MANDO EL MAIL DE CONFIRMACION DE COMPRA PARA HYDRO Y USERS
