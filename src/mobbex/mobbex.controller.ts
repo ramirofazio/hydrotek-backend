@@ -30,16 +30,17 @@ export class MobbexController {
     }
   }
 
-  @Post("update-dni")
-  async updateUserAndGenerateCheckout(@Body() body: CheckoutRequest) {
-    try {
-      await this.mobbexService.updateUser(body.userId, body.identifier);
-      return await this.generateCheckout(body);
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  }
+  //! DEPRECADO
+  //   @Post("update-dni")
+  //   async updateUserAndGenerateCheckout(@Body() body: CheckoutRequest) {
+  //     try {
+  //       await this.mobbexService.updateUser(body.userId, body.identifier);
+  //       return await this.generateCheckout(body);
+  //     } catch (error) {
+  //       console.log(error);
+  //       throw error;
+  //     }
+  //   }
 
   @Post("guest")
   async generateGuestCheckout(@Body() body: CheckoutGuestRequest) {
@@ -53,6 +54,17 @@ export class MobbexController {
       if ("error" in checkout) {
         throw checkout.error;
       }
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  @Post("/webhook")
+  //? El type del body seria una respuesta del webhook de mobbex:
+  async webHook(@Body() { data }) {
+    try {
+      await this.mobbexService.webhookResponse(data);
     } catch (error) {
       console.log(error);
       throw error;

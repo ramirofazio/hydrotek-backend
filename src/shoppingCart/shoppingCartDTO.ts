@@ -42,8 +42,8 @@ export class NewOrderDTO {
   fresaId: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  status: number;
+  @IsString()
+  type: string;
 
   @IsNotEmpty()
   @IsNumber()

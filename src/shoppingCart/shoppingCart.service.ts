@@ -14,51 +14,58 @@ export class ShoppingCartService {
     email,
     items,
     fresaId,
-    status,
     totalPrice,
     discount,
-  }: NewOrderDTO): Promise<HttpStatus> {
+    type,
+  }: NewOrderDTO) {
     try {
       return await this.prisma.$transaction(async (tx) => {
         const user = await tx.user.findUnique({ where: { id: id } });
 
         if (!user) {
           //? Creo ordenes sin usuarios para los NO LOGGED
-          await tx.order.create({
+          const newOrder = await tx.order.create({
             data: {
               name: name,
               email: email,
               totalPrice: totalPrice,
               fresaId: fresaId,
-              status: status,
+              type,
               discount: discount,
               products: { createMany: { data: items } },
             },
           });
 
-          return HttpStatus.CREATED;
+          return newOrder.id;
         }
 
+        //? Creo ordenes para usuarios logged
         const newOrder = await tx.order.create({
           data: {
             totalPrice: totalPrice,
             fresaId: fresaId,
-            status: status,
             discount: discount,
+            type,
             user: { connect: { id: user.id } },
             products: { createMany: { data: items } },
           },
         });
 
         if (!newOrder) {
-          return HttpStatus.BAD_REQUEST;
+          throw new HttpException(
+            `Error al crear la orden para el user: ${email}`,
+            HttpStatus.BAD_REQUEST
+          );
         }
 
-        return HttpStatus.CREATED;
+        return newOrder.id;
       });
     } catch (error) {
       console.error("Error al crear la orden:", error);
-      return HttpStatus.INTERNAL_SERVER_ERROR;
+      throw new HttpException(
+        `Error al crear la orden para el user: ${email}`,
+        HttpStatus.BAD_REQUEST
+      );
     }
   }
 

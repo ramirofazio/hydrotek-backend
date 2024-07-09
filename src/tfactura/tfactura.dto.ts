@@ -7,15 +7,15 @@ export interface TokenError {
 }
 
 export interface RawProductResponse {
-    Error: ErrorObject[];
-    CodigoError: number;
-    ContentEncoding?: any;
-    ContentType?: string;
-    JsonRequestBehavior: number;
-    MaxJsonLength: number;
-    RecursionLimit?: any;
-    Data: string | Array<RawDataProduct>;
-  }
+  Error: ErrorObject[];
+  CodigoError: number;
+  ContentEncoding?: any;
+  ContentType?: string;
+  JsonRequestBehavior: number;
+  MaxJsonLength: number;
+  RecursionLimit?: any;
+  Data: string | Array<RawDataProduct>;
+}
 
 export interface RawDataProduct {
   ProductoId: number;
@@ -33,97 +33,95 @@ export interface RawDataProduct {
 }
 
 export interface RawClientResponse {
-  Error:               any[];
-  CodigoError:         number;
-  ContentEncoding:     null;
-  ContentType:         null;
-  Data:                RawDataClient[];
+  Error: any[];
+  CodigoError: number;
+  ContentEncoding: null;
+  ContentType: null;
+  Data: RawDataClient[];
   JsonRequestBehavior: number;
-  MaxJsonLength:       number;
-  RecursionLimit:      null;
+  MaxJsonLength: number;
+  RecursionLimit: null;
 }
 
 export interface SuccessPostClientResponse {
-  Error:               any[];
-  CodigoError:         number;
-  ContentEncoding:     null;
-  ContentType:         null;
-  Data:                SuccessPostClientDataResponse;
+  Error: any[];
+  CodigoError: number;
+  ContentEncoding: null;
+  ContentType: null;
+  Data: SuccessPostClientDataResponse;
   JsonRequestBehavior: number;
-  MaxJsonLength:       number;
-  RecursionLimit:      null;
+  MaxJsonLength: number;
+  RecursionLimit: null;
 }
 
 export interface SuccessPostClientDataResponse {
-  ClienteID : number
+  ClienteID: number;
 }
 
 export interface RawDataClient {
-  ClienteId:                     number;
-  ClienteCodigoAlternativo:      string;
-  ClientePerfil:                 number;
-  ClienteCodigo:                 string;
-  ClienteNombre:                 string;
-  ClienteTipoDocumento:          number | null;
-  ClienteNumeroDocumento:        null | string;
-  ClienteDireccion:              RawClientAddress;
-  ClienteEmail:                  any[];
-  CategoriaImpositiva:           string;
+  ClienteId: number;
+  ClienteCodigoAlternativo: string;
+  ClientePerfil: number;
+  ClienteCodigo: string;
+  ClienteNombre: string;
+  ClienteTipoDocumento: number | null;
+  ClienteNumeroDocumento: null | string;
+  ClienteDireccion: RawClientAddress;
+  ClienteEmail: any[];
+  CategoriaImpositiva: string;
   ClientePerfilImpositivoCodigo: string;
-  CrearAunRepetido:              boolean;
-  AplicacionID:                  number;
-  UserIdentifier:                null;
-  ApplicationPublicKey:          null;
-  Token:                         null;
+  CrearAunRepetido: boolean;
+  AplicacionID: number;
+  UserIdentifier: null;
+  ApplicationPublicKey: null;
+  Token: null;
 }
 
 export interface ClientCreate {
-  ClienteNombre:                 string;
-  ClienteTipoDocumento:          number;
-  ClienteNumeroDocumento:        number;
-  ClienteDireccion:              AddressCreate;
-  CategoriaImpositiva:           string;
+  ClienteNombre: string;
+  ClienteTipoDocumento: number;
+  ClienteNumeroDocumento: number;
+  ClienteDireccion: AddressCreate;
+  CategoriaImpositiva: string;
   ClientePerfilImpositivoCodigo: string;
-  CrearAunRepetido:              boolean;
-  AplicacionID:                  number;
-  UserIdentifier:                string;
-  ApplicationPublicKey:          string;
-  Token:                         string;
+  CrearAunRepetido: boolean;
+  AplicacionID: number;
+  UserIdentifier: string;
+  ApplicationPublicKey: string;
+  Token: string;
 }
 
 export interface AddressCreate {
-  Calle:                string;
-  Numero:               string;
-  Piso:                 string;
-  Departamento:         string;
-  Localidad:            string;
-  CodigoPostal:         string;
-  Provincia:            string;
-  PaisID:               null;
-  PaisNombre:           string;
+  Calle: string;
+  Numero: string;
+  Piso: string;
+  Departamento: string;
+  Localidad: string;
+  CodigoPostal: string;
+  Provincia: string;
+  PaisID: null;
+  PaisNombre: string;
 }
 
 export interface RawClientAddress {
-  Calle:                string;
-  Numero:               string;
-  Piso:                 string;
-  Departamento:         string;
-  Localidad:            string;
-  CodigoPostal:         string;
-  Provincia:            string;
-  PaisID:               null;
-  PaisNombre:           string;
-  UserIdentifier:       null;
+  Calle: string;
+  Numero: string;
+  Piso: string;
+  Departamento: string;
+  Localidad: string;
+  CodigoPostal: string;
+  Provincia: string;
+  PaisID: null;
+  PaisNombre: string;
+  UserIdentifier: null;
   ApplicationPublicKey: null;
-  Token:                null;
+  Token: null;
 }
-
 
 export interface ErrorObject {
   Mensaje?: string;
   Nivel?: number;
 }
-
 
 export class Product {
   id: number;
@@ -162,8 +160,8 @@ export class Product {
 }
 
 export interface TFacturaUserLog {
-  identifier : string,
-  errorCode : number,
-  data : string,
-  date : string,
+  identifier: string;
+  errorCode: number;
+  data: string;
+  date: string;
 }
