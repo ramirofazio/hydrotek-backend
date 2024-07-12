@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import {
   CheckoutGuestRequest,
@@ -9,9 +9,9 @@ import {
   requestItem,
 } from "./mobbex.dto";
 import { DateTime } from "luxon";
-import { TfacturaService } from "src/tfactura/tfactura.service";
-import { SuccessPostClientDataResponse } from "src/tfactura/tfactura.dto";
 import { env } from "process";
+import { UserService } from "src/user/user.service";
+import { ShoppingCartService } from "src/shoppingCart/shoppingCart.service";
 
 @Injectable()
 export class MobbexService {
@@ -19,37 +19,118 @@ export class MobbexService {
     // eslint-disable-next-line no-unused-vars
     private readonly prisma: PrismaService,
     // eslint-disable-next-line no-unused-vars
-    private readonly tfacturaService: TfacturaService
+    private readonly userService: UserService,
+    // eslint-disable-next-line no-unused-vars
+    private readonly cartService: ShoppingCartService
+    //! DEPRECADO
+    //private readonly tfacturaService: TfacturaService
   ) {}
 
+  async webhookResponse(data) {
+    try {
+      console.log("WEBHOOK DATA RAW", data);
+
+      const status =
+        data?.status?.code || data?.payment?.status?.code || data.status.code;
+
+      if (status !== "200") {
+        console.log("PAGO FALLIDO");
+        //! EN ESTE BLOQUE A FUTURO SE PUEDEN HACER COSITAS DE EMAIL MARKETING U OTROS FLUJOS CUANDO EL PAGO FALLO
+
+        const orderId =
+          data?.payment?.reference ||
+          data?.checkout?.reference ||
+          data.reference;
+
+        //? Elimino la orden temporal creada porque fallo el pago
+        await this.prisma.order.delete({
+          where: { id: orderId, type: "TEMPORAL" },
+        });
+
+        //? Elimino los items de la orden temporal porque fallo el pago
+        await this.prisma.orderProducts.deleteMany({
+          where: { orderId },
+        });
+
+        console.log("BORRE ORDEN TEMPORAL E ITEMS");
+
+        throw new HttpException(
+          JSON.stringify(data.payment.status),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      const orderId = data.payment.reference;
+      const userId = data.customer.identification;
+      const transactionId = data.payment.id;
+      const type = data.payment.source.type;
+
+      console.log("WEBHOOK DATA:", userId, transactionId, type, orderId);
+
+      await this.prisma.order.update({
+        where: { id: orderId, type: "TEMPORAL" },
+        data: { type, fresaId: transactionId, status },
+      });
+
+      //! DE ACA MANDO EL MAIL DE CONFIRMACION DE COMPRA PARA HYDRO Y USERS
+      //await this.mail.sendConfirmOrderEmail(newOrder, email, fantasyName);
+      console.log("TODO ACTUALIZADO");
+      return HttpStatus.OK;
+    } catch (e) {
+      console.log("Hubo un fallo en el webhook---:", e);
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   async generateBody(userId: string, items: requestItem[], discount: number) {
+    const { email, name } = await this.userService.getById(userId);
+
     const customer: mobbexCustomer = await this.generateCustomer(userId);
+
     const mobbexItems: mobbexItem[] = await this.generateItems(
       items,
       Boolean(discount)
     );
 
-    const total =
-      env.env === "production" || env.env === "staging"
-        ? this.calculateTotal(mobbexItems)
-        : this.calculateTotal(mobbexItems);
-    const reference = this.generateReference(customer);
-    const description = `Checkout ${reference}`;
-    const currency = "ARS";
-    const test = false;
-    // eslint-disable-next-line camelcase
-    const return_url = "https://www.hydrotek.store/shoppingCart";
+    const total = this.calculateTotal(mobbexItems);
+
+    const orderItems = await Promise.all(
+      items.map(async ({ id, qty }) => {
+        const { name, arsPrice } = await this.prisma.product.findFirst({
+          where: { id },
+          select: { name: true, arsPrice: true },
+        });
+
+        return { name, productId: id, quantity: qty, price: arsPrice };
+      })
+    );
+
+    //? Creo una orden temporal para confirmar una vez hecho el pago. (EN WEBHOOK)
+    const orderId = await this.cartService.createNewOrder({
+      id: userId,
+      name,
+      email,
+      items: orderItems,
+      discount,
+      totalPrice: total,
+      fresaId: "00000", //? ESTO SE CAMBIA EN WEBHOOK
+      type: "TEMPORAL", //? ESTO SE CAMBIA EN WEBHOOK
+    });
+
+    console.log("ORDERID + ", orderId);
 
     const bodyResponse: mobbexBody = {
+      webhook: env.MOBBEX_X_WEBHOOK, //! AGREGAR ESTO A ENV
+      webhooksType: "all",
       total,
-      description,
-      reference,
-      currency,
-      test,
+      description: `Venta WEB para ${name}`,
+      reference: orderId,
+      test: env.env === "production" ? false : true,
       // eslint-disable-next-line camelcase
-      return_url,
+      return_url: env.MOBBEX_X_RETURN_URL, //! AGREGAR ESTO A ENV
       customer,
       items: mobbexItems,
+      currency: "ARS",
       sources: [
         "naranja",
         "mastercard",
@@ -81,7 +162,6 @@ export class MobbexService {
 
     const reference = this.generateGuestReference(customer);
     const description = `Checkout ${reference}`;
-    const currency = "ARS";
     const test = env.env === "production" ? false : true;
     // eslint-disable-next-line camelcase
     const return_url =
@@ -92,15 +172,17 @@ export class MobbexService {
           : "http://localhost:5173/shoppingCart";
 
     const bodyResponse: mobbexBody = {
+      webhook: "https://rfddevelopment.tech/mobbex/webhook",
+      webhooksType: "all",
       total,
       description,
       reference,
-      currency,
       test,
       // eslint-disable-next-line camelcase
       return_url,
       customer,
       items: mobbexItems,
+      currency: "ARS",
       sources: [
         "naranja",
         "mastercard",
@@ -217,35 +299,36 @@ export class MobbexService {
     }
   }
 
-  async updateUser(id: string, identifier: string) {
-    // Este bloque solo se puede ejecutar teniendo las credenciales TFactura
-    const res: SuccessPostClientDataResponse =
-      await this.tfacturaService.createUser(identifier);
+  //! DEPRECADO
+  //   async updateUser(id: string, identifier: string) {
+  //     // Este bloque solo se puede ejecutar teniendo las credenciales TFactura
+  //     const res: SuccessPostClientDataResponse =
+  //       await this.tfacturaService.createUser(identifier);
 
-    //updateo todo
-    await this.prisma.$transaction(async (tx) => {
-      const existingUser = await tx.user.findUnique({
-        where: { id: id },
-      });
+  //     //updateo todo
+  //     await this.prisma.$transaction(async (tx) => {
+  //       const existingUser = await tx.user.findUnique({
+  //         where: { id: id },
+  //       });
 
-      if (existingUser) {
-        if (typeof res === "object" && "ClienteID" in res) {
-          await tx.user.update({
-            where: { id: id },
-            data: {
-              dni: Number(identifier),
-              tFacturaId: res.ClienteID,
-            },
-          });
-        } else {
-          await tx.user.update({
-            where: { id: id },
-            data: {
-              dni: Number(identifier),
-            },
-          });
-        }
-      }
-    });
-  }
+  //       if (existingUser) {
+  //         if (typeof res === "object" && "ClienteID" in res) {
+  //           await tx.user.update({
+  //             where: { id: id },
+  //             data: {
+  //               dni: Number(identifier),
+  //               tFacturaId: res.ClienteID,
+  //             },
+  //           });
+  //         } else {
+  //           await tx.user.update({
+  //             where: { id: id },
+  //             data: {
+  //               dni: Number(identifier),
+  //             },
+  //           });
+  //         }
+  //       }
+  //     });
+  //   }
 }

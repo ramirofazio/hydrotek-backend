@@ -190,13 +190,15 @@ model PromotionalCodeOnProducts {
 model Order {
     id         String          @id @default(uuid())
     user       User?           @relation(fields: [userId], references: [id])
-    userId     String?
-    email      String?
-    name       String?
-    totalPrice Int
+    userId     String?         @default("")
+    email      String?         @default("")
+    name       String?         @default("")
+    type       String?         @default("TEMPORAL")
+    subtotal   Int             @default(0)
+    totalPrice Int             @default(0)
     discount   Int             @default(0)
-    fresaId    String          @unique
-    status     Int
+    fresaId    String          @unique @default("000000")
+    status     Int?
     date       DateTime        @default(now())
     products   OrderProducts[]
 }

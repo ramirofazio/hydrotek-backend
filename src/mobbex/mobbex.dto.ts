@@ -93,12 +93,14 @@ export interface mobbexBody {
   total: number;
   description: string;
   reference: string;
-  currency: string;
   test: boolean;
   return_url: string;
   customer: mobbexCustomer | mobbexGuestCustomer;
   items: mobbexItem[];
   sources: string[];
+  webhooksType: string;
+  webhook: string;
+  currency: string;
 }
 
 export interface successCheckoutResponse {

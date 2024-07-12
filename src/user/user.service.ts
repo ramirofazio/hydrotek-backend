@@ -45,6 +45,7 @@ export class UserService {
   async getAllOrders() {
     try {
       const orders = await this.prisma.order.findMany({
+        where: { type: { not: "TEMPORAL" } },
         select: {
           user: { select: { name: true, email: true } },
           totalPrice: true,
@@ -78,7 +79,7 @@ export class UserService {
   async getOneOrder(id: string) {
     try {
       const order = await this.prisma.order.findFirst({
-        where: { fresaId: id },
+        where: { fresaId: id, type: { not: "TEMPORAL" } },
         select: {
           totalPrice: true,
           fresaId: true,
@@ -118,7 +119,7 @@ export class UserService {
       }
 
       const userOrders = await this.prisma.order.findMany({
-        where: { userId: id },
+        where: { userId: id, type: { not: "TEMPORAL" } },
         select: {
           totalPrice: true,
           fresaId: true,
